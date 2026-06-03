@@ -1,5 +1,15 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login_perusahaan.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -270,10 +280,25 @@
             justify-content: center;
         }
 
-        .stat-icon.blue { background: #eff6ff; color: #3b82f6; }
-        .stat-icon.green { background: #f0fdf4; color: #22c55e; }
-        .stat-icon.purple { background: #faf5ff; color: #a855f7; }
-        .stat-icon.orange { background: #fff7ed; color: #f59e0b; }
+        .stat-icon.blue {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .stat-icon.green {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+
+        .stat-icon.purple {
+            background: #faf5ff;
+            color: #a855f7;
+        }
+
+        .stat-icon.orange {
+            background: #fff7ed;
+            color: #f59e0b;
+        }
 
         .stat-trend {
             display: flex;
@@ -285,8 +310,15 @@
             border-radius: 6px;
         }
 
-        .stat-trend.up { background: #dcfce7; color: #16a34a; }
-        .stat-trend.down { background: #fee2e2; color: #dc2626; }
+        .stat-trend.up {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .stat-trend.down {
+            background: #fee2e2;
+            color: #dc2626;
+        }
 
         .stat-label {
             font-size: 13px;
@@ -379,14 +411,44 @@
             transition: all 0.3s;
         }
 
-        .chart-bar:hover { opacity: 0.8; }
-        .chart-bar:nth-child(1) { height: 45%; background: #14b8a6; }
-        .chart-bar:nth-child(2) { height: 60%; background: #0d9488; }
-        .chart-bar:nth-child(3) { height: 75%; background: #14b8a6; }
-        .chart-bar:nth-child(4) { height: 55%; background: #0d9488; }
-        .chart-bar:nth-child(5) { height: 85%; background: #14b8a6; }
-        .chart-bar:nth-child(6) { height: 70%; background: #0d9488; }
-        .chart-bar:nth-child(7) { height: 90%; background: #14b8a6; }
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+
+        .chart-bar:nth-child(1) {
+            height: 45%;
+            background: #14b8a6;
+        }
+
+        .chart-bar:nth-child(2) {
+            height: 60%;
+            background: #0d9488;
+        }
+
+        .chart-bar:nth-child(3) {
+            height: 75%;
+            background: #14b8a6;
+        }
+
+        .chart-bar:nth-child(4) {
+            height: 55%;
+            background: #0d9488;
+        }
+
+        .chart-bar:nth-child(5) {
+            height: 85%;
+            background: #14b8a6;
+        }
+
+        .chart-bar:nth-child(6) {
+            height: 70%;
+            background: #0d9488;
+        }
+
+        .chart-bar:nth-child(7) {
+            height: 90%;
+            background: #14b8a6;
+        }
 
         .progress-list {
             display: flex;
@@ -431,11 +493,25 @@
             transition: width 0.3s;
         }
 
-        .progress-fill.blue { background: #3b82f6; }
-        .progress-fill.green { background: #22c55e; }
-        .progress-fill.purple { background: #a855f7; }
-        .progress-fill.orange { background: #f59e0b; }
-        .progress-fill.red { background: #ef4444; }
+        .progress-fill.blue {
+            background: #3b82f6;
+        }
+
+        .progress-fill.green {
+            background: #22c55e;
+        }
+
+        .progress-fill.purple {
+            background: #a855f7;
+        }
+
+        .progress-fill.orange {
+            background: #f59e0b;
+        }
+
+        .progress-fill.red {
+            background: #ef4444;
+        }
 
         .table-container {
             overflow-x: auto;
@@ -484,9 +560,20 @@
             font-weight: 600;
         }
 
-        .badge.success { background: #dcfce7; color: #16a34a; }
-        .badge.warning { background: #fef3c7; color: #d97706; }
-        .badge.info { background: #dbeafe; color: #2563eb; }
+        .badge.success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .badge.warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge.info {
+            background: #dbeafe;
+            color: #2563eb;
+        }
 
         .metrics-grid {
             display: grid;
@@ -518,9 +605,20 @@
             justify-content: center;
         }
 
-        .metric-icon-circle.teal { background: #e0f2f1; color: #0d9488; }
-        .metric-icon-circle.blue { background: #eff6ff; color: #3b82f6; }
-        .metric-icon-circle.indigo { background: #eef2ff; color: #6366f1; }
+        .metric-icon-circle.teal {
+            background: #e0f2f1;
+            color: #0d9488;
+        }
+
+        .metric-icon-circle.blue {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .metric-icon-circle.indigo {
+            background: #eef2ff;
+            color: #6366f1;
+        }
 
         .metric-info {
             flex: 1;
@@ -607,6 +705,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <aside class="sidebar">
@@ -616,10 +715,16 @@
             </div>
 
             <div class="company-profile">
-                <div class="company-avatar">P</div>
+                <div class="company-avatar">
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)) ?>
+                </div>
                 <div class="company-info">
-                    <div class="company-name">PT NADYA</div>
-                    <div class="company-industry">Technology</div>
+                    <div class="company-name">
+                        <?= htmlspecialchars($_SESSION['nama']) ?>
+                    </div>
+                    <div class="company-industry">
+                        <?= htmlspecialchars($_SESSION['email']) ?>
+                    </div>
                 </div>
             </div>
 
@@ -679,7 +784,7 @@
                     Profil Perusahaan
                 </a>
 
-                <a href="analytics.html" class="nav-item active">
+                <a href="analytics.php" class="nav-item active">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="20" x2="18" y2="10"></line>
                         <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -697,7 +802,7 @@
 
                 <div class="nav-divider"></div>
 
-                <a href="pengaturan_perusahaan.html" class="nav-item">
+                <a href="pengaturan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6"></path>
@@ -728,19 +833,22 @@
 
                 <div class="header-actions">
                     <div class="date-filter">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
                         30 Hari Terakhir
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </div>
                     <button class="btn-export">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -754,13 +862,15 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon blue">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
                         </div>
                         <div class="stat-trend up">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="18 15 12 9 6 15"></polyline>
                             </svg>
                             12.5%
@@ -774,7 +884,8 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon green">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="8.5" cy="7" r="4"></circle>
                                 <line x1="20" y1="8" x2="20" y2="14"></line>
@@ -782,7 +893,8 @@
                             </svg>
                         </div>
                         <div class="stat-trend up">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="18 15 12 9 6 15"></polyline>
                             </svg>
                             8.2%
@@ -796,13 +908,15 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon purple">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
                             </svg>
                         </div>
                         <div class="stat-trend down">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                             2.1%
@@ -816,13 +930,15 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon orange">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <polyline points="12 6 12 12 16 14"></polyline>
                             </svg>
                         </div>
                         <div class="stat-trend up">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="18 15 12 9 6 15"></polyline>
                             </svg>
                             15.3%

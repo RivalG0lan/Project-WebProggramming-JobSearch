@@ -1,5 +1,15 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login_perusahaan.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,7 +54,7 @@
             padding: 0 8px;
         }
 
-       .logo-img {
+        .logo-img {
             width: 27px;
             height: 27px;
             object-fit: contain;
@@ -615,6 +625,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <!-- Sidebar -->
@@ -625,10 +636,16 @@
             </div>
 
             <div class="company-profile">
-                <div class="company-avatar">P</div>
+                <div class="company-avatar">
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)) ?>
+                </div>
                 <div class="company-info">
-                    <div class="company-name">PT NADYA</div>
-                    <div class="company-industry">Technology</div>
+                    <div class="company-name">
+                        <?= htmlspecialchars($_SESSION['nama']) ?>
+                    </div>
+                    <div class="company-industry">
+                        <?= htmlspecialchars($_SESSION['email']) ?>
+                    </div>
                 </div>
             </div>
 
@@ -688,7 +705,7 @@
                     Profil Perusahaan
                 </a>
 
-                <a href="analytics.html" class="nav-item">
+                <a href="analytics.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="20" x2="18" y2="10"></line>
                         <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -706,7 +723,7 @@
 
                 <div class="nav-divider"></div>
 
-                <a href="pengaturan_perusahaan.html" class="nav-item">
+                <a href="pengaturan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6"></path>
@@ -739,14 +756,16 @@
 
                 <div class="header-actions">
                     <button class="btn-secondary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                         Preview Profil
                     </button>
                     <button class="btn-primary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                         Simpan Perubahan
@@ -760,18 +779,22 @@
                 <div class="profile-header-content">
                     <div class="profile-avatar-large">P</div>
                     <div class="profile-header-info">
-                        <h2 class="profile-header-name">PT NADYA</h2>
+                        <h2 class="profile-header-name">
+                            <?= htmlspecialchars($_SESSION['nama']) ?>
+                        </h2>
                         <p class="profile-header-industry">Technology • Software Development</p>
                         <div class="profile-header-meta">
                             <span class="profile-meta-item">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                     <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
                                 Jakarta, Indonesia
                             </span>
                             <span class="profile-meta-item">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="9" cy="7" r="4"></circle>
                                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -779,7 +802,8 @@
                                 50-200 Karyawan
                             </span>
                             <span class="profile-meta-item">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                     <line x1="16" y1="2" x2="16" y2="6"></line>
                                     <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -796,7 +820,8 @@
             <div class="verification-card">
                 <div class="verification-header">
                     <div class="verification-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
@@ -809,7 +834,8 @@
                 <div class="verification-progress">
                     <div class="progress-item">
                         <div class="progress-check">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -817,7 +843,8 @@
                     </div>
                     <div class="progress-item">
                         <div class="progress-check">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -839,7 +866,8 @@
                         <div class="card-header">
                             <h3 class="card-title">Tentang Perusahaan</h3>
                             <button class="edit-btn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
@@ -848,7 +876,8 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Deskripsi Perusahaan</label>
-                            <textarea class="form-textarea" rows="6">PT NADYA adalah perusahaan teknologi yang berfokus pada pengembangan software dan solusi digital inovatif. Kami berkomitmen untuk menciptakan produk berkualitas tinggi yang memberikan dampak positif bagi klien dan pengguna kami.
+                            <textarea class="form-textarea"
+                                rows="6"><?= htmlspecialchars($_SESSION['nama']) ?> adalah perusahaan teknologi yang berfokus pada pengembangan software dan solusi digital inovatif. Kami berkomitmen untuk menciptakan produk berkualitas tinggi yang memberikan dampak positif bagi klien dan pengguna kami.
 
 Dengan tim profesional yang berpengalaman, kami telah melayani berbagai industri dan membantu perusahaan dalam transformasi digital mereka.</textarea>
                         </div>

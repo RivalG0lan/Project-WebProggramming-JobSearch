@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login_perusahaan.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -735,10 +744,16 @@
             </div>
 
             <div class="company-profile">
-                <div class="company-avatar">P</div>
+                <div class="company-avatar">
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)) ?>
+                </div>
                 <div class="company-info">
-                    <div class="company-name">PT NADYA</div>
-                    <div class="company-industry">Industry</div>
+                    <div class="company-name">
+                        <?= htmlspecialchars($_SESSION['nama']) ?>
+                    </div>
+                    <div class="company-industry">
+                        <?= htmlspecialchars($_SESSION['email']) ?>
+                    </div>
                 </div>
             </div>
 
@@ -798,7 +813,7 @@
                     Profil Perusahaan
                 </a>
 
-                <a href="analytics.html" class="nav-item">
+                <a href="analytics.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="20" x2="18" y2="10"></line>
                         <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -816,7 +831,7 @@
 
                 <div class="nav-divider"></div>
 
-                <a href="pengaturan_perusahaan.html" class="nav-item">
+                <a href="pengaturan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6"></path>

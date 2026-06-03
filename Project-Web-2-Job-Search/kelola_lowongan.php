@@ -714,7 +714,7 @@ if (isset($_GET['hapus'])) {
                     Profil Perusahaan
                 </a>
 
-                <a href="analytics.html" class="nav-item">
+                <a href="analytics.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="20" x2="18" y2="10"></line>
                         <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -732,7 +732,7 @@ if (isset($_GET['hapus'])) {
 
                 <div class="nav-divider"></div>
 
-                <a href="pengaturan_perusahaan.html" class="nav-item">
+                <a href="pengaturan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6"></path>
