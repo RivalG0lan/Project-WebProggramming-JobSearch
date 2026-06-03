@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -724,6 +725,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <aside class="sidebar">
@@ -778,7 +780,7 @@
                     Kelola Lowongan
                 </a>
 
-                <a href="kandidat.html" class="nav-item">
+                <a href="kandidat.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
@@ -790,18 +792,17 @@
 
                 <a href="profil_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                     Profil Perusahaan
                 </a>
 
                 <a href="analytics.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
                     </svg>
                     Analytics
                 </a>
@@ -842,7 +843,8 @@
                 <div class="message-list-header">
                     <h1 class="message-list-title">Pesan</h1>
                     <div class="message-search">
-                        <svg class="message-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg class="message-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
                             <path d="m21 21-4.35-4.35"></path>
                         </svg>
@@ -920,13 +922,15 @@
                     </div>
                     <div class="chat-actions">
                         <button class="icon-btn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <path d="m21 21-4.35-4.35"></path>
                             </svg>
                         </button>
                         <button class="icon-btn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="1"></circle>
                                 <circle cx="19" cy="12" r="1"></circle>
                                 <circle cx="5" cy="12" r="1"></circle>
@@ -940,4 +944,3 @@
 
                     <div class="message-group">
                         <div class="message-bubble sent">
-                            

@@ -4,36 +4,40 @@ session_start();
 
 include 'config/koneksi.php';
 
-if(!isset($_SESSION['id_user'])){
+if (!isset($_SESSION['id_user'])) {
 
     header("Location: login_perusahaan.php");
 
 }
 
-if($_SESSION['role'] != 'perusahaan'){
+if ($_SESSION['role'] != 'perusahaan') {
 
     header("Location: login_perusahaan.php");
 
 }
 
-$query = mysqli_query($conn,
+$query = mysqli_query(
+    $conn,
 
-"SELECT * FROM lowongan
+    "SELECT * FROM lowongan
 
-WHERE id_perusahaan='".$_SESSION['id_user']."'
+WHERE id_perusahaan='" . $_SESSION['id_user'] . "'
 
 ORDER BY id_lowongan DESC
 
-");
+"
+);
 
-if(isset($_GET['hapus'])){
+if (isset($_GET['hapus'])) {
 
     $id_hapus = $_GET['hapus'];
 
-    mysqli_query($conn,
+    mysqli_query(
+        $conn,
 
-    "DELETE FROM lowongan
-    WHERE id_lowongan='$id_hapus'");
+        "DELETE FROM lowongan
+    WHERE id_lowongan='$id_hapus'"
+    );
 
     header("Location: kelola_lowongan.php");
 
@@ -43,6 +47,7 @@ if(isset($_GET['hapus'])){
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -627,6 +632,7 @@ if(isset($_GET['hapus'])){
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <!-- Sidebar -->
@@ -638,16 +644,16 @@ if(isset($_GET['hapus'])){
 
             <div class="company-profile">
                 <div class="company-avatar">
-                <?= strtoupper(substr($_SESSION['nama'],0,1)); ?>
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
                 </div>
                 <div class="company-info">
                     <div class="company-name">
 
-                    <?= $_SESSION['nama']; ?>
+                        <?= $_SESSION['nama']; ?>
 
                     </div>
                     <div class="company-industry">
-                    <?= $_SESSION['email']; ?>
+                        <?= $_SESSION['email']; ?>
                     </div>
                 </div>
             </div>
@@ -702,18 +708,17 @@ if(isset($_GET['hapus'])){
 
                 <a href="profil_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                     Profil Perusahaan
                 </a>
 
                 <a href="analytics.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
                     </svg>
                     Analytics
                 </a>
@@ -760,7 +765,8 @@ if(isset($_GET['hapus'])){
 
                 <div class="header-actions">
                     <button class="btn-post" onclick="window.location.href='posting_lowongan.php'">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="12" y1="8" x2="12" y2="16"></line>
                             <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -769,14 +775,16 @@ if(isset($_GET['hapus'])){
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                         </svg>
                     </button>
@@ -788,7 +796,8 @@ if(isset($_GET['hapus'])){
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon blue">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
                             </svg>
@@ -801,7 +810,8 @@ if(isset($_GET['hapus'])){
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon green">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -813,7 +823,8 @@ if(isset($_GET['hapus'])){
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon orange">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -828,7 +839,8 @@ if(isset($_GET['hapus'])){
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon red">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="15" y1="9" x2="9" y2="15"></line>
                                 <line x1="9" y1="9" x2="15" y2="15"></line>
@@ -844,7 +856,8 @@ if(isset($_GET['hapus'])){
             <div class="filters-section">
                 <div class="filters-row">
                     <div class="search-box">
-                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
                             <path d="m21 21-4.35-4.35"></path>
                         </svg>
@@ -855,7 +868,8 @@ if(isset($_GET['hapus'])){
                     <button class="filter-btn">Draft</button>
                     <button class="filter-btn">Ditutup</button>
                     <button class="filter-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <line x1="4" y1="21" x2="4" y2="14"></line>
                             <line x1="4" y1="10" x2="4" y2="3"></line>
                             <line x1="12" y1="21" x2="12" y2="12"></line>
@@ -872,76 +886,70 @@ if(isset($_GET['hapus'])){
             </div>
             <!-- Jobs Grid -->
             <div class="jobs-grid">
-            <?php
-            while($data = mysqli_fetch_assoc($query)){
-            ?>
-            <div class="job-card">
-                <div class="job-card-header">
-                    <div class="job-info">
-                        <h3 class="job-title">
-                            <?= $data['judul']; ?>
-                        </h3>
-                        <div class="job-meta">
-                            <span class="job-meta-item">
-                                📁 <?= $data['kategori']; ?>
-                            </span>
-                            <span class="job-meta-item">
-                                📍 <?= $data['lokasi']; ?>
-                            </span>
-                            <span class="job-meta-item">
-                                💰 Rp <?= $data['gaji']; ?>
-                            </span>
-                            <p>
-                                📌 Status: <?= $data['status']; ?>
-                            </p>
+                <?php
+                while ($data = mysqli_fetch_assoc($query)) {
+                    ?>
+                    <div class="job-card">
+                        <div class="job-card-header">
+                            <div class="job-info">
+                                <h3 class="job-title">
+                                    <?= $data['judul']; ?>
+                                </h3>
+                                <div class="job-meta">
+                                    <span class="job-meta-item">
+                                        📁 <?= $data['kategori']; ?>
+                                    </span>
+                                    <span class="job-meta-item">
+                                        📍 <?= $data['lokasi']; ?>
+                                    </span>
+                                    <span class="job-meta-item">
+                                        💰 Rp <?= $data['gaji']; ?>
+                                    </span>
+                                    <p>
+                                        📌 Status: <?= $data['status']; ?>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="job-actions">
+
+                                <a href="edit_lowongan.php?id=<?= $data['id_lowongan']; ?>" class="action-btn edit">
+                                    ✏️
+                                </a>
+                                <a href="kelola_lowongan.php?hapus=<?= $data['id_lowongan']; ?>"
+                                    onclick="return confirm('Yakin ingin menghapus lowongan ini?')"
+                                    class="action-btn delete">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+
+                                        <path d="M19 6l-1 14H6L5 6"></path>
+
+                                        <path d="M10 11v6"></path>
+
+                                        <path d="M14 11v6"></path>
+
+                                        <path d="M9 6V4h6v2"></path>
+
+                                    </svg>
+                                </a>
+                            </div>
+
                         </div>
+
                     </div>
-                    
-                    <div class="job-actions">
 
-                        <a
-                        href="edit_lowongan.php?id=<?= $data['id_lowongan']; ?>"
-                        class="action-btn edit">
-                            ✏️
-                        </a>
-                        <a
-                        href="kelola_lowongan.php?hapus=<?= $data['id_lowongan']; ?>"
-                        onclick="return confirm('Yakin ingin menghapus lowongan ini?')"
-                        class="action-btn delete">
-                            <svg width="18" height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2">
-
-                            <polyline points="3 6 5 6 21 6"></polyline>
-
-                            <path d="M19 6l-1 14H6L5 6"></path>
-
-                            <path d="M10 11v6"></path>
-
-                            <path d="M14 11v6"></path>
-
-                            <path d="M9 6V4h6v2"></path>
-
-                            </svg>
-                        </a>
+                    <div style="margin-top:16px; color:#6b7280;">
+                        <?= $data['deskripsi']; ?>
                     </div>
-                    
-                    </div>
-                     
                 </div>
-
-                <div style="margin-top:16px; color:#6b7280;">
-                    <?= $data['deskripsi']; ?>
-                </div>
-            </div>
-            <?php
-            }
-            ?>
-            </div>
-        </main>
-    </div>  
+                <?php
+                }
+                ?>
+    </div>
+    </main>
+    </div>
 </body>
+
 </html>
-                        

@@ -4,42 +4,43 @@ session_start();
 
 include 'config/koneksi.php';
 
-if(!isset($_SESSION['id_user'])){
+if (!isset($_SESSION['id_user'])) {
 
     header("Location: login_perusahaan.php");
 
 }
 
-if($_SESSION['role'] != 'perusahaan'){
+if ($_SESSION['role'] != 'perusahaan') {
 
     header("Location: login_perusahaan.php");
 
 }
 
 
-if(isset($_POST['post_lowongan'])){
+if (isset($_POST['post_lowongan'])) {
 
     $id_perusahaan =
-    $_SESSION['id_user'];
+        $_SESSION['id_user'];
 
     $judul =
-    $_POST['judul'];
+        $_POST['judul'];
 
     $kategori =
-    $_POST['kategori'];
+        $_POST['kategori'];
 
     $lokasi =
-    $_POST['lokasi'];
+        $_POST['lokasi'];
 
     $gaji =
-    $_POST['gaji'];
+        $_POST['gaji'];
 
     $deskripsi =
-    $_POST['deskripsi'];
+        $_POST['deskripsi'];
 
-    $query = mysqli_query($conn,
+    $query = mysqli_query(
+        $conn,
 
-    "INSERT INTO lowongan
+        "INSERT INTO lowongan
     (
     id_perusahaan,
     judul,
@@ -62,7 +63,7 @@ if(isset($_POST['post_lowongan'])){
     )"
     );
 
-    if($query){
+    if ($query) {
 
         header("Location: kelola_lowongan.php");
 
@@ -76,6 +77,7 @@ if(isset($_POST['post_lowongan'])){
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -796,6 +798,7 @@ if(isset($_POST['post_lowongan'])){
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <!-- Sidebar -->
@@ -807,17 +810,17 @@ if(isset($_POST['post_lowongan'])){
 
             <div class="company-profile">
                 <div class="company-avatar">
-                <?= strtoupper(substr($_SESSION['nama'],0,1)); ?>
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
                 </div>
                 <div class="company-info">
                     <div class="company-name">
 
-                    <?= $_SESSION['nama']; ?>
+                        <?= $_SESSION['nama']; ?>
 
                     </div>
                     <div class="company-industry">
 
-                    <?= $_SESSION['email']; ?>
+                        <?= $_SESSION['email']; ?>
 
                     </div>
                 </div>
@@ -861,7 +864,7 @@ if(isset($_POST['post_lowongan'])){
                     Kelola Lowongan
                 </a>
 
-                <a href="kandidat.html" class="nav-item">
+                <a href="kandidat.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
@@ -873,18 +876,17 @@ if(isset($_POST['post_lowongan'])){
 
                 <a href="profil_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                     Profil Perusahaan
                 </a>
 
                 <a href="analytics.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
                     </svg>
                     Analytics
                 </a>
@@ -926,16 +928,15 @@ if(isset($_POST['post_lowongan'])){
             <header class="header">
                 <div class="greeting">
 
-                Selamat datang,
-                <?= $_SESSION['nama']; ?>
+                    Selamat datang,
+                    <?= $_SESSION['nama']; ?>
 
                 </div>
 
                 <div class="header-actions">
-                    <button
-                        class="btn-post"
-                        onclick="window.location.href='kelola_lowongan.php'">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="btn-post" onclick="window.location.href='kelola_lowongan.php'">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="12" y1="8" x2="12" y2="16"></line>
                             <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -944,14 +945,16 @@ if(isset($_POST['post_lowongan'])){
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                         </svg>
                     </button>
@@ -985,199 +988,222 @@ if(isset($_POST['post_lowongan'])){
                 <!-- Form Section -->
                 <div class="form-section">
 
-                <form method="POST">
-                    <!-- Step 1: Info Dasar -->
-                    <div id="form-step1">
-                        <h2 class="section-title">Informasi Dasar</h2>
-
-                        <div class="form-group">
-                            <label class="form-label">Judul Posisi <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
-                                <input type="text" name="judul" class="form-input" placeholder="e.g. Senior Frontend Developer">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Departemen</label>
-                                <input type="text" name="kategori" class="form-input" placeholder="e.g. Engineering">
-                            </div>
+                    <form method="POST">
+                        <!-- Step 1: Info Dasar -->
+                        <div id="form-step1">
+                            <h2 class="section-title">Informasi Dasar</h2>
 
                             <div class="form-group">
-                                <label class="form-label">Lokasi <span class="required">*</span></label>
+                                <label class="form-label">Judul Posisi <span class="required">*</span></label>
                                 <div class="input-with-icon">
-                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                        <circle cx="12" cy="10" r="3"></circle>
+                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                                     </svg>
-                                    <input type="text" name="lokasi" class="form-input" placeholder="e.g. Jakarta">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Tipe Pekerjaan <span class="required">*</span></label>
-                                <div class="type-buttons">
-                                    <button type="button" class="type-btn active">Full-time</button>
-                                    <button type="button" class="type-btn">Part-time</button>
-                                    <button type="button" class="type-btn">Remote</button>
-                                    <button type="button" class="type-btn">Hybrid</button>
-                                    <button type="button" class="type-btn">Contract</button>
-                                    <button type="button" class="type-btn">Internship</button>
+                                    <input type="text" name="judul" class="form-input"
+                                        placeholder="e.g. Senior Frontend Developer">
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Level <span class="required">*</span></label>
-                                <select class="form-select">
-                                    <option>Mid</option>
-                                    <option>Entry</option>
-                                    <option>Senior</option>
-                                    <option>Lead</option>
-                                    <option>Manager</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Range Gaji</label>
                             <div class="form-row">
-                                <div class="input-with-icon">
-                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                    </svg>
-                                    <input type="text" name="gaji" class="form-input" placeholder="Min (e.g. 20000000)">
+                                <div class="form-group">
+                                    <label class="form-label">Departemen</label>
+                                    <input type="text" name="kategori" class="form-input"
+                                        placeholder="e.g. Engineering">
                                 </div>
-                                <div class="input-with-icon">
-                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                    </svg>
-                                    <input type="text" class="form-input" placeholder="Max (e.g. 35000000)">
+
+                                <div class="form-group">
+                                    <label class="form-label">Lokasi <span class="required">*</span></label>
+                                    <div class="input-with-icon">
+                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        <input type="text" name="lokasi" class="form-input" placeholder="e.g. Jakarta">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="hide-salary">
-                                <label for="hide-salary">Sembunyikan range gaji dari pelamar</label>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Tipe Pekerjaan <span class="required">*</span></label>
+                                    <div class="type-buttons">
+                                        <button type="button" class="type-btn active">Full-time</button>
+                                        <button type="button" class="type-btn">Part-time</button>
+                                        <button type="button" class="type-btn">Remote</button>
+                                        <button type="button" class="type-btn">Hybrid</button>
+                                        <button type="button" class="type-btn">Contract</button>
+                                        <button type="button" class="type-btn">Internship</button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Level <span class="required">*</span></label>
+                                    <select class="form-select">
+                                        <option>Mid</option>
+                                        <option>Entry</option>
+                                        <option>Senior</option>
+                                        <option>Lead</option>
+                                        <option>Manager</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-actions">
-                            <div></div>
-                            <button type="button" class="btn-primary" onclick="nextStep(2)">
-                                Selanjutnya
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                            <div class="form-group">
+                                <label class="form-label">Range Gaji</label>
+                                <div class="form-row">
+                                    <div class="input-with-icon">
+                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                        </svg>
+                                        <input type="text" name="gaji" class="form-input"
+                                            placeholder="Min (e.g. 20000000)">
+                                    </div>
+                                    <div class="input-with-icon">
+                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                        </svg>
+                                        <input type="text" class="form-input" placeholder="Max (e.g. 35000000)">
+                                    </div>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="hide-salary">
+                                    <label for="hide-salary">Sembunyikan range gaji dari pelamar</label>
+                                </div>
+                            </div>
 
-                    <!-- Step 2: Deskripsi -->
-                    <div id="form-step2" style="display: none;">
-                        <h2 class="section-title">Deskripsi & Requirements</h2>
-
-                        <div class="form-group">
-                            <label class="form-label">Deskripsi Pekerjaan <span class="required">*</span></label>
-                            <textarea name="deskripsi" class="form-textarea" placeholder="Jelaskan tentang posisi ini, tanggung jawab, dan apa yang akan dikerjakan..." maxlength="500"></textarea>
-                            <div class="char-count">0/500 karakter</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Requirements / Kualifikasi</label>
-                            <div class="input-with-add">
-                                <input type="text" class="form-input" id="requirement-input" placeholder="e.g. Minimal 3 tahun pengalaman...">
-                                <button type="button" class="btn-add" onclick="addRequirement()">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <div class="form-actions">
+                                <div></div>
+                                <button type="button" class="btn-primary" onclick="nextStep(2)">
+                                    Selanjutnya
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
                                     </svg>
                                 </button>
                             </div>
-                            <div class="added-items" id="requirements-list"></div>
                         </div>
 
-                        <div class="form-actions">
-                            <button type="button" class="btn-secondary" onclick="prevStep(1)">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                                    <polyline points="12 19 5 12 12 5"></polyline>
-                                </svg>
-                                Sebelumnya
-                            </button>
-                            <button type="button" class="btn-primary" onclick="nextStep(3)">
-                                Selanjutnya
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                        <!-- Step 2: Deskripsi -->
+                        <div id="form-step2" style="display: none;">
+                            <h2 class="section-title">Deskripsi & Requirements</h2>
 
-                    <!-- Step 3: Skills & Benefit -->
-                    <div id="form-step3" style="display: none;">
-                        <h2 class="section-title">Skills & Benefits</h2>
+                            <div class="form-group">
+                                <label class="form-label">Deskripsi Pekerjaan <span class="required">*</span></label>
+                                <textarea name="deskripsi" class="form-textarea"
+                                    placeholder="Jelaskan tentang posisi ini, tanggung jawab, dan apa yang akan dikerjakan..."
+                                    maxlength="500"></textarea>
+                                <div class="char-count">0/500 karakter</div>
+                            </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Skills yang Dibutuhkan</label>
-                            <div class="input-with-add">
-                                <input type="text" class="form-input" id="skill-input" placeholder="e.g. React, TypeScript...">
-                                <button type="button" class="btn-add" onclick="addSkill()">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <div class="form-group">
+                                <label class="form-label">Requirements / Kualifikasi</label>
+                                <div class="input-with-add">
+                                    <input type="text" class="form-input" id="requirement-input"
+                                        placeholder="e.g. Minimal 3 tahun pengalaman...">
+                                    <button type="button" class="btn-add" onclick="addRequirement()">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="added-items" id="requirements-list"></div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="prevStep(1)">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                                        <polyline points="12 19 5 12 12 5"></polyline>
+                                    </svg>
+                                    Sebelumnya
+                                </button>
+                                <button type="button" class="btn-primary" onclick="nextStep(3)">
+                                    Selanjutnya
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
                                     </svg>
                                 </button>
                             </div>
-                            <div class="added-items" id="skills-list"></div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Benefits & Fasilitas</label>
-                            <div class="input-with-add">
-                                <input type="text" class="form-input" id="benefit-input" placeholder="e.g. Health Insurance, Remote Work...">
-                                <button type="button" class="btn-add" onclick="addBenefit()">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <!-- Step 3: Skills & Benefit -->
+                        <div id="form-step3" style="display: none;">
+                            <h2 class="section-title">Skills & Benefits</h2>
+
+                            <div class="form-group">
+                                <label class="form-label">Skills yang Dibutuhkan</label>
+                                <div class="input-with-add">
+                                    <input type="text" class="form-input" id="skill-input"
+                                        placeholder="e.g. React, TypeScript...">
+                                    <button type="button" class="btn-add" onclick="addSkill()">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="added-items" id="skills-list"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Benefits & Fasilitas</label>
+                                <div class="input-with-add">
+                                    <input type="text" class="form-input" id="benefit-input"
+                                        placeholder="e.g. Health Insurance, Remote Work...">
+                                    <button type="button" class="btn-add" onclick="addBenefit()">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="added-items" id="benefits-list"></div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="prevStep(2)">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                                        <polyline points="12 19 5 12 12 5"></polyline>
                                     </svg>
+                                    Sebelumnya
+                                </button>
+                                <button type="submit" name="post_lowongan" class="btn-primary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Publikasi Lowongan
                                 </button>
                             </div>
-                            <div class="added-items" id="benefits-list"></div>
                         </div>
-
-                        <div class="form-actions">
-                            <button type="button" class="btn-secondary" onclick="prevStep(2)">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                                    <polyline points="12 19 5 12 12 5"></polyline>
-                                </svg>
-                                Sebelumnya
-                            </button>
-                            <button type="submit" name="post_lowongan" class="btn-primary">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                Publikasi Lowongan
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
                 </div>
 
                 <!-- Score Sidebar -->
                 <div class="score-sidebar">
                     <div class="score-header">
-                        <svg class="score-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        <svg class="score-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                            </polygon>
                         </svg>
                         <span class="score-title">Job Attractiveness Score</span>
                     </div>
@@ -1195,31 +1221,36 @@ if(isset($_POST['post_lowongan'])){
 
                     <div class="checklist">
                         <div class="checklist-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10" stroke="#e5e7eb"></circle>
                             </svg>
                             Judul posisi
                         </div>
                         <div class="checklist-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10" stroke="#e5e7eb"></circle>
                             </svg>
                             Deskripsi lengkap
                         </div>
                         <div class="checklist-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10" stroke="#e5e7eb"></circle>
                             </svg>
                             Range gaji terlihat
                         </div>
                         <div class="checklist-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10" stroke="#e5e7eb"></circle>
                             </svg>
                             Min. 3 skills
                         </div>
                         <div class="checklist-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10" stroke="#e5e7eb"></circle>
                             </svg>
                             Min. 2 benefits
@@ -1240,32 +1271,32 @@ if(isset($_POST['post_lowongan'])){
         function nextStep(step) {
             document.getElementById('form-step' + currentStep).style.display = 'none';
             document.getElementById('form-step' + step).style.display = 'block';
-            
+
             document.getElementById('step' + currentStep).classList.remove('active');
             document.getElementById('step' + currentStep).classList.add('completed');
-            
+
             document.getElementById('step' + step).classList.remove('inactive');
             document.getElementById('step' + step).classList.add('active');
-            
+
             currentStep = step;
         }
 
         function prevStep(step) {
             document.getElementById('form-step' + currentStep).style.display = 'none';
             document.getElementById('form-step' + step).style.display = 'block';
-            
+
             document.getElementById('step' + currentStep).classList.remove('active');
             document.getElementById('step' + currentStep).classList.add('inactive');
-            
+
             document.getElementById('step' + step).classList.remove('completed');
             document.getElementById('step' + step).classList.add('active');
-            
+
             currentStep = step;
         }
 
         // Type Buttons
         document.querySelectorAll('.type-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 this.classList.toggle('active');
             });
@@ -1275,7 +1306,7 @@ if(isset($_POST['post_lowongan'])){
         function addRequirement() {
             const input = document.getElementById('requirement-input');
             const value = input.value.trim();
-            
+
             if (value) {
                 requirements.push(value);
                 updateList('requirements-list', requirements, 'requirement');
@@ -1287,7 +1318,7 @@ if(isset($_POST['post_lowongan'])){
         function addSkill() {
             const input = document.getElementById('skill-input');
             const value = input.value.trim();
-            
+
             if (value) {
                 skills.push(value);
                 updateList('skills-list', skills, 'skill');
@@ -1300,7 +1331,7 @@ if(isset($_POST['post_lowongan'])){
         function addBenefit() {
             const input = document.getElementById('benefit-input');
             const value = input.value.trim();
-            
+
             if (value) {
                 benefits.push(value);
                 updateList('benefits-list', benefits, 'benefit');
@@ -1313,7 +1344,7 @@ if(isset($_POST['post_lowongan'])){
         function updateList(listId, array, type) {
             const list = document.getElementById(listId);
             list.innerHTML = '';
-            
+
             array.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'added-item';
@@ -1344,16 +1375,16 @@ if(isset($_POST['post_lowongan'])){
         // Update Score
         function updateScore() {
             let score = 0;
-            
+
             // Check skills (min 3)
             if (skills.length >= 3) score += 20;
-            
+
             // Check benefits (min 2)
             if (benefits.length >= 2) score += 20;
-            
+
             document.getElementById('score-value').textContent = score;
             document.getElementById('score-bar').style.width = score + '%';
-            
+
             // Update color based on score
             const scoreBar = document.getElementById('score-bar');
             if (score >= 60) {
@@ -1366,27 +1397,27 @@ if(isset($_POST['post_lowongan'])){
         }
 
         // Character Count
-        document.querySelector('.form-textarea').addEventListener('input', function() {
+        document.querySelector('.form-textarea').addEventListener('input', function () {
             const count = this.value.length;
             this.parentElement.querySelector('.char-count').textContent = count + '/500 karakter';
         });
 
         // Enter key for adding items
-        document.getElementById('requirement-input').addEventListener('keypress', function(e) {
+        document.getElementById('requirement-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 addRequirement();
             }
         });
 
-        document.getElementById('skill-input').addEventListener('keypress', function(e) {
+        document.getElementById('skill-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 addSkill();
             }
         });
 
-        document.getElementById('benefit-input').addEventListener('keypress', function(e) {
+        document.getElementById('benefit-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 addBenefit();
@@ -1394,4 +1425,5 @@ if(isset($_POST['post_lowongan'])){
         });
     </script>
 </body>
+
 </html>

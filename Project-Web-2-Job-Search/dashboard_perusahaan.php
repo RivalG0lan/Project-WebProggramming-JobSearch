@@ -2,13 +2,13 @@
 
 session_start();
 
-if(!isset($_SESSION['id_user'])){
+if (!isset($_SESSION['id_user'])) {
 
     header("Location: login_perusahaan.php");
 
 }
 
-if($_SESSION['role'] != 'perusahaan'){
+if ($_SESSION['role'] != 'perusahaan') {
 
     header("Location: login_perusahaan.php");
 
@@ -17,6 +17,7 @@ if($_SESSION['role'] != 'perusahaan'){
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -330,7 +331,7 @@ if($_SESSION['role'] != 'perusahaan'){
         }
 
         .stat-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .stat-icon {
@@ -431,7 +432,7 @@ if($_SESSION['role'] != 'perusahaan'){
         }
 
         .job-item:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .job-item:last-child {
@@ -631,7 +632,7 @@ if($_SESSION['role'] != 'perusahaan'){
         }
 
         .candidate-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .match-badge {
@@ -777,6 +778,7 @@ if($_SESSION['role'] != 'perusahaan'){
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <!-- Sidebar -->
@@ -790,14 +792,14 @@ if($_SESSION['role'] != 'perusahaan'){
                 <div class="company-avatar">P</div>
                 <div class="company-info">
                     <div class="company-name"><?= $_SESSION['nama']; ?></div>
-                    <div class="company-industry">Industry</div>
                     <div class="company-industry"><?= $_SESSION['email']; ?></div>
                 </div>
             </div>
 
             <div class="employer-score">
                 <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span class="employer-score-label">Employer Score</span>
                         <span class="employer-score-value">50%</span>
                     </div>
@@ -847,18 +849,17 @@ if($_SESSION['role'] != 'perusahaan'){
 
                 <a href="profil_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                     Profil Perusahaan
                 </a>
 
                 <a href="analytics.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
                     </svg>
                     Analytics
                 </a>
@@ -902,7 +903,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                 <div class="header-actions">
                     <button class="btn-post">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="12" y1="8" x2="12" y2="16"></line>
                             <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -911,14 +913,16 @@ if($_SESSION['role'] != 'perusahaan'){
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                         </svg>
                     </button>
@@ -928,7 +932,7 @@ if($_SESSION['role'] != 'perusahaan'){
             <!-- Welcome Banner -->
             <div class="welcome-banner">
                 <div class="welcome-title">
-                    Selamat Datang, <?= $_SESSION['nama']; ?>! 
+                    Selamat Datang, <?= $_SESSION['nama']; ?>!
                 </div>
                 <div class="welcome-subtitle">
                     Employer Score Anda 50%. Tingkatkan untuk menarik lebih banyak kandidat berkualitas!
@@ -946,7 +950,8 @@ if($_SESSION['role'] != 'perusahaan'){
             <div class="stats-section">
                 <div class="stat-card">
                     <div class="stat-icon teal">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
@@ -957,7 +962,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                 <div class="stat-card">
                     <div class="stat-icon yellow">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -970,7 +976,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                 <div class="stat-card">
                     <div class="stat-icon blue">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
@@ -981,7 +988,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                 <div class="stat-card">
                     <div class="stat-icon purple">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -1003,7 +1011,8 @@ if($_SESSION['role'] != 'perusahaan'){
                             <h2 class="section-title">Lowongan Aktif</h2>
                             <a href="" class="btn-see-all">
                                 Lihat Semua
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </a>
@@ -1011,7 +1020,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                         <div class="job-item">
                             <div class="job-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                                 </svg>
@@ -1033,7 +1043,8 @@ if($_SESSION['role'] != 'perusahaan'){
                                 </div>
                             </div>
                             <button class="btn-arrow">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </button>
@@ -1041,7 +1052,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                         <div class="job-item">
                             <div class="job-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                                 </svg>
@@ -1063,7 +1075,8 @@ if($_SESSION['role'] != 'perusahaan'){
                                 </div>
                             </div>
                             <button class="btn-arrow">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </button>
@@ -1071,7 +1084,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                         <div class="job-item">
                             <div class="job-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                                 </svg>
@@ -1093,7 +1107,8 @@ if($_SESSION['role'] != 'perusahaan'){
                                 </div>
                             </div>
                             <button class="btn-arrow">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </button>
@@ -1101,7 +1116,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                         <a href="posting_lowongan.php" style="text-decoration: none;"></a>
                         <button class="btn-post-full">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="12" y1="8" x2="12" y2="16"></line>
                                 <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -1116,11 +1132,12 @@ if($_SESSION['role'] != 'perusahaan'){
                     <!-- Quick Actions -->
                     <div class="section">
                         <h2 class="section-title" style="margin-bottom: 16px;">Aksi Cepat</h2>
-                        
+
                         <div class="quick-actions">
                             <div class="action-item">
                                 <div class="action-icon teal">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <line x1="12" y1="8" x2="12" y2="16"></line>
                                         <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -1134,7 +1151,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                             <div class="action-item">
                                 <div class="action-icon yellow">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="9" cy="7" r="4"></circle>
                                         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -1149,7 +1167,8 @@ if($_SESSION['role'] != 'perusahaan'){
 
                             <div class="action-item">
                                 <div class="action-icon blue">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <line x1="12" y1="1" x2="12" y2="23"></line>
                                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                     </svg>
@@ -1169,14 +1188,18 @@ if($_SESSION['role'] != 'perusahaan'){
                 <div class="section">
                     <div class="section-header">
                         <div class="section-title-with-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                </polygon>
                             </svg>
                             Kandidat Terbaik (AI Ranking)
                         </div>
                         <a href="" class="btn-see-all">
                             Lihat Semua
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
                         </a>
@@ -1194,7 +1217,8 @@ if($_SESSION['role'] != 'perusahaan'){
                             </div>
                             <div class="candidate-actions">
                                 <button class="btn-shortlist">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
                                     Shortlist
@@ -1214,7 +1238,8 @@ if($_SESSION['role'] != 'perusahaan'){
                             </div>
                             <div class="candidate-actions">
                                 <button class="btn-shortlist">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
                                     Shortlist
@@ -1234,7 +1259,8 @@ if($_SESSION['role'] != 'perusahaan'){
                             </div>
                             <div class="candidate-actions">
                                 <button class="btn-shortlist">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
                                     Shortlist
@@ -1249,7 +1275,8 @@ if($_SESSION['role'] != 'perusahaan'){
     </div>
 
     <script>
-      
+
     </script>
 </body>
+
 </html>
