@@ -1,0 +1,583 @@
+/* Warna Utama (berdasarkan tampilan) */
+:root {
+    --color-primary-green: #378E72; /* Hijau Tua untuk tombol/Aksen */
+    --color-light-green: #E8F5F1; /* Background bagian/tag */
+    --color-background-main: #F7FAF8; /* Background utama body */
+    --color-text-dark: #293846; /* Warna teks gelap */
+    --color-text-medium: #5F7483; /* Warna teks sedang/body */
+    --color-text-light: #899BA6; /* Warna teks abu-abu/sekunder */
+    --color-border: #E5E9EC; /* Warna border halus */
+    --color-search-bg: #FFFFFF; /* Background search bar & card */
+    --color-accent-blue: #2A6E9B; /* Biru/hijau aksen untuk badge */
+
+    /* Warna Fitur Unggulan */
+    --color-feature-green: #D7F0E6;
+    --color-feature-blue: #D8EBF7;
+    --color-feature-light-green: #E6F5EC;
+    --color-feature-red: #F7E9E9;
+
+    /* Warna CTA Card Gradient */
+    --cta-gradient-start: #3B7E79;
+    --cta-gradient-end: #65C0A7;
+}
+
+/* Reset dan Font Dasar */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-background-main);
+    color: var(--color-text-dark);
+    line-height: 1.6;
+}
+
+/* --- Global Styling --- */
+a {
+    text-decoration: none;
+    color: var(--color-text-dark);
+}
+
+.section-title {
+    font-size: 36px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.section-subtitle {
+    font-size: 16px;
+    color: var(--color-text-medium);
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+/* --- Navigasi Atas --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 80px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-primary-green);
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--color-text-dark);
+    margin-left: 30px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--color-primary-green);
+}
+
+.auth-buttons .btn-masuk {
+    color: var(--color-text-dark);
+    margin-right: 15px;
+    padding: 8px 15px;
+    font-weight: 500;
+}
+
+.auth-buttons .btn-daftar {
+    background-color: var(--color-primary-green);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.auth-buttons .btn-daftar:hover {
+    background-color: #317f64;
+}
+
+/* --- BAGIAN 1: HERO SECTION --- */
+.hero-section {
+    text-align: center;
+    padding: 80px 20px 100px;
+}
+
+.center-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.platform-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #F0F2F4;
+    color: var(--color-accent-blue);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.star-icon {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.hero-section h1 {
+    font-size: 56px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.hero-section .accent-text {
+    color: var(--color-primary-green);
+}
+
+.hero-section .tagline {
+    font-size: 18px;
+    color: var(--color-text-medium);
+    margin-bottom: 40px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Search Bar */
+.search-bar-container {
+    display: flex;
+    justify-content: center;
+    background-color: var(--color-search-bg);
+    padding: 8px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 750px;
+    margin: 0 auto 50px;
+}
+
+.input-field {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    flex-grow: 1;
+}
+
+.search-input {
+    border-right: 1px solid var(--color-border);
+}
+
+.icon {
+    margin-right: 10px;
+    color: var(--color-text-light);
+}
+
+.search-bar-container input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    width: 100%;
+    color: var(--color-text-dark);
+    background: transparent;
+}
+
+.btn-cari {
+    background-color: var(--color-primary-green);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+/* Stats Container */
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;
+    max-width: 800px;
+    margin: auto;
+}
+
+.stat-item .number {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 5px;
+}
+
+.stat-item .label {
+    font-size: 16px;
+    color: var(--color-text-medium);
+}
+
+/* --- BAGIAN 2: FITUR UNGGULAN --- */
+.features-section {
+    padding: 100px 80px;
+    background-color: white;
+}
+
+.features-grid {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.feature-card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    max-width: 280px;
+    border: 1px solid var(--color-border);
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.icon-box svg {
+    color: var(--color-primary-green); /* Semua ikon diatur ke warna yang sama untuk konsistensi */
+    width: 24px;
+    height: 24px;
+}
+
+/* Menyesuaikan warna background box ikon */
+.feature-card:nth-child(1) .icon-box { background-color: var(--color-feature-green); }
+.feature-card:nth-child(2) .icon-box { background-color: var(--color-feature-blue); }
+.feature-card:nth-child(3) .icon-box { background-color: var(--color-feature-light-green); }
+.feature-card:nth-child(4) .icon-box { background-color: var(--color-feature-red); }
+
+
+.feature-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    font-size: 14px;
+    color: var(--color-text-medium);
+}
+
+/* --- BAGIAN 3: LOWONGAN POPULER --- */
+.popular-jobs-section {
+    padding: 50px 80px 100px;
+    background-color: var(--color-background-main);
+}
+
+.section-header-jobs {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    max-width: 1200px;
+    margin: 0 auto 30px;
+}
+
+.section-header-jobs h2 {
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.section-header-jobs p {
+    font-size: 16px;
+    color: var(--color-text-medium);
+    margin-left: 20px;
+    flex-grow: 1;
+}
+
+.btn-lihat-semua {
+    color: var(--color-primary-green);
+    font-weight: 600;
+    padding: 10px 20px;
+    border: 1px solid var(--color-primary-green);
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.btn-lihat-semua:hover {
+    background-color: var(--color-light-green);
+}
+
+.jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.job-card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.job-icon {
+    font-size: 24px;
+    background-color: var(--color-light-green);
+    color: var(--color-primary-green);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.match-percentage {
+    background-color: #E6F5EC; /* Hijau muda untuk match */
+    color: var(--color-primary-green);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.job-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.company {
+    color: var(--color-text-medium);
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.job-tags {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 8px;
+}
+
+.tag {
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #F0F4F7;
+    color: var(--color-text-medium);
+}
+
+.job-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #F0F4F7;
+}
+
+.salary {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primary-green);
+}
+
+.detail-link {
+    color: var(--color-primary-green);
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+
+/* --- BAGIAN 4: CTA (Call to Action) --- */
+.cta-section {
+    padding: 0px 80px 100px;
+}
+
+.cta-card {
+    background-image: linear-gradient(to right, var(--cta-gradient-start), var(--cta-gradient-end));
+    color: white;
+    padding: 50px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.cta-left h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.cta-left p {
+    font-size: 16px;
+    opacity: 0.85;
+    margin-bottom: 25px;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-cta {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.btn-pelamar {
+    background-color: #FFC46B; /* Kuning/Orange */
+    color: var(--color-text-dark);
+}
+
+.btn-perusahaan {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.cta-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-box {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.stat-large {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-small {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: flex-end;
+}
+
+.percent-num, .multiplier-num {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.stat-box p {
+    font-size: 14px;
+    line-height: 1.3;
+    opacity: 0.9;
+}
+
+/* --- BAGIAN 5: FOOTER --- */
+.main-footer {
+    padding: 50px 80px 20px;
+    background-color: white;
+    border-top: 1px solid var(--color-border);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto 30px;
+}
+
+.footer-brand {
+    max-width: 300px;
+}
+
+.footer-brand .footer-logo {
+    margin-bottom: 15px;
+}
+
+.footer-brand .icon-bg {
+    margin-right: 8px;
+    background-color: var(--color-light-green);
+    padding: 5px;
+    border-radius: 6px;
+    color: var(--color-primary-green);
+    font-size: 18px;
+}
+
+.footer-brand p {
+    color: var(--color-text-medium);
+    font-size: 14px;
+}
+
+.footer-links-container {
+    display: flex;
+    gap: 80px;
+}
+
+.link-group h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.link-group ul {
+    list-style: none;
+}
+
+.link-group ul li {
+    margin-bottom: 8px;
+}
+
+.link-group a {
+    color: var(--color-text-medium);
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.link-group a:hover {
+    color: var(--color-primary-green);
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+    font-size: 14px;
+    color: var(--color-text-medium);
+}
