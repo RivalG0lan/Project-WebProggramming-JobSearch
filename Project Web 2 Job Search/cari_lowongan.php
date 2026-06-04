@@ -37,6 +37,7 @@ $total_lowongan = mysqli_num_rows($query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cari Lowongan - Lokerin</title>
+    <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png">
     <style>
         * {
             margin: 0;

@@ -85,6 +85,7 @@ foreach (['dikirim', 'review', 'interview', 'accepted', 'rejected'] as $s) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Kandidat - LokerIn</title>
+    <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png">
     <style>
         * {
             margin: 0;

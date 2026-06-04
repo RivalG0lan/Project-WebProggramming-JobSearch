@@ -58,6 +58,7 @@ $other = mysqli_query($conn,
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($data['judul']) ?> - LokerIn</title>
+    <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {

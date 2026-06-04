@@ -78,6 +78,7 @@ AND status='rejected'"));
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lamaran Saya - LokerIn</title>
+    <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png">
     <style>
         * {
             margin: 0;
