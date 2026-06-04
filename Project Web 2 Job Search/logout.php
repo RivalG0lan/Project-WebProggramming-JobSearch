@@ -4,6 +4,6 @@ session_start();
 
 session_destroy();
 
-header("Location: tipe_akun.html");
+header("Location: index.html");
 
 ?>
