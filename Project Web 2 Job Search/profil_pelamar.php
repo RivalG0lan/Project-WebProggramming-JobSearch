@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,7 +45,7 @@
             padding: 0 8px;
         }
 
-         .logo-img {
+        .logo-img {
             width: 27px;
             height: 27px;
             object-fit: contain;
@@ -570,6 +571,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <!-- Sidebar -->
@@ -647,17 +649,14 @@
 
                 <a href="pesan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
                     Pesan
                 </a>
 
                 <div class="nav-divider"></div>
 
-                
+
 
                 <a href="pengaturan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -695,7 +694,8 @@
 
                 <div class="header-actions">
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
@@ -703,7 +703,8 @@
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
@@ -719,9 +720,9 @@
                     </div>
                     <div class="career-score-percentage">30%</div>
                 </div>
-                
+
                 <p class="career-score-subtitle">Lengkapi profil untuk meningkatkan skor</p>
-                
+
                 <div class="career-score-progress">
                     <div class="career-score-progress-bar"></div>
                 </div>
@@ -729,7 +730,8 @@
                 <div class="career-checklist">
                     <div class="checklist-item">
                         <div class="checklist-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -737,7 +739,8 @@
                     </div>
                     <div class="checklist-item">
                         <div class="checklist-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -745,7 +748,8 @@
                     </div>
                     <div class="checklist-item">
                         <div class="checklist-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -753,7 +757,8 @@
                     </div>
                     <div class="checklist-item">
                         <div class="checklist-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -761,7 +766,8 @@
                     </div>
                     <div class="checklist-item">
                         <div class="checklist-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -769,7 +775,8 @@
                     </div>
                     <div class="checklist-item">
                         <div class="checklist-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -777,7 +784,8 @@
                     </div>
                     <div class="checklist-item">
                         <div class="checklist-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -785,7 +793,8 @@
                     </div>
                     <div class="checklist-item">
                         <div class="checklist-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
@@ -809,24 +818,30 @@
 
                     <div class="profile-info">
                         <h2 class="profile-name">Leeya Alikha Wardana</h2>
-                        <p class="profile-bio">Passionate Frontend Developer with 5+ years of experience building modern web applications.</p>
-                        
+                        <p class="profile-bio">Passionate Frontend Developer with 5+ years of experience building modern
+                            web applications.</p>
+
                         <div class="profile-contact">
                             <div class="contact-item">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                                 </svg>
                                 email@example.com
                             </div>
                             <div class="contact-item">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                                    </path>
                                 </svg>
                                 +62 812 3456 7890
                             </div>
                             <div class="contact-item">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                     <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
@@ -842,8 +857,11 @@
             <!-- Skills Section -->
             <div class="section-card">
                 <div class="section-header">
-                    <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                        </polygon>
                     </svg>
                     <h3 class="section-title">Skills</h3>
                 </div>
@@ -860,7 +878,8 @@
             <!-- Experience Section -->
             <div class="section-card">
                 <div class="section-header">
-                    <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
                         <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                         <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                     </svg>
@@ -873,7 +892,8 @@
                         <p class="timeline-company">Tech Startup</p>
                         <p class="timeline-period">2022 - Present</p>
                     </div>
-                    <p class="timeline-description">Leading frontend development team and building scalable React applications.</p>
+                    <p class="timeline-description">Leading frontend development team and building scalable React
+                        applications.</p>
                 </div>
 
                 <div class="timeline-item">
@@ -882,14 +902,16 @@
                         <p class="timeline-company">Digital Agency</p>
                         <p class="timeline-period">2019 - 2022</p>
                     </div>
-                    <p class="timeline-description">Developed responsive websites and web applications for various clients.</p>
+                    <p class="timeline-description">Developed responsive websites and web applications for various
+                        clients.</p>
                 </div>
             </div>
 
             <!-- Education Section -->
             <div class="section-card">
                 <div class="section-header">
-                    <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
                         <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
                         <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
                     </svg>
@@ -908,7 +930,8 @@
             <!-- CV/Resume Section -->
             <div class="section-card">
                 <div class="section-header">
-                    <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
                         <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -920,7 +943,8 @@
 
                 <div class="cv-upload-area">
                     <div class="upload-icon">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="17 8 12 3 7 8"></polyline>
                             <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -928,7 +952,8 @@
                     </div>
                     <p class="upload-text">Drag & drop file CV Anda di sini atau klik untuk upload</p>
                     <button class="btn-upload-cv">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="17 8 12 3 7 8"></polyline>
                             <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -942,35 +967,36 @@
     </div>
 
     <script>
-    
+
 
         // Handle icon buttons
         document.querySelectorAll('.icon-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 e.preventDefault();
             });
         });
 
         // Handle edit profile button
-        document.querySelector('.btn-edit-profile').addEventListener('click', function(e) {
+        document.querySelector('.btn-edit-profile').addEventListener('click', function (e) {
             e.preventDefault();
         });
 
         // Handle avatar edit button
-        document.querySelector('.avatar-edit-btn').addEventListener('click', function(e) {
+        document.querySelector('.avatar-edit-btn').addEventListener('click', function (e) {
             e.preventDefault();
         });
 
         // Handle CV upload
-        document.querySelector('.btn-upload-cv').addEventListener('click', function(e) {
+        document.querySelector('.btn-upload-cv').addEventListener('click', function (e) {
             e.preventDefault();
         });
 
-        document.querySelector('.cv-upload-area').addEventListener('click', function(e) {
+        document.querySelector('.cv-upload-area').addEventListener('click', function (e) {
             if (e.target === this || e.target.closest('.upload-icon, .upload-text')) {
                 // Trigger file upload
             }
         });
     </script>
 </body>
+
 </html>

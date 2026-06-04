@@ -2,13 +2,13 @@
 
 session_start();
 
-if(!isset($_SESSION['id_user'])){
+if (!isset($_SESSION['id_user'])) {
 
     header("Location: login_pelamar.php");
 
 }
 
-if($_SESSION['role'] != 'pelamar'){
+if ($_SESSION['role'] != 'pelamar') {
 
     header("Location: login_pelamar.php");
 
@@ -16,13 +16,15 @@ if($_SESSION['role'] != 'pelamar'){
 
 include 'config/koneksi.php';
 
-$query = mysqli_query($conn,
+$query = mysqli_query(
+    $conn,
 
-"SELECT * FROM lowongan
+    "SELECT * FROM lowongan
 
 WHERE status='aktif'
 
-ORDER BY id_lowongan DESC");
+ORDER BY id_lowongan DESC"
+);
 
 $total_lowongan = mysqli_num_rows($query);
 
@@ -30,6 +32,7 @@ $total_lowongan = mysqli_num_rows($query);
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -74,7 +77,7 @@ $total_lowongan = mysqli_num_rows($query);
             padding: 0 8px;
         }
 
-          .logo-img {
+        .logo-img {
             width: 27px;
             height: 27px;
             object-fit: contain;
@@ -408,7 +411,7 @@ $total_lowongan = mysqli_num_rows($query);
 
         .job-card:hover {
             border-color: #0d9488;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .job-card-header {
@@ -593,6 +596,7 @@ $total_lowongan = mysqli_num_rows($query);
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <!-- Sidebar -->
@@ -604,14 +608,14 @@ $total_lowongan = mysqli_num_rows($query);
 
             <div class="user-profile">
                 <div class="user-avatar">
-                <?= strtoupper(substr($_SESSION['nama'],0,1)); ?>
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
                 </div>
                 <div class="user-info">
                     <div class="user-name">
-                    <?= $_SESSION['nama']; ?>
+                        <?= $_SESSION['nama']; ?>
                     </div>
                     <div class="user-email">
-                    <?= $_SESSION['email']; ?>
+                        <?= $_SESSION['email']; ?>
                     </div>
                 </div>
             </div>
@@ -676,17 +680,14 @@ $total_lowongan = mysqli_num_rows($query);
 
                 <a href="pesan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
                     Pesan
                 </a>
 
                 <div class="nav-divider"></div>
 
-                
+
 
                 <a href="pengaturan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -724,7 +725,8 @@ $total_lowongan = mysqli_num_rows($query);
 
                 <div class="header-actions">
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
@@ -732,7 +734,8 @@ $total_lowongan = mysqli_num_rows($query);
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
@@ -749,38 +752,43 @@ $total_lowongan = mysqli_num_rows($query);
             <div class="search-section">
                 <form method="GET">
 
-                <div class="search-bar">
-                    <div class="search-input-wrapper">
-                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        <input type="text" name="keyword" class="search-input" placeholder="Posisi, skill, atau perusahaan...">
+                    <div class="search-bar">
+                        <div class="search-input-wrapper">
+                            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <input type="text" name="keyword" class="search-input"
+                                placeholder="Posisi, skill, atau perusahaan...">
+                        </div>
+
+                        <div class="search-input-wrapper">
+                            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <input type="text" name="location" class="search-input" placeholder="Lokasi...">
+                        </div>
+
+                        <button type="submit" class="btn-search">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            Cari
+                        </button>
+
+                        <button class="btn-filter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                            Filter
+                        </button>
                     </div>
-
-                    <div class="search-input-wrapper">
-                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        <input type="text" name="location" class="search-input" placeholder="Lokasi...">
-                    </div>
-
-                    <button type="submit" class="btn-search">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        Cari
-                    </button>
-
-                    <button class="btn-filter">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                        </svg>
-                        Filter
-                    </button>
-                </div>
                 </form>
             </div>
 
@@ -801,76 +809,73 @@ $total_lowongan = mysqli_num_rows($query);
             <!-- Job List -->
             <div class="job-list">
                 <?php
-                if(mysqli_num_rows($query) > 0){
-                ?>
-                <?php
-                while($data = mysqli_fetch_assoc($query)){
-                ?>
-                <div class="job-card">
-                    <div class="job-card-header">
-                        <div class="job-logo">
-                            💼
-                        </div>
+                if (mysqli_num_rows($query) > 0) {
+                    ?>
+                    <?php
+                    while ($data = mysqli_fetch_assoc($query)) {
+                        ?>
+                        <div class="job-card">
+                            <div class="job-card-header">
+                                <div class="job-logo">
+                                    💼
+                                </div>
 
-                        <div class="job-info">
-                            <h3 class="job-title">
-                                <?= $data['judul']; ?>
-                            </h3>
-                            <p class="job-company">
-                                <?= $data['kategori']; ?>
+                                <div class="job-info">
+                                    <h3 class="job-title">
+                                        <?= $data['judul']; ?>
+                                    </h3>
+                                    <p class="job-company">
+                                        <?= $data['kategori']; ?>
+                                    </p>
+                                </div>
+
+                                <div class="job-actions">
+                                    <a href="detail_lowongan.php?id=<?= $data['id_lowongan']; ?>" class="btn-apply">
+
+                                        Lihat Detail
+                                    </a>
+                                </div>
+
+                            </div>
+
+                            <div class="job-meta">
+
+                                <div class="meta-item">
+
+                                    📍 <?= $data['lokasi']; ?>
+
+                                </div>
+
+                            </div>
+
+                            <p class="job-description">
+
+                                <?= $data['deskripsi']; ?>
+
                             </p>
-                        </div>
 
-                        <div class="job-actions">
-                            <a
-                           href="detail_lowongan.php?id=<?= $data['id_lowongan']; ?>"
+                            <div class="job-footer">
 
-                            class="btn-apply">
+                                <div class="job-salary">
 
-                            Lihat Detail
-                            </a>
-                        </div>
+                                    Rp <?= $data['gaji']; ?>
 
-                    </div>
+                                </div>
 
-                    <div class="job-meta">
-
-                        <div class="meta-item">
-
-                            📍 <?= $data['lokasi']; ?>
+                            </div>
 
                         </div>
 
-                    </div>
-
-                    <p class="job-description">
-
-                        <?= $data['deskripsi']; ?>
-
+                        <?php
+                    }
+                } else {
+                    ?>
+                    <p>
+                        Tidak ada lowongan tersedia
                     </p>
-
-                    <div class="job-footer">
-
-                        <div class="job-salary">
-
-                            Rp <?= $data['gaji']; ?>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <?php
+                    <?php
                 }
-                }else{
-                ?>  
-                <p>
-                Tidak ada lowongan tersedia
-                </p>
-                <?php
-                }
-                ?> 
+                ?>
             </div>
 
 
@@ -898,32 +903,33 @@ $total_lowongan = mysqli_num_rows($query);
             // Placeholder for future navigation
         }
 
-       
-       
 
-       
+
+
+
 
         // Handle search
-        document.querySelector('.btn-search').addEventListener('click', function(e) {
+        document.querySelector('.btn-search').addEventListener('click', function (e) {
             e.preventDefault();
         });
 
         // Handle filter
-        document.querySelector('.btn-filter').addEventListener('click', function(e) {
+        document.querySelector('.btn-filter').addEventListener('click', function (e) {
             e.preventDefault();
         });
 
         // Handle load more
-        document.querySelector('.btn-load-more').addEventListener('click', function(e) {
+        document.querySelector('.btn-load-more').addEventListener('click', function (e) {
             e.preventDefault();
         });
 
         // Handle icon buttons
         document.querySelectorAll('.icon-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 e.preventDefault();
             });
         });
     </script>
 </body>
+
 </html>

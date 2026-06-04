@@ -2,13 +2,13 @@
 
 session_start();
 
-if(!isset($_SESSION['id_user'])){
+if (!isset($_SESSION['id_user'])) {
 
     header("Location: login_pelamar.php");
 
 }
 
-if($_SESSION['role'] != 'pelamar'){
+if ($_SESSION['role'] != 'pelamar') {
 
     header("Location: login_pelamar.php");
 
@@ -18,39 +18,48 @@ include 'config/koneksi.php';
 
 $id_pelamar = $_SESSION['id_user'];
 
-$total_lamaran = mysqli_num_rows(mysqli_query($conn,
+$total_lamaran = mysqli_num_rows(mysqli_query(
+    $conn,
 
-"SELECT * FROM lamaran
+    "SELECT * FROM lamaran
 
-WHERE id_pelamar='$id_pelamar'"));
+WHERE id_pelamar='$id_pelamar'"
+));
 
-$total_review = mysqli_num_rows(mysqli_query($conn,
+$total_review = mysqli_num_rows(mysqli_query(
+    $conn,
 
-"SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'
-
-AND status='review'"));
-
-$total_interview = mysqli_num_rows(mysqli_query($conn,
-
-"SELECT * FROM lamaran
+    "SELECT * FROM lamaran
 
 WHERE id_pelamar='$id_pelamar'
 
-AND status='interview'"));
+AND status='review'"
+));
 
-$total_lowongan = mysqli_num_rows(mysqli_query($conn,
+$total_interview = mysqli_num_rows(mysqli_query(
+    $conn,
 
-"SELECT * FROM lowongan
+    "SELECT * FROM lamaran
 
-WHERE status='aktif'"));
+WHERE id_pelamar='$id_pelamar'
+
+AND status='interview'"
+));
+
+$total_lowongan = mysqli_num_rows(mysqli_query(
+    $conn,
+
+    "SELECT * FROM lowongan
+
+WHERE status='aktif'"
+));
 
 ?>
 
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -96,13 +105,13 @@ WHERE status='aktif'"));
         }
 
 
-         .logo-img {
+        .logo-img {
             width: 27px;
             height: 27px;
             object-fit: contain;
         }
 
-         
+
         .logo-text {
             font-size: 18px;
             font-weight: 700;
@@ -302,7 +311,7 @@ WHERE status='aktif'"));
             right: -20%;
             width: 300px;
             height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
         }
 
         .welcome-card-content {
@@ -317,7 +326,7 @@ WHERE status='aktif'"));
 
         .welcome-card p {
             font-size: 14px;
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 20px;
         }
 
@@ -537,7 +546,7 @@ WHERE status='aktif'"));
 
         .recommendation-card:hover {
             border-color: #0d9488;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .rec-badge {
@@ -702,6 +711,7 @@ WHERE status='aktif'"));
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <!-- Sidebar -->
@@ -714,7 +724,7 @@ WHERE status='aktif'"));
             <div class="user-profile">
                 <div class="user-avatar">
 
-                <?= strtoupper(substr($_SESSION['nama'],0,1)); ?>
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
 
                 </div>
                 <div class="user-info">
@@ -783,17 +793,14 @@ WHERE status='aktif'"));
 
                 <a href="pesan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
                     Pesan
                 </a>
 
                 <div class="nav-divider"></div>
 
-                
+
 
                 <a href="pengaturan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -831,7 +838,8 @@ WHERE status='aktif'"));
 
                 <div class="header-actions">
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
@@ -839,7 +847,8 @@ WHERE status='aktif'"));
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
@@ -852,14 +861,15 @@ WHERE status='aktif'"));
                 <div class="welcome-card-content">
                     <h2>
 
-                    Selamat Datang,
-                    <?= $_SESSION['nama']; ?> 👋
+                        Selamat Datang,
+                        <?= $_SESSION['nama']; ?> 👋
 
                     </h2>
                     <p>Profil Anda 30% lengkap - Tingkatkan untuk peluang lebih besar!</p>
                     <button class="btn-complete">
                         Lengkapi Profil
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M5 12h14"></path>
                             <path d="m12 5 7 7-7 7"></path>
                         </svg>
@@ -871,7 +881,8 @@ WHERE status='aktif'"));
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon green">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
                             <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -880,7 +891,7 @@ WHERE status='aktif'"));
                     </div>
                     <div class="stat-value">
 
-                    <?= $total_lamaran; ?>
+                        <?= $total_lamaran; ?>
 
                     </div>
                     <div class="stat-label">Total Lamaran</div>
@@ -888,14 +899,15 @@ WHERE status='aktif'"));
 
                 <div class="stat-card">
                     <div class="stat-icon purple">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                     </div>
                     <div class="stat-value">
 
-                    <?= $total_review; ?>
+                        <?= $total_review; ?>
 
                     </div>
                     <div class="stat-label">Dilihat HRD</div>
@@ -903,14 +915,15 @@ WHERE status='aktif'"));
 
                 <div class="stat-card">
                     <div class="stat-icon blue">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
                     </div>
                     <div class="stat-value">
 
-                    <?= $total_interview; ?>
+                        <?= $total_interview; ?>
 
                     </div>
                     <div class="stat-label">Interview</div>
@@ -918,13 +931,14 @@ WHERE status='aktif'"));
 
                 <div class="stat-card">
                     <div class="stat-icon orange">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                         </svg>
                     </div>
                     <div class="stat-value">
 
-                    <?= $total_lowongan; ?>
+                        <?= $total_lowongan; ?>
 
                     </div>
                     <div class="stat-label">Lowongan Cocok</div>
@@ -937,7 +951,8 @@ WHERE status='aktif'"));
                     <h2 class="section-title">Lamaran Terbaru</h2>
                     <a href="#" class="btn-link">
                         Lihat Semua
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                     </a>
@@ -946,7 +961,8 @@ WHERE status='aktif'"));
                 <div class="job-list">
                     <div class="job-card">
                         <div class="job-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                             </svg>
@@ -963,7 +979,8 @@ WHERE status='aktif'"));
 
                     <div class="job-card">
                         <div class="job-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                             </svg>
@@ -980,7 +997,8 @@ WHERE status='aktif'"));
 
                     <div class="job-card">
                         <div class="job-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                             </svg>
@@ -1005,7 +1023,8 @@ WHERE status='aktif'"));
                         <h2 class="section-title">Rekomendasi untuk Anda</h2>
                         <a href="#" class="btn-link">
                             Lihat Semua
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
                         </a>
@@ -1015,7 +1034,8 @@ WHERE status='aktif'"));
                         <div class="recommendation-card">
                             <span class="rec-badge">95% Match</span>
                             <div class="rec-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                                 </svg>
@@ -1023,7 +1043,8 @@ WHERE status='aktif'"));
                             <div class="rec-title">Senior React Developer</div>
                             <div class="rec-company">Bukalapak</div>
                             <div class="rec-location">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                     <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
@@ -1035,7 +1056,8 @@ WHERE status='aktif'"));
                         <div class="recommendation-card">
                             <span class="rec-badge">89% Match</span>
                             <div class="rec-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                                 </svg>
@@ -1043,7 +1065,8 @@ WHERE status='aktif'"));
                             <div class="rec-title">Full Stack Engineer</div>
                             <div class="rec-company">Traveloka</div>
                             <div class="rec-location">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                     <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
@@ -1055,7 +1078,8 @@ WHERE status='aktif'"));
                         <div class="recommendation-card">
                             <span class="rec-badge">82% Match</span>
                             <div class="rec-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                                 </svg>
@@ -1063,7 +1087,8 @@ WHERE status='aktif'"));
                             <div class="rec-title">Frontend Lead</div>
                             <div class="rec-company">Goto</div>
                             <div class="rec-location">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                     <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
@@ -1115,7 +1140,8 @@ WHERE status='aktif'"));
                     </div>
 
                     <button class="btn-analyze" onclick="handleAnalyzeSkill(event)">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
                             <path d="M12 1v6m0 6v6"></path>
                             <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
@@ -1145,21 +1171,21 @@ WHERE status='aktif'"));
 
         // Handle job card clicks
         document.querySelectorAll('.job-card, .recommendation-card').forEach(card => {
-            card.addEventListener('click', function(e) {
+            card.addEventListener('click', function (e) {
                 e.preventDefault();
                 // Placeholder for future functionality
             });
         });
 
         // Handle button clicks
-        document.querySelector('.btn-complete')?.addEventListener('click', function(e) {
+        document.querySelector('.btn-complete')?.addEventListener('click', function (e) {
             e.preventDefault();
             // Placeholder for future functionality
         });
 
         // Handle icon buttons
         document.querySelectorAll('.icon-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 // Placeholder for future functionality
             });
@@ -1167,11 +1193,12 @@ WHERE status='aktif'"));
 
         // Handle link buttons
         document.querySelectorAll('.btn-link').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 // Placeholder for future functionality
             });
         });
     </script>
 </body>
+
 </html>
