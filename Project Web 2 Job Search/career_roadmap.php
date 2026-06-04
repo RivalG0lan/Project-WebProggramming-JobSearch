@@ -1,3 +1,61 @@
+<?php
+
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+
+    header("Location: login_pelamar.php");
+
+}
+
+if ($_SESSION['role'] != 'pelamar') {
+
+    header("Location: login_pelamar.php");
+
+}
+
+include 'config/koneksi.php';
+
+$id_pelamar = $_SESSION['id_user'];
+
+$total_lamaran = mysqli_num_rows(mysqli_query(
+    $conn,
+
+    "SELECT * FROM lamaran
+
+WHERE id_pelamar='$id_pelamar'"
+));
+
+$total_review = mysqli_num_rows(mysqli_query(
+    $conn,
+
+    "SELECT * FROM lamaran
+
+WHERE id_pelamar='$id_pelamar'
+
+AND status='review'"
+));
+
+$total_interview = mysqli_num_rows(mysqli_query(
+    $conn,
+
+    "SELECT * FROM lamaran
+
+WHERE id_pelamar='$id_pelamar'
+
+AND status='interview'"
+));
+
+$total_lowongan = mysqli_num_rows(mysqli_query(
+    $conn,
+
+    "SELECT * FROM lowongan
+
+WHERE status='aktif'"
+));
+
+?>
+
 <!doctype html>
 <html lang="id">
   <head>
@@ -661,12 +719,18 @@
         </div>
 
         <div class="user-profile">
-          <div class="user-avatar">LA</div>
-          <div class="user-info">
-            <div class="user-name">Leeya Alikha Wardana</div>
-            <div class="user-email">eyyakhawrd@gmail.com</div>
-          </div>
-        </div>
+                <div class="user-avatar">
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <?= $_SESSION['nama']; ?>
+                    </div>
+                    <div class="user-email">
+                        <?= $_SESSION['email']; ?>
+                    </div>
+                </div>
+            </div>
 
         <div class="career-score">
           <span class="career-score-label">Career Score</span>
@@ -738,7 +802,7 @@
             Profil
           </a>
 
-          <a href="career_roadmap.html" class="nav-item active">
+          <a href="career_roadmap.php" class="nav-item active">
             <svg
               width="20"
               height="20"

@@ -2,13 +2,13 @@
 
 session_start();
 
-if(!isset($_SESSION['id_user'])){
+if (!isset($_SESSION['id_user'])) {
 
     header("Location: login_pelamar.php");
 
 }
 
-if($_SESSION['role'] != 'pelamar'){
+if ($_SESSION['role'] != 'pelamar') {
 
     header("Location: login_pelamar.php");
 
@@ -18,9 +18,10 @@ include 'config/koneksi.php';
 
 $id_pelamar = $_SESSION['id_user'];
 
-$query = mysqli_query($conn,
+$query = mysqli_query(
+    $conn,
 
-"SELECT
+    "SELECT
 
 lamaran.*,
 
@@ -35,45 +36,55 @@ ON lamaran.id_lowongan = lowongan.id_lowongan
 
 WHERE lamaran.id_pelamar='$id_pelamar'
 
-ORDER BY lamaran.id_lamaran DESC");
+ORDER BY lamaran.id_lamaran DESC"
+);
 
 $total_lamaran = mysqli_num_rows($query);
 
-$total_review = mysqli_num_rows(mysqli_query($conn,
+$total_review = mysqli_num_rows(mysqli_query(
+    $conn,
 
-"SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'
-
-AND status='review'"));
-
-$total_accepted = mysqli_num_rows(mysqli_query($conn,
-
-"SELECT * FROM lamaran
+    "SELECT * FROM lamaran
 
 WHERE id_pelamar='$id_pelamar'
 
-AND status='accepted'"));
+AND status='review'"
+));
 
-$total_interview = mysqli_num_rows(mysqli_query($conn,
+$total_accepted = mysqli_num_rows(mysqli_query(
+    $conn,
 
-"SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'
-
-AND status='interview'"));
-
-$total_rejected = mysqli_num_rows(mysqli_query($conn,
-
-"SELECT * FROM lamaran
+    "SELECT * FROM lamaran
 
 WHERE id_pelamar='$id_pelamar'
 
-AND status='rejected'"));
+AND status='accepted'"
+));
+
+$total_interview = mysqli_num_rows(mysqli_query(
+    $conn,
+
+    "SELECT * FROM lamaran
+
+WHERE id_pelamar='$id_pelamar'
+
+AND status='interview'"
+));
+
+$total_rejected = mysqli_num_rows(mysqli_query(
+    $conn,
+
+    "SELECT * FROM lamaran
+
+WHERE id_pelamar='$id_pelamar'
+
+AND status='rejected'"
+));
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -119,7 +130,7 @@ AND status='rejected'"));
             padding: 0 8px;
         }
 
-         .logo-img {
+        .logo-img {
             width: 27px;
             height: 27px;
             object-fit: contain;
@@ -340,7 +351,7 @@ AND status='rejected'"));
         }
 
         .stat-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .stat-card.active {
@@ -380,7 +391,7 @@ AND status='rejected'"));
         }
 
         .application-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .application-header {
@@ -448,7 +459,7 @@ AND status='rejected'"));
             color: #92400e;
         }
 
-        
+
 
         .status-badge.rejected {
             background: #fee2e2;
@@ -548,20 +559,21 @@ AND status='rejected'"));
             color: #9ca3af;
             text-align: right;
         }
-        .btn-cancel{
 
-         display: inline-block;
-        margin-top: 10px;
-        padding: 8px 14px;
-        background: #ef4444;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-size: 14px;
+        .btn-cancel {
 
-    }
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 14px;
+            background: #ef4444;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
 
-        .btn-cancel:hover{
+        }
+
+        .btn-cancel:hover {
 
             background: #dc2626;
         }
@@ -597,6 +609,7 @@ AND status='rejected'"));
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <!-- Sidebar -->
@@ -608,18 +621,14 @@ AND status='rejected'"));
 
             <div class="user-profile">
                 <div class="user-avatar">
-                <?= strtoupper(substr($_SESSION['nama'],0,1)); ?>
+                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
                 </div>
                 <div class="user-info">
                     <div class="user-name">
-
-                    <?= $_SESSION['nama']; ?>
-
+                        <?= $_SESSION['nama']; ?>
                     </div>
-                   <div class="user-email">
-
-                    Pelamar Aktif
-
+                    <div class="user-email">
+                        <?= $_SESSION['email']; ?>
                     </div>
                 </div>
             </div>
@@ -666,7 +675,7 @@ AND status='rejected'"));
                     Profil
                 </a>
 
-                <a href="career_roadmap.html" class="nav-item">
+                <a href="career_roadmap.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 3v18h18"></path>
                         <path d="m19 9-5 5-4-4-3 3"></path>
@@ -691,7 +700,7 @@ AND status='rejected'"));
 
                 <div class="nav-divider"></div>
 
-                
+
 
                 <a href="pengaturan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -729,7 +738,8 @@ AND status='rejected'"));
 
                 <div class="header-actions">
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
@@ -737,7 +747,8 @@ AND status='rejected'"));
                     </button>
 
                     <button class="icon-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
@@ -756,7 +767,7 @@ AND status='rejected'"));
                 <div class="stat-card active">
                     <div class="stat-number">
 
-                    <?= $total_lamaran; ?>
+                        <?= $total_lamaran; ?>
 
                     </div>
                     <div class="stat-label">Semua</div>
@@ -764,7 +775,7 @@ AND status='rejected'"));
                 <div class="stat-card">
                     <div class="stat-number">
 
-                    <?= $total_review; ?>
+                        <?= $total_review; ?>
 
                     </div>
                     <div class="stat-label">Direview</div>
@@ -791,100 +802,97 @@ AND status='rejected'"));
 
             <!-- Application List -->
             <div class="application-list">
-                
+
 
                 <?php
-                if(mysqli_num_rows($query) > 0){
-                while($data = mysqli_fetch_assoc($query)){
-                ?>
-                <div class="application-card">
-                    <div class="application-header">
-                        <div class="application-logo">
-                            💼
-                        </div>
-                        <div class="application-info">
-                            <h3 class="application-title">
-                                <?= $data['judul']; ?>
-                            </h3>
-                            <p class="application-company">
-                                <?= $data['kategori']; ?>
-                            </p>
-                        </div>
-                        <div class="application-status">
-                            <span class="status-badge <?= $data['status']; ?>">
+                if (mysqli_num_rows($query) > 0) {
+                    while ($data = mysqli_fetch_assoc($query)) {
+                        ?>
+                        <div class="application-card">
+                            <div class="application-header">
+                                <div class="application-logo">
+                                    💼
+                                </div>
+                                <div class="application-info">
+                                    <h3 class="application-title">
+                                        <?= $data['judul']; ?>
+                                    </h3>
+                                    <p class="application-company">
+                                        <?= $data['kategori']; ?>
+                                    </p>
+                                </div>
+                                <div class="application-status">
+                                    <span class="status-badge <?= $data['status']; ?>">
+                                        <?= ucfirst($data['status']); ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="application-meta">
+                                <div class="meta-item">
+                                    📍 <?= $data['lokasi']; ?>
+                                </div>
+                                <div class="meta-item">
+                                    📅 <?= date('d M Y', strtotime($data['tanggal_lamaran'])); ?>
+                                </div>
+                            </div>
+                            <div class="update-time">
+                                Status lamaran:
                                 <?= ucfirst($data['status']); ?>
-                            </span>
+                            </div>
+
+                            <a <?php
+                            if (
+                                $data['status'] == 'dikirim'
+                                || $data['status'] == 'review'
+                            ) {
+                                ?>
+
+                                href="batal_lamaran.php?id=<?= $data['id_lamaran']; ?>"
+                                    onclick="return confirm('Yakin ingin membatalkan lamaran ini?')" class="btn-cancel">
+
+                                    Batalkan
+
+                                    <?php
+                            }
+                            ?>
+
+                            </a>
                         </div>
-                    </div>
-                    <div class="application-meta">
-                        <div class="meta-item">
-                            📍 <?= $data['lokasi']; ?>
-                        </div>
-                        <div class="meta-item">
-                            📅 <?= date('d M Y', strtotime($data['tanggal_lamaran'])); ?>
-                        </div>
-                    </div>
-                    <div class="update-time">
-                       Status lamaran:
-                        <?= ucfirst($data['status']); ?>
-                    </div>
-
-                    <a
-
-                    <?php
-                    if($data['status'] == 'dikirim'
-                    || $data['status'] == 'review'){
-                    ?>
-
-                    href="batal_lamaran.php?id=<?= $data['id_lamaran']; ?>"
-
-                    onclick="return confirm('Yakin ingin membatalkan lamaran ini?')"
-
-                    class="btn-cancel">
-
-                    Batalkan
-
-                    <?php
+                        <?php
                     }
+                } else {
                     ?>
 
-                    </a>
-                </div>
-                <?php
-                }
-                }else{
-                ?>
+                    <div style="text-align:center; padding:40px;">
 
-               <div style="text-align:center; padding:40px;">
+                        <h3>Belum Ada Lamaran</h3>
 
-                <h3>Belum Ada Lamaran</h3>
+                        <p>
 
-                <p>
+                            Silakan lamar pekerjaan terlebih dahulu
 
-                Silakan lamar pekerjaan terlebih dahulu
+                        </p>
 
-                </p>
-
-                </div>
-                <?php
+                    </div>
+                    <?php
                 }
                 ?>
 
 
-                    
 
 
-                
+
+
             </div>
         </main>
     </div>
 
     <script>
-       
+
 
         // Handle stat card clicks
         document.querySelectorAll('.stat-card').forEach(card => {
-            card.addEventListener('click', function() {
+            card.addEventListener('click', function () {
                 document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
             });
