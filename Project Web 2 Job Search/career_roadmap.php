@@ -817,7 +817,7 @@ WHERE status='aktif'"
             Career Roadmap
           </a>
 
-          <a href="skill_gap_analyzer.html" class="nav-item">
+          <a href="skill_gap_analyzer.php" class="nav-item">
             <svg
               width="20"
               height="20"

@@ -310,7 +310,7 @@ $other = mysqli_query($conn,
                 <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
             </svg> Career Roadmap
         </a>
-        <a href="skill_gap_analyzer.html" class="nav-item">
+        <a href="skill_gap_analyzer.php" class="nav-item">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"/>

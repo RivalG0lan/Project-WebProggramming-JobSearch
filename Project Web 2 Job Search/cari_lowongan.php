@@ -671,7 +671,7 @@ $total_lowongan = mysqli_num_rows($query);
                     Career Roadmap
                 </a>
 
-                <a href="skill_gap_analyzer.html" class="nav-item">
+                <a href="skill_gap_analyzer.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
