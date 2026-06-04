@@ -17,6 +17,17 @@ if ($_SESSION['role'] != 'pelamar') {
 include 'config/koneksi.php';
 
 $id_pelamar = $_SESSION['id_user'];
+// Ambil data user
+$result = mysqli_query($conn, "
+    SELECT *
+    FROM users
+    WHERE id_user='$id_pelamar'
+");
+
+$user = mysqli_fetch_assoc($result);
+
+// Inisial avatar
+$initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
 
 $total_lamaran = mysqli_num_rows(mysqli_query(
     $conn,
@@ -126,7 +137,7 @@ WHERE status='aktif'"
             padding: 12px;
             background: #f9fafb;
             border-radius: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 24px
         }
 
         .user-avatar {
@@ -139,21 +150,37 @@ WHERE status='aktif'"
             justify-content: center;
             color: white;
             font-weight: 600;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .user-info {
             flex: 1;
+            min-width: 0;
         }
 
         .user-name {
             font-size: 14px;
             font-weight: 600;
             color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-email {
             font-size: 12px;
             color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .career-score {
@@ -724,13 +751,21 @@ WHERE status='aktif'"
 
             <div class="user-profile">
                 <div class="user-avatar">
-
-                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
-
+                    <?php if (!empty($user['foto_profil']) && file_exists('uploads/foto_profil/' . $user['foto_profil'])): ?>
+                        <img src="uploads/foto_profil/<?= htmlspecialchars($user['foto_profil']) ?>" alt="foto">
+                    <?php else: ?>
+                        <?= $initials ?>
+                    <?php endif; ?>
                 </div>
+
                 <div class="user-info">
-                    <div class="user-name"><?= $_SESSION['nama']; ?></div>
-                    <div class="user-email"><?= $_SESSION['email']; ?></div>
+                    <div class="user-name">
+                        <?= htmlspecialchars($user['nama'] ?? '-') ?>
+                    </div>
+
+                    <div class="user-email">
+                        <?= htmlspecialchars($user['email'] ?? '') ?>
+                    </div>
                 </div>
             </div>
 
