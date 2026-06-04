@@ -828,7 +828,7 @@ WHERE status='aktif'"
           Skill Gap Analyzer
         </a>
 
-        <a href="pesan_pelamar.html" class="nav-item">
+        <a href="pesan_pelamar.php" class="nav-item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
@@ -837,7 +837,7 @@ WHERE status='aktif'"
 
         <div class="nav-divider"></div>
 
-        <a href="pengaturan_pelamar.html" class="nav-item">
+        <a href="pengaturan_pelamar.php" class="nav-item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M12 1v6m0 6v6"></path>

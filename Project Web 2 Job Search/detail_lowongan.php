@@ -316,14 +316,14 @@ $other = mysqli_query($conn,
                 <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"/>
             </svg> Skill Gap Analyzer
         </a>
-        <a href="pesan_pelamar.html" class="nav-item">
+        <a href="pesan_pelamar.php" class="nav-item">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg> Pesan
         </a>
         <div class="nav-divider"></div>
         <div class="nav-section-title">Pengaturan</div>
-        <a href="pengaturan_pelamar.html" class="nav-item">
+        <a href="pengaturan_pelamar.php" class="nav-item">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M12 1v6m0 6v6m-7.07-7.07 4.24 4.24m5.66-5.66 4.24 4.24M1 12h6m6 0h6m-14.07 7.07 4.24-4.24m5.66-5.66 4.24-4.24"/>

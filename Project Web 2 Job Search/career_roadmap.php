@@ -832,7 +832,7 @@ WHERE status='aktif'"
             Skill Gap Analyzer
           </a>
 
-          <a href="pesan_pelamar.html" class="nav-item">
+          <a href="pesan_pelamar.php" class="nav-item">
             <svg
               width="20"
               height="20"
@@ -850,7 +850,7 @@ WHERE status='aktif'"
 
           <div class="nav-divider"></div>
 
-          <a href="pengaturan_pelamar.html" class="nav-item">
+          <a href="pengaturan_pelamar.php" class="nav-item">
             <svg
               width="20"
               height="20"
