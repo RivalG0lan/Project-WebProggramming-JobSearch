@@ -71,7 +71,20 @@ CREATE TABLE `users` (
   `nama` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `role` enum('pelamar','perusahaan') DEFAULT NULL
+  `role` enum('pelamar','perusahaan') DEFAULT NULL,
+
+  `foto_profil` VARCHAR(255) DEFAULT NULL,
+  `cv_path` VARCHAR(255) DEFAULT NULL,
+  `telepon` VARCHAR(20) DEFAULT NULL,
+  `lokasi` VARCHAR(100) DEFAULT NULL,
+  `bio` TEXT DEFAULT NULL,
+  `pendidikan` VARCHAR(255) DEFAULT NULL,
+  `pengalaman` TEXT DEFAULT NULL,
+  `skills` TEXT DEFAULT NULL,
+  `linkedin` VARCHAR(255) DEFAULT NULL,
+  `portfolio` VARCHAR(255) DEFAULT NULL,
+  `tanggal_lahir` DATE DEFAULT NULL
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
