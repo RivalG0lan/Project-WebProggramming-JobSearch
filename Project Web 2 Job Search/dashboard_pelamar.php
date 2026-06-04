@@ -765,7 +765,7 @@ WHERE status='aktif'"));
                     Profil
                 </a>
 
-                <a href="career_roadmap.php" class="nav-item">
+                <a href="career_roadmap.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 3v18h18"></path>
                         <path d="m19 9-5 5-4-4-3 3"></path>
@@ -773,7 +773,7 @@ WHERE status='aktif'"));
                     Career Roadmap
                 </a>
 
-                <a href="skill_gap_analyzer.php" class="nav-item">
+                <a href="skill_gap_analyzer.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
@@ -781,7 +781,7 @@ WHERE status='aktif'"));
                     Skill Gap Analyzer
                 </a>
 
-                <a href="pesan_pelamar.php" class="nav-item">
+                <a href="pesan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -793,9 +793,9 @@ WHERE status='aktif'"));
 
                 <div class="nav-divider"></div>
 
-                <div class="nav-section-title">Pengaturan</div>
+                
 
-                <a href="pengaturan_pelamar.php" class="nav-item">
+                <a href="pengaturan_pelamar.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6"></path>
