@@ -278,7 +278,7 @@ $other = mysqli_query($conn,
     </div>
     <div class="career-score">
         <span class="career-score-label">Career Score</span>
-        <span class="career-score-value">Coming Soon</span>
+        <span class="career-score-value">30%</span>
     </div>
     <nav>
         <a href="dashboard_pelamar.php" class="nav-item">
@@ -322,12 +322,16 @@ $other = mysqli_query($conn,
             </svg> Pesan
         </a>
         <div class="nav-divider"></div>
-        <div class="nav-section-title">Pengaturan</div>
+        <!-- <div class="nav-section-title">Pengaturan</div> -->
         <a href="pengaturan_pelamar.php" class="nav-item">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M12 1v6m0 6v6m-7.07-7.07 4.24 4.24m5.66-5.66 4.24 4.24M1 12h6m6 0h6m-14.07 7.07 4.24-4.24m5.66-5.66 4.24-4.24"/>
-            </svg> Pengaturan
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 1v6m0 6v6"></path>
+            <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
+            <path d="M1 12h6m6 0h6"></path>
+            <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path>
+          </svg>
+        Pengaturan
         </a>
         <a href="logout.php" class="nav-item nav-item-logout">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
