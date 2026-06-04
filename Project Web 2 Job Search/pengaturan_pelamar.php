@@ -725,12 +725,12 @@ WHERE status='aktif'"
 
         <div class="form-group">
           <label class="form-label">Nama Lengkap</label>
-          <input type="text" class="form-input" value="John Doe" />
+          <input type="text" class="form-input" value="<?= htmlspecialchars($_SESSION['nama']) ?>" />
         </div>
 
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input type="email" class="form-input" value="email@example.com" disabled />
+          <input type="email" class="form-input" value="<?= htmlspecialchars($_SESSION['email']) ?>" disabled />
           <p class="form-helper">Email tidak dapat diubah</p>
         </div>
 
