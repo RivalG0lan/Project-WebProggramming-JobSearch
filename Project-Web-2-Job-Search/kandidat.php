@@ -822,9 +822,11 @@ foreach (['dikirim', 'review', 'interview', 'accepted', 'rejected'] as $s) {
                 <div class="nav-divider"></div>
                 <a href="pengaturan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3" />
-                        <path
-                            d="M12 1v6m0 6v6m-7.07-7.07 4.24 4.24m5.66-5.66 4.24 4.24M1 12h6m6 0h6m-14.07 7.07 4.24-4.24m5.66-5.66 4.24-4.24" />
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6"></path>
+                        <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
+                        <path d="M1 12h6m6 0h6"></path>
+                        <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path>
                     </svg> Pengaturan
                 </a>
                 <a href="logout.php" class="nav-item nav-item-logout">

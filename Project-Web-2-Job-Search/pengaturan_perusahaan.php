@@ -1451,12 +1451,12 @@ if (!isset($_SESSION['id_user'])) {
 
         <div class="form-group">
           <label class="form-label">Nama Lengkap</label>
-          <input type="text" class="form-input" value="PT Nadya" />
+          <input type="text" class="form-input" value="<?= strtoupper(substr($_SESSION['nama'], 0, 1)) . substr($_SESSION['nama'], 1) ?>" />
         </div>
 
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input type="email" class="form-input" value="email@example.com" disabled />
+          <input type="email" class="form-input" value="<?= htmlspecialchars($_SESSION['email']) ?>" disabled />
           <p class="form-helper">Email tidak dapat diubah</p>
         </div>
 
