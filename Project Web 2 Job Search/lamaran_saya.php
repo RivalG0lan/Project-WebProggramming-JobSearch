@@ -80,6 +80,16 @@ WHERE id_pelamar='$id_pelamar'
 
 AND status='rejected'"
 ));
+
+$id_pelamar = (int) $_SESSION['id_user'];
+
+$result = mysqli_query($conn, "
+    SELECT *
+    FROM users
+    WHERE id_user=$id_pelamar
+");
+
+$user = mysqli_fetch_assoc($result);
 ?>
 
 <!DOCTYPE html>
@@ -149,10 +159,10 @@ AND status='rejected'"
             padding: 12px;
             background: #f9fafb;
             border-radius: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 24px
         }
 
-        .user-avatar {
+        .sidebar-avatar {
             width: 40px;
             height: 40px;
             background: #0d9488;
@@ -160,23 +170,40 @@ AND status='rejected'"
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: 600;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            overflow: hidden;
+            flex-shrink: 0
+        }
+
+        .sidebar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%
         }
 
         .user-info {
             flex: 1;
+            min-width: 0
         }
 
         .user-name {
             font-size: 14px;
             font-weight: 600;
             color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
         }
 
         .user-email {
             font-size: 12px;
             color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
         }
 
         .career-score {
@@ -620,16 +647,16 @@ AND status='rejected'"
             </div>
 
             <div class="user-profile">
-                <div class="user-avatar">
-                    <?= strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
+                <div class="sidebar-avatar">
+                    <?php if (!empty($user['foto_profil']) && file_exists('uploads/foto_profil/' . $user['foto_profil'])): ?>
+                        <img src="uploads/foto_profil/<?= htmlspecialchars($user['foto_profil']) ?>" alt="foto">
+                    <?php else: ?>
+                        <?= $initials ?>
+                    <?php endif; ?>
                 </div>
                 <div class="user-info">
-                    <div class="user-name">
-                        <?= $_SESSION['nama']; ?>
-                    </div>
-                    <div class="user-email">
-                        <?= $_SESSION['email']; ?>
-                    </div>
+                    <div class="user-name"><?= htmlspecialchars($user['nama'] ?? '-') ?></div>
+                    <div class="user-email"><?= htmlspecialchars($user['email'] ?? '') ?></div>
                 </div>
             </div>
 
@@ -846,8 +873,7 @@ AND status='rejected'"
                                 || $data['status'] == 'review'
                             ) {
                                 ?>
-
-                                href="batal_lamaran.php?id=<?= $data['id_lamaran']; ?>"
+                                    href="batal_lamaran.php?id=<?= $data['id_lamaran']; ?>"
                                     onclick="return confirm('Yakin ingin membatalkan lamaran ini?')" class="btn-cancel">
 
                                     Batalkan
