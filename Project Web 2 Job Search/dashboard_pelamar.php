@@ -1059,7 +1059,7 @@ WHERE status='aktif'"
                 <div class="section">
                     <div class="section-header">
                         <h2 class="section-title">Rekomendasi untuk Anda</h2>
-                        <a href="#" class="btn-link">
+                        <a href="cari_lowongan.php" class="btn-link">
                             Lihat Semua
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
@@ -1177,7 +1177,7 @@ WHERE status='aktif'"
                         </div>
                     </div>
 
-                    <button class="btn-analyze" onclick="handleAnalyzeSkill(event)">
+                    <button class="btn-analyze" onclick="window.location.href='skill_gap_analyzer.php'">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
