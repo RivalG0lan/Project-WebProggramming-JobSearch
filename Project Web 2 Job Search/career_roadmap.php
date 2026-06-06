@@ -63,6 +63,7 @@ $result = mysqli_query($conn, "
 ");
 
 $user = mysqli_fetch_assoc($result);
+$initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
 ?>
 
 <!doctype html>

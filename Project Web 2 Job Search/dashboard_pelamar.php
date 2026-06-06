@@ -152,6 +152,8 @@ WHERE status='aktif'"
             font-weight: 600;
             overflow: hidden;
             flex-shrink: 0;
+            font-weight: 700;
+            font-size: 14px;
         }
 
         .user-avatar img {
