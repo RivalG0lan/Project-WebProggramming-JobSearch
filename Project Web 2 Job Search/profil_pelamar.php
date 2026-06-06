@@ -16,10 +16,26 @@ $id_user = $_SESSION['id_user'];
 $pesan_sukses = '';
 $pesan_error = '';
 
-// ─── HANDLE POST: Simpan data profil ───────────────────────────────────────
+// ─── HANDLE POST ───────────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  // ── Upload Foto Profil ──────────────────────────────────────────────────
+  // ── Hapus Foto ─────────────────────────────────────────────────────────
+  if (isset($_POST['hapus_foto'])) {
+    $q = mysqli_query($conn, "SELECT foto_profil FROM users WHERE id_user='$id_user'");
+    $data = mysqli_fetch_assoc($q);
+
+    if (!empty($data['foto_profil'])) {
+      $file = 'uploads/foto_profil/' . $data['foto_profil'];
+      if (file_exists($file))
+        unlink($file);
+      mysqli_query($conn, "UPDATE users SET foto_profil=NULL WHERE id_user='$id_user'");
+    }
+
+    header("Location: profil_pelamar.php?hapus_foto=ok");
+    exit;
+  }
+
+  // ── Upload Foto Profil ─────────────────────────────────────────────────
   if (isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] === UPLOAD_ERR_OK) {
     $allowed_img = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     $ftype = $_FILES['foto_profil']['type'];
@@ -30,6 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($fsize > 2 * 1024 * 1024) {
       $pesan_error = 'Ukuran foto maksimal 2 MB.';
     } else {
+      // 1. Ambil foto lama SEBELUM apapun
+      $q_old = mysqli_query($conn, "SELECT foto_profil FROM users WHERE id_user='$id_user'");
+      $old = mysqli_fetch_assoc($q_old);
+
       $ext = pathinfo($_FILES['foto_profil']['name'], PATHINFO_EXTENSION);
       $nama_file = 'foto_' . $id_user . '_' . time() . '.' . $ext;
       $tujuan = 'uploads/foto_profil/' . $nama_file;
@@ -37,9 +57,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (!is_dir('uploads/foto_profil'))
         mkdir('uploads/foto_profil', 0755, true);
 
+      // 2. Pindahkan file baru
       if (move_uploaded_file($_FILES['foto_profil']['tmp_name'], $tujuan)) {
+        // 3. Hapus file lama dari folder
+        if (!empty($old['foto_profil'])) {
+          $old_file = 'uploads/foto_profil/' . $old['foto_profil'];
+          if (file_exists($old_file))
+            unlink($old_file);
+        }
+
+        // 4. Simpan nama file baru ke DB
         $nama_esc = mysqli_real_escape_string($conn, $nama_file);
         mysqli_query($conn, "UPDATE users SET foto_profil='$nama_esc' WHERE id_user='$id_user'");
+
         header("Location: profil_pelamar.php?foto=ok");
         exit;
       } else {
@@ -48,7 +78,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  // ── Upload CV ───────────────────────────────────────────────────────────
+  // ── Hapus CV ───────────────────────────────────────────────────────────
+  if (isset($_POST['hapus_cv'])) {
+    $q = mysqli_query($conn, "SELECT cv_path FROM users WHERE id_user='$id_user'");
+    $data = mysqli_fetch_assoc($q);
+
+    if (!empty($data['cv_path'])) {
+      $file = 'uploads/cv/' . $data['cv_path'];
+      if (file_exists($file))
+        unlink($file);
+      mysqli_query($conn, "UPDATE users SET cv_path=NULL WHERE id_user='$id_user'");
+    }
+
+    header("Location: profil_pelamar.php?hapus_cv=ok");
+    exit;
+  }
+
+  // ── Upload CV ──────────────────────────────────────────────────────────
   if (isset($_FILES['cv_file']) && $_FILES['cv_file']['error'] === UPLOAD_ERR_OK) {
     $allowed_cv = ['application/pdf'];
     $ftype = $_FILES['cv_file']['type'];
@@ -59,15 +105,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($fsize > 5 * 1024 * 1024) {
       $pesan_error = 'Ukuran CV maksimal 5 MB.';
     } else {
+      // 1. Ambil CV lama SEBELUM apapun
+      $q_old = mysqli_query($conn, "SELECT cv_path FROM users WHERE id_user='$id_user'");
+      $old = mysqli_fetch_assoc($q_old);
+
       $nama_cv = 'cv_' . $id_user . '_' . time() . '.pdf';
       $tujuan = 'uploads/cv/' . $nama_cv;
 
       if (!is_dir('uploads/cv'))
         mkdir('uploads/cv', 0755, true);
 
+      // 2. Pindahkan file baru
       if (move_uploaded_file($_FILES['cv_file']['tmp_name'], $tujuan)) {
+        // 3. Hapus file lama dari folder
+        if (!empty($old['cv_path'])) {
+          $old_file = 'uploads/cv/' . $old['cv_path'];
+          if (file_exists($old_file))
+            unlink($old_file);
+        }
+
+        // 4. Simpan nama file baru ke DB
         $nama_esc = mysqli_real_escape_string($conn, $nama_cv);
         mysqli_query($conn, "UPDATE users SET cv_path='$nama_esc' WHERE id_user='$id_user'");
+
         header("Location: profil_pelamar.php?cv=ok");
         exit;
       } else {
@@ -76,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  // ── Simpan data profil teks ─────────────────────────────────────────────
+  // ── Simpan data profil teks ────────────────────────────────────────────
   if (isset($_POST['simpan_profil'])) {
     $nama = mysqli_real_escape_string($conn, trim($_POST['nama']));
     $telepon = mysqli_real_escape_string($conn, trim($_POST['telepon']));
@@ -90,22 +150,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tgl_lahir = mysqli_real_escape_string($conn, trim($_POST['tanggal_lahir']));
 
     $q = mysqli_query($conn, "
-            UPDATE users SET
-              nama            = '$nama',
-              telepon         = '$telepon',
-              lokasi          = '$lokasi',
-              bio             = '$bio',
-              pendidikan      = '$pendidikan',
-              pengalaman      = '$pengalaman',
-              skills          = '$skills',
-              linkedin        = '$linkedin',
-              portfolio       = '$portfolio',
-              tanggal_lahir   = " . ($tgl_lahir ? "'$tgl_lahir'" : "NULL") . "
-            WHERE id_user = '$id_user'
-        ");
+      UPDATE users SET
+        nama          = '$nama',
+        telepon       = '$telepon',
+        lokasi        = '$lokasi',
+        bio           = '$bio',
+        pendidikan    = '$pendidikan',
+        pengalaman    = '$pengalaman',
+        skills        = '$skills',
+        linkedin      = '$linkedin',
+        portfolio     = '$portfolio',
+        tanggal_lahir = " . ($tgl_lahir ? "'$tgl_lahir'" : "NULL") . "
+      WHERE id_user = '$id_user'
+    ");
 
     if ($q) {
-      $_SESSION['nama'] = $nama; // update nama di session
+      $_SESSION['nama'] = $nama;
       header("Location: profil_pelamar.php?simpan=ok");
       exit;
     } else {
@@ -141,6 +201,10 @@ if (isset($_GET['foto']) && $_GET['foto'] === 'ok')
   $pesan_sukses = 'Foto profil berhasil diupload!';
 if (isset($_GET['cv']) && $_GET['cv'] === 'ok')
   $pesan_sukses = 'CV berhasil diupload!';
+if (isset($_GET['hapus_foto']) && $_GET['hapus_foto'] === 'ok')
+  $pesan_sukses = 'Foto profil berhasil dihapus!';
+if (isset($_GET['hapus_cv']) && $_GET['hapus_cv'] === 'ok')
+  $pesan_sukses = 'CV berhasil dihapus!';
 
 // Initials avatar
 $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
@@ -647,6 +711,22 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
       margin-top: 8px
     }
 
+    .btn-hapus-file {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .btn-hapus-file:hover {
+      background: #dc2626;
+    }
+
     /* ─── Form ────────────────────────────────────────── */
     .form-grid {
       display: grid;
@@ -973,6 +1053,16 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
                 <input class="upload-foto-input" id="foto_profil_input" type="file" name="foto_profil"
                   accept="image/jpeg,image/png,image/webp" onchange="this.form.submit()">
               </form>
+
+              <!-- form hapus poto -->
+              <?php if (!empty($user['foto_profil']) && file_exists('uploads/foto_profil/' . $user['foto_profil'])): ?>
+                <form method="POST" style="margin-top:8px;">
+                  <button type="submit" name="hapus_foto" class="btn-hapus-file"
+                    onclick="return confirm('Yakin hapus foto profil?')">
+                    Hapus Foto
+                  </button>
+                </form>
+              <?php endif; ?>
             </div>
 
             <!-- Kelengkapan Profil -->
@@ -1030,7 +1120,7 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
             <div class="card-body" style="padding-top:16px">
               <div class="cv-card <?= !empty($user['cv_path']) ? 'has-cv' : '' ?>">
                 <div class="cv-icon"><?= !empty($user['cv_path']) ? '📄' : '📁' ?></div>
-                <?php if (!empty($user['cv_path'])): ?>
+                <?php if (!empty($user['cv_path']) && file_exists('uploads/cv/' . $user['cv_path'])): ?>
                   <div class="cv-name"><?= htmlspecialchars($user['cv_path']) ?></div>
                   <div class="cv-meta">CV tersimpan</div>
                   <div class="cv-actions">
@@ -1055,6 +1145,12 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
                         accept="application/pdf" onchange="this.form.submit()">
                     </form>
                   </div>
+                  <form method="POST" style="display:inline">
+                    <button type="submit" name="hapus_cv" class="btn-hapus-file"
+                      onclick="return confirm('Yakin hapus CV?')">
+                      Hapus CV
+                    </button>
+                  </form>
                 <?php else: ?>
                   <div class="cv-meta" style="margin-bottom:12px">Belum ada CV yang diupload</div>
                   <form method="POST" enctype="multipart/form-data">
