@@ -772,7 +772,7 @@ $kelengkapan = round(
                         <circle cx="12" cy="7" r="4" />
                     </svg> Profil
                 </a>
-                <a href="career_roadmap.html" class="nav-item">
+                <a href="career_roadmap.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 3v18h18" />
                         <path d="m19 9-5 5-4-4-3 3" />
