@@ -552,7 +552,11 @@ $kelengkapan = round(
             cursor: pointer;
             transition: all 0.2s;
             text-decoration: none;
-            display: inline-block;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
 
         .btn-apply:hover {
