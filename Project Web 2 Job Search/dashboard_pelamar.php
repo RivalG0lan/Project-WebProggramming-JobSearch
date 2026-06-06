@@ -904,7 +904,7 @@ WHERE status='aktif'"
 
                     </h2>
                     <p>Profil Anda 30% lengkap - Tingkatkan untuk peluang lebih besar!</p>
-                    <button class="btn-complete">
+                    <button class="btn-complete" onclick="window.location.href='profil_pelamar.php'">
                         Lengkapi Profil
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -987,7 +987,7 @@ WHERE status='aktif'"
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">Lamaran Terbaru</h2>
-                    <a href="#" class="btn-link">
+                    <a href="lamaran_saya.php" class="btn-link" onclick="">
                         Lihat Semua
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -1192,51 +1192,6 @@ WHERE status='aktif'"
             </div>
         </main>
     </div>
-
-    <script>
-        // Navigation functions
-        function goToDashboard(e) {
-            e.preventDefault();
-            // Already on dashboard, do nothing
-        }
-
-        // Handle analyze skill button
-        function handleAnalyzeSkill(e) {
-            e.preventDefault();
-            // Placeholder for future functionality
-        }
-
-
-        // Handle job card clicks
-        document.querySelectorAll('.job-card, .recommendation-card').forEach(card => {
-            card.addEventListener('click', function (e) {
-                e.preventDefault();
-                // Placeholder for future functionality
-            });
-        });
-
-        // Handle button clicks
-        document.querySelector('.btn-complete')?.addEventListener('click', function (e) {
-            e.preventDefault();
-            // Placeholder for future functionality
-        });
-
-        // Handle icon buttons
-        document.querySelectorAll('.icon-btn').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                // Placeholder for future functionality
-            });
-        });
-
-        // Handle link buttons
-        document.querySelectorAll('.btn-link').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                // Placeholder for future functionality
-            });
-        });
-    </script>
 </body>
 
 </html>
