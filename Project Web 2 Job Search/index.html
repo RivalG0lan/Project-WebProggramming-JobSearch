@@ -1,947 +1,1087 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lokerin - Platform Karir AI Indonesia</title>
-    <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png">
+    <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f9fafb;
-            color: #111827;
-            line-height: 1.6;
-        }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background-color: #f9fafb;
+        color: #111827;
+        line-height: 1.6;
+      }
 
-        header {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+      header {
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
 
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-        }
+      .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+      }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-        .logo-img {
-            width: 27px;
-            height: 27px;
-            object-fit: contain;
-}
+      .logo-img {
+        width: 27px;
+        height: 27px;
+        object-fit: contain;
+      }
 
-        .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: #051f47;
-        }
+      .logo-text {
+        font-size: 20px;
+        font-weight: 700;
+        color: #051f47;
+      }
 
+      nav {
+        display: flex;
+        gap: 32px;
+      }
+
+      nav a {
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+
+      nav a:hover {
+        color: #111827;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .btn-masuk {
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .btn-masuk:hover {
+        color: #111827;
+      }
+
+      .btn-daftar {
+        background: #14b8a6;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+
+      .btn-daftar:hover {
+        background: #0d9488;
+      }
+
+      .hero {
+        background: linear-gradient(to bottom, #f9fafb, white);
+        padding: 80px 20px;
+      }
+
+      .hero-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #dbeafe;
+        color: #2563eb;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .hero h1 {
+        font-size: 56px;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 16px;
+        color: #111827;
+      }
+
+      .hero h1 .highlight {
+        color: #0d9488;
+      }
+
+      .hero p {
+        font-size: 18px;
+        color: #6b7280;
+        margin-bottom: 40px;
+        line-height: 1.6;
+      }
+
+      .search-box {
+        max-width: 900px;
+        margin: 0 auto 60px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 12px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .search-input {
+        flex: 1;
+        min-width: 200px;
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .search-input input {
+        border: none;
+        background: transparent;
+        outline: none;
+        flex: 1;
+        font-size: 14px;
+        color: #111827;
+      }
+
+      .search-input input::placeholder {
+        color: #9ca3af;
+      }
+
+      .btn-search {
+        background: #14b8a6;
+        color: white;
+        padding: 12px 32px;
+        border-radius: 12px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+      }
+
+      .btn-search:hover {
+        background: #0d9488;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 40px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      .features {
+        padding: 80px 20px;
+        background: white;
+      }
+
+      .features-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: #111827;
+      }
+
+      .section-subtitle {
+        text-align: center;
+        font-size: 16px;
+        color: #6b7280;
+        margin-bottom: 60px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+      }
+
+      .feature-card {
+        text-align: center;
+        padding: 24px;
+      }
+
+      .feature-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 20px;
+        background: #e0f2f1;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0d9488;
+      }
+
+      .feature-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #111827;
+      }
+
+      .feature-desc {
+        font-size: 14px;
+        color: #6b7280;
+        line-height: 1.5;
+      }
+
+      .jobs {
+        padding: 80px 20px;
+        background: #f9fafb;
+      }
+
+      .jobs-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .jobs-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+      }
+
+      .jobs-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .jobs-header p {
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      .btn-lihat {
+        color: #0d9488;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 16px;
+        border: 1px solid #0d9488;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+
+      .btn-lihat:hover {
+        background: #0d9488;
+        color: white;
+      }
+
+      .jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .job-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s;
+      }
+
+      .job-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .job-badge {
+        display: inline-block;
+        background: #dbeafe;
+        color: #2563eb;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 16px;
+      }
+
+      .job-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #111827;
+      }
+
+      .job-company {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 16px;
+      }
+
+      .job-tags {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+
+      .job-tag {
+        background: #f3f4f6;
+        color: #4b5563;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+
+      .job-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        border-top: 1px solid #f3f4f6;
+      }
+
+      .job-salary {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .job-detail {
+        color: #0d9488;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* CTA Section */
+      .cta {
+        padding: 80px 20px;
+        background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%);
+      }
+
+      .cta-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+      }
+
+      .cta-content h2 {
+        font-size: 36px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+      }
+
+      .cta-content p {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 32px;
+        line-height: 1.6;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 16px;
+      }
+
+      .btn-cta {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .btn-cta-primary {
+        background: #fbbf24;
+        color: #111827;
+      }
+
+      .btn-cta-primary:hover {
+        background: #f59e0b;
+      }
+
+      .btn-cta-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-cta-secondary:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .cta-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+
+      .cta-stat {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 32px;
+        text-align: center;
+      }
+
+      .cta-stat-number {
+        font-size: 48px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 8px;
+      }
+
+      .cta-stat-label {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      /* Footer */
+      footer {
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        padding: 60px 20px 30px;
+      }
+
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 60px;
+        margin-bottom: 40px;
+      }
+
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .footer-desc {
+        font-size: 14px;
+        color: #6b7280;
+        line-height: 1.6;
+      }
+
+      .footer-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 16px;
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 12px;
+      }
+
+      .footer-links a {
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.2s;
+      }
+
+      .footer-links a:hover {
+        color: #111827;
+      }
+
+      .footer-bottom {
+        text-align: center;
+        padding-top: 30px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
         nav {
-            display: flex;
-            gap: 32px;
-        }
-
-        nav a {
-            color: #6b7280;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        nav a:hover {
-            color: #111827;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .btn-masuk {
-            color: #6b7280;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .btn-masuk:hover {
-            color: #111827;
-        }
-
-        .btn-daftar {
-            background: #14b8a6;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .btn-daftar:hover {
-            background: #0d9488;
-        }
-
-        .hero {
-            background: linear-gradient(to bottom, #f9fafb, white);
-            padding: 80px 20px;
-        }
-
-        .hero-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #dbeafe;
-            color: #2563eb;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 14px;
-            margin-bottom: 24px;
+          display: none;
         }
 
         .hero h1 {
-            font-size: 56px;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 16px;
-            color: #111827;
-        }
-
-        .hero h1 .highlight {
-            color: #0d9488;
-        }
-
-        .hero p {
-            font-size: 18px;
-            color: #6b7280;
-            margin-bottom: 40px;
-            line-height: 1.6;
+          font-size: 36px;
         }
 
         .search-box {
-            max-width: 900px;
-            margin: 0 auto 60px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 12px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .search-input {
-            flex: 1;
-            min-width: 200px;
-            background: #f9fafb;
-            border-radius: 12px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .search-input input {
-            border: none;
-            background: transparent;
-            outline: none;
-            flex: 1;
-            font-size: 14px;
-            color: #111827;
-        }
-
-        .search-input input::placeholder {
-            color: #9ca3af;
-        }
-
-        .btn-search {
-            background: #14b8a6;
-            color: white;
-            padding: 12px 32px;
-            border-radius: 12px;
-            border: none;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-
-        .btn-search:hover {
-            background: #0d9488;
+          flex-direction: column;
         }
 
         .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 40px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 40px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .features {
-            padding: 80px 20px;
-            background: white;
-        }
-
-        .features-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #111827;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            font-size: 16px;
-            color: #6b7280;
-            margin-bottom: 60px;
+          grid-template-columns: repeat(2, 1fr);
         }
 
         .features-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 24px;
-        }
-
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 20px;
-            background: #e0f2f1;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0d9488;
-        }
-
-        .feature-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #111827;
-        }
-
-        .feature-desc {
-            font-size: 14px;
-            color: #6b7280;
-            line-height: 1.5;
-        }
-
-        .jobs {
-            padding: 80px 20px;
-            background: #f9fafb;
-        }
-
-        .jobs-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .jobs-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-
-        .jobs-header h2 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #111827;
-        }
-
-        .jobs-header p {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .btn-lihat {
-            color: #0d9488;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 16px;
-            border: 1px solid #0d9488;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn-lihat:hover {
-            background: #0d9488;
-            color: white;
+          grid-template-columns: 1fr;
         }
 
         .jobs-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-
-        .job-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.2s;
-        }
-
-        .job-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
-        }
-
-        .job-badge {
-            display: inline-block;
-            background: #dbeafe;
-            color: #2563eb;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 16px;
-        }
-
-        .job-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #111827;
-        }
-
-        .job-company {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 16px;
-        }
-
-        .job-tags {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .job-tag {
-            background: #f3f4f6;
-            color: #4b5563;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-        }
-
-        .job-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 16px;
-            border-top: 1px solid #f3f4f6;
-        }
-
-        .job-salary {
-            font-size: 14px;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .job-detail {
-            color: #0d9488;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* CTA Section */
-        .cta {
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%);
+          grid-template-columns: 1fr;
         }
 
         .cta-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-
-        .cta-content h2 {
-            font-size: 36px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 16px;
-        }
-
-        .cta-content p {
-            font-size: 16px;
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 32px;
-            line-height: 1.6;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 16px;
-        }
-
-        .btn-cta {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn-cta-primary {
-            background: #fbbf24;
-            color: #111827;
-        }
-
-        .btn-cta-primary:hover {
-            background: #f59e0b;
-        }
-
-        .btn-cta-secondary {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .btn-cta-secondary:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .cta-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-
-        .cta-stat {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 12px;
-            padding: 32px;
-            text-align: center;
-        }
-
-        .cta-stat-number {
-            font-size: 48px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 8px;
-        }
-
-        .cta-stat-label {
-            font-size: 14px;
-            color: rgba(255,255,255,0.9);
-        }
-
-        /* Footer */
-        footer {
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            padding: 60px 20px 30px;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
+          grid-template-columns: 1fr;
         }
 
         .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 60px;
-            margin-bottom: 40px;
+          grid-template-columns: 1fr;
+          gap: 40px;
         }
-
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .footer-desc {
-            font-size: 14px;
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        .footer-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 16px;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: #6b7280;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: #111827;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                display: none;
-            }
-
-            .hero h1 {
-                font-size: 36px;
-            }
-
-            .search-box {
-                flex-direction: column;
-            }
-
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .jobs-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cta-container {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header -->
     <header>
-        <div class="header-container">
-            <div class="logo">
-                <img class="logo-img" src="assets/logo_lokerin.png" alt="Logo">
-                <span class="logo-text">LokerIn</span>
-            </div>
-            
-            <nav>
-                <a href="#lowongan">Cari Lowongan</a>
-                <a href="#perusahaan">Perusahaan</a>
-                <a href="#tentang">Tentang Kami</a>
-            </nav>
-
-            <div class="header-actions">
-                <a href="login_pelamar.php" class="btn-masuk">Masuk</a>
-                <a href="tipe_akun.html" class="btn-daftar">Daftar gratis</a>
-            </div>
+      <div class="header-container">
+        <div class="logo">
+          <img class="logo-img" src="assets/logo_lokerin.png" alt="Logo" />
+          <span class="logo-text">LokerIn</span>
         </div>
+
+        <nav>
+          <a href="#lowongan">Cari Lowongan</a>
+          <a href="#perusahaan">Perusahaan</a>
+          <a href="#tentang">Tentang Kami</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="login_pelamar.php" class="btn-masuk">Masuk</a>
+          <a href="tipe_akun.html" class="btn-daftar">Daftar gratis</a>
+        </div>
+      </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-container">
-            <div class="badge">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                Platform Karir #1 di Indonesia
-            </div>
-            
-            <h1>
-                Temukan Pekerjaan Impian<br>
-                <span class="highlight">dengan Teknologi AI</span>
-            </h1>
-            
-            <p>
-                Lokerin menghubungkan pelamar dengan perusahaan menggunakan AI<br>
-                matching untuk hasil yang lebih akurat dan cepat.
-            </p>
-
-            <!-- Search Box -->
-            <div class="search-box">
-                <div class="search-input">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.35-4.35"></path>
-                    </svg>
-                    <input type="text" placeholder="Posisi atau kata kunci...">
-                </div>
-                
-                <div class="search-input">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    <input type="text" placeholder="Lokasi...">
-                </div>
-                
-                <button class="btn-search">
-                    Cari Lowongan
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Stats -->
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-number">50K+</div>
-                    <div class="stat-label">Lowongan Aktif</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">100K+</div>
-                    <div class="stat-label">Pelamar Terdaftar</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">5K+</div>
-                    <div class="stat-label">Perusahaan Partner</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">95%</div>
-                    <div class="stat-label">Tingkat Kepuasan</div>
-                </div>
-            </div>
+      <div class="hero-container">
+        <div class="badge">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          Platform Karir #1 di Indonesia
         </div>
+
+        <h1>
+          Temukan Pekerjaan Impian<br />
+          <span class="highlight">dengan Teknologi AI</span>
+        </h1>
+
+        <p>
+          Lokerin menghubungkan pelamar dengan perusahaan menggunakan AI<br />
+          matching untuk hasil yang lebih akurat dan cepat.
+        </p>
+
+        <!-- Search Box -->
+        <div class="search-box">
+          <div class="search-input">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#9ca3af"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input type="text" placeholder="Posisi atau kata kunci..." />
+          </div>
+
+          <div class="search-input">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#9ca3af"
+              stroke-width="2"
+            >
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <input type="text" placeholder="Lokasi..." />
+          </div>
+
+          <button
+            class="btn-search"
+            onclick="window.location = 'login_pelamar.php'"
+          >
+            Cari Lowongan
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Lowongan Aktif</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">100K+</div>
+            <div class="stat-label">Pelamar Terdaftar</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">5K+</div>
+            <div class="stat-label">Perusahaan Partner</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">95%</div>
+            <div class="stat-label">Tingkat Kepuasan</div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Features Section -->
     <section id="tentang" class="features">
-        <div class="features-container">
-            <h2 class="section-title">Fitur Unggulan</h2>
-            <p class="section-subtitle">Teknologi AI terdepan untuk membantu Anda menemukan pekerjaan atau kandidat yang tepat</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 11l3 3L22 4"></path>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Skill Match Analysis</h3>
-                    <p class="feature-desc">Sistem AI menganalisis kecocokan skill Anda dengan kebutuhan perusahaan</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Career Roadmap</h3>
-                    <p class="feature-desc">Visualisasi perjalanan karir dan posisi ideal Anda ke depan</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <line x1="12" y1="1" x2="12" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="23"></line>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                            <line x1="1" y1="12" x2="3" y2="12"></line>
-                            <line x1="21" y1="12" x2="23" y2="12"></line>
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">AI Candidate Ranking</h3>
-                    <p class="feature-desc">Perusahaan mendapat rekomendasi kandidat terbaik secara otomatis</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Fraud Detection</h3>
-                    <p class="feature-desc">Sistem keamanan untuk memblokir CV palsu dan data mencurigakan</p>
-                </div>
+      <div class="features-container">
+        <h2 class="section-title">Fitur Unggulan</h2>
+        <p class="section-subtitle">
+          Teknologi AI terdepan untuk membantu Anda menemukan pekerjaan atau
+          kandidat yang tepat
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M9 11l3 3L22 4"></path>
+                <path
+                  d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
+                ></path>
+              </svg>
             </div>
+            <h3 class="feature-title">Skill Match Analysis</h3>
+            <p class="feature-desc">
+              Sistem AI menganalisis kecocokan skill Anda dengan kebutuhan
+              perusahaan
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+            <h3 class="feature-title">Career Roadmap</h3>
+            <p class="feature-desc">
+              Visualisasi perjalanan karir dan posisi ideal Anda ke depan
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="3"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            </div>
+            <h3 class="feature-title">AI Candidate Ranking</h3>
+            <p class="feature-desc">
+              Perusahaan mendapat rekomendasi kandidat terbaik secara otomatis
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <h3 class="feature-title">Fraud Detection</h3>
+            <p class="feature-desc">
+              Sistem keamanan untuk memblokir CV palsu dan data mencurigakan
+            </p>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Jobs Section -->
     <section id="lowongan" class="jobs">
-        <div class="jobs-container">
-            <div class="jobs-header">
-                <div>
-                    <h2>Lowongan Populer</h2>
-                    <p>Temukan lowongan terbaru dari perusahaan top</p>
-                </div>
-                <a href="#" class="btn-lihat">
-                    Lihat Semua
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </a>
-            </div>
-            
-            <div id="perusahaan" class="jobs-grid">
-                <div class="job-card">
-                    <span class="job-badge">100% Match</span>
-                    <h3 class="job-title">Senior Frontend Developer</h3>
-                    <p class="job-company">PT. Teknologi</p>
-                    <div class="job-tags">
-                        <span class="job-tag">Jakarta</span>
-                        <span class="job-tag">Full-time</span>
-                    </div>
-                    <div class="job-footer">
-                        <span class="job-salary">Rp 25-35 Juta</span>
-                        <a href="#" class="job-detail">
-                            Detail
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="job-card">
-                    <span class="job-badge">85% Match</span>
-                    <h3 class="job-title">Product Manager</h3>
-                    <p class="job-company">Shopee</p>
-                    <div class="job-tags">
-                        <span class="job-tag">Jakarta</span>
-                        <span class="job-tag">Full-time</span>
-                    </div>
-                    <div class="job-footer">
-                        <span class="job-salary">Rp 20-45 Juta</span>
-                        <a href="#" class="job-detail">
-                            Detail
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="job-card">
-                    <span class="job-badge">78% Match</span>
-                    <h3 class="job-title">UI/UX Designer</h3>
-                    <p class="job-company">Shopee</p>
-                    <div class="job-tags">
-                        <span class="job-tag">Remote</span>
-                        <span class="job-tag">Remote</span>
-                    </div>
-                    <div class="job-footer">
-                        <span class="job-salary">Rp 18-28 Juta</span>
-                        <a href="#" class="job-detail">
-                            Detail
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
+      <div class="jobs-container">
+        <div class="jobs-header">
+          <div>
+            <h2>Lowongan Populer</h2>
+            <p>Temukan lowongan terbaru dari perusahaan top</p>
+          </div>
+          <a href="login_pelamar.php" class="btn-lihat">
+            Lihat Semua
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
         </div>
+
+        <div id="perusahaan" class="jobs-grid">
+          <div class="job-card">
+            <span class="job-badge">100% Match</span>
+            <h3 class="job-title">Senior Frontend Developer</h3>
+            <p class="job-company">PT. Teknologi</p>
+            <div class="job-tags">
+              <span class="job-tag">Jakarta</span>
+              <span class="job-tag">Full-time</span>
+            </div>
+            <div class="job-footer">
+              <span class="job-salary">Rp 25-35 Juta</span>
+              <a href="login_pelamar.php" class="job-detail">
+                Detail
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="job-card">
+            <span class="job-badge">85% Match</span>
+            <h3 class="job-title">Product Manager</h3>
+            <p class="job-company">Shopee</p>
+            <div class="job-tags">
+              <span class="job-tag">Jakarta</span>
+              <span class="job-tag">Full-time</span>
+            </div>
+            <div class="job-footer">
+              <span class="job-salary">Rp 20-45 Juta</span>
+              <a href="login_pelamar.php" class="job-detail">
+                Detail
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="job-card">
+            <span class="job-badge">78% Match</span>
+            <h3 class="job-title">UI/UX Designer</h3>
+            <p class="job-company">Shopee</p>
+            <div class="job-tags">
+              <span class="job-tag">Remote</span>
+              <span class="job-tag">Remote</span>
+            </div>
+            <div class="job-footer">
+              <span class="job-salary">Rp 18-28 Juta</span>
+              <a href="login_pelamar.php" class="job-detail">
+                Detail
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- CTA Section -->
     <section class="cta">
-        <div class="cta-container">
-            <div class="cta-content">
-                <h2>Mulai Perjalanan Karir Anda Sekarang</h2>
-                <p>Bergabunglah dengan Ribuan profesional yang telah menemukan pekerjaan impian melalui Lokerin.</p>
-                <div class="cta-buttons">
-                    <a href="register_pelamar.php" class="btn-cta btn-cta-primary">
-                        Daftar sebagai Pelamar
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14"></path>
-                            <path d="m12 5 7 7-7 7"></path>
-                        </svg>
-                    </a>
-                    <a href="register_perusahaan.php" class="btn-cta btn-cta-secondary">
-                        Daftar sebagai Perusahaan
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="3" y1="9" x2="21" y2="9"></line>
-                            <line x1="9" y1="21" x2="9" y2="9"></line>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="cta-stats">
-                <div class="cta-stat">
-                    <div class="cta-stat-number">92%</div>
-                    <div class="cta-stat-label">Pelamar menemukan pekerjaan dalam 7 hari</div>
-                </div>
-                <div class="cta-stat">
-                    <div class="cta-stat-number">3x</div>
-                    <div class="cta-stat-label">Lebih cepat dari platform lain</div>
-                </div>
-            </div>
+      <div class="cta-container">
+        <div class="cta-content">
+          <h2>Mulai Perjalanan Karir Anda Sekarang</h2>
+          <p>
+            Bergabunglah dengan Ribuan profesional yang telah menemukan
+            pekerjaan impian melalui Lokerin.
+          </p>
+          <div class="cta-buttons">
+            <a href="register_pelamar.php" class="btn-cta btn-cta-primary">
+              Daftar sebagai Pelamar
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+            <a href="register_perusahaan.php" class="btn-cta btn-cta-secondary">
+              Daftar sebagai Perusahaan
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+            </a>
+          </div>
         </div>
+
+        <div class="cta-stats">
+          <div class="cta-stat">
+            <div class="cta-stat-number">92%</div>
+            <div class="cta-stat-label">
+              Pelamar menemukan pekerjaan dalam 7 hari
+            </div>
+          </div>
+          <div class="cta-stat">
+            <div class="cta-stat-number">3x</div>
+            <div class="cta-stat-label">Lebih cepat dari platform lain</div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div>
-                    <div class="footer-brand">
-                        <img class="logo-img" src ="assets/logo_lokerin.png" alt="logo">
-                        <span class="logo-text">LokerIn</span>
-                    </div>
-                    <p class="footer-desc">Platform karir terdepan di Indonesia dengan teknologi AI matching.</p>
-                </div>
-
-                <div>
-                    <h4 class="footer-title">Untuk Pelamar</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Cari Lowongan</a></li>
-                        <li><a href="#">Perusahaan</a></li>
-                        <li><a href="#">Panduan Karir</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="footer-title">Untuk Perusahaan</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Pricing Lowongan</a></li>
-                        <li><a href="#">Harga</a></li>
-                        <li><a href="#">Enterprise</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="footer-title">Bantuan</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Pusat Bantuan</a></li>
-                        <li><a href="#">Kebijakan Privasi</a></li>
-                        <li><a href="#">Syarat & Ketentuan</a></li>
-                    </ul>
-                </div>
+      <div class="footer-container">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand">
+              <img class="logo-img" src="assets/logo_lokerin.png" alt="logo" />
+              <span class="logo-text">LokerIn</span>
             </div>
+            <p class="footer-desc">
+              Platform karir terdepan di Indonesia dengan teknologi AI matching.
+            </p>
+          </div>
 
-            <div class="footer-bottom">
-                © 2024 LokerIn. All rights reserved.
-            </div>
+          <div>
+            <h4 class="footer-title">Untuk Pelamar</h4>
+            <ul class="footer-links">
+              <li><a href="login_pelamar.php">Cari Lowongan</a></li>
+              <li><a href="login_pelamar.php">Perusahaan</a></li>
+              <li><a href="login_pelamar.php">Panduan Karir</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="footer-title">Untuk Perusahaan</h4>
+            <ul class="footer-links">
+              <li><a href="login_perusahaan.php">Pricing Lowongan</a></li>
+              <li><a href="login_perusahaan.php">Harga</a></li>
+              <li><a href="login_perusahaan.php">Enterprise</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="footer-title">Bantuan</h4>
+            <ul class="footer-links">
+              <li>
+                <a href="https://support.google.com/?hl=id">Pusat Bantuan</a>
+              </li>
+              <li>
+                <a href="https://policies.google.com/privacy?hl=id"
+                  >Kebijakan Privasi</a
+                >
+              </li>
+              <li>
+                <a href="https://policies.google.com/terms?hl=id"
+                  >Syarat & Ketentuan</a
+                >
+              </li>
+            </ul>
+          </div>
         </div>
+
+        <div class="footer-bottom">
+          © <span id="copyright-year"></span> LokerIn. All rights reserved.
+        </div>
+      </div>
     </footer>
 
     <script>
-        // Smooth scroll for navigation
-        document.querySelectorAll('nav a, .btn-lihat').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href && href.startsWith('#')) {
-                    e.preventDefault();
-                    const target = document.querySelector(href);
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                }
-            });
+      // Smooth scroll for navigation
+      document.querySelectorAll("nav a, .btn-lihat").forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          const href = this.getAttribute("href");
+          if (href && href.startsWith("#")) {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }
+          }
         });
+      });
+
+      // ngikutin tahun berjalan di copyright
+      const currentYear = new Date().getFullYear();
+
+      document.getElementById("copyright-year").textContent =
+        currentYear === 2024 ? "2024" : `2024-${currentYear}`;
     </script>
-</body>
+  </body>
 </html>
