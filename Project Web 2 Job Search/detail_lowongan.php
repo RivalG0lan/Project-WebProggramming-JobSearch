@@ -14,6 +14,22 @@ if ($_SESSION['role'] != 'pelamar') {
 }
 
 $id_pelamar = $_SESSION['id_user'];
+
+/* =========================
+   DATA USER UNTUK SIDEBAR
+   ========================= */
+$result = mysqli_query($conn, "
+    SELECT *
+    FROM users
+    WHERE id_user='$id_pelamar'
+");
+
+$user = mysqli_fetch_assoc($result);
+
+$initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
+
+
+// data lowongan
 $id_lowongan = (int) $_GET['id'];
 
 $query = mysqli_query(
@@ -54,8 +70,8 @@ $other = mysqli_query(
      LIMIT 3"
 );
 
-$initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -123,7 +139,7 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
             padding: 12px;
             background: #f9fafb;
             border-radius: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 24px
         }
 
         .user-avatar {
@@ -136,19 +152,39 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
             justify-content: center;
             color: white;
             font-weight: 600;
+            overflow: hidden;
+            flex-shrink: 0;
             font-weight: 700;
             font-size: 14px;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
         }
 
         .user-name {
             font-size: 14px;
             font-weight: 600;
             color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-email {
             font-size: 12px;
             color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .career-score {
@@ -627,10 +663,22 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
                 <span class="logo-text">LokerIn</span>
             </div>
             <div class="user-profile">
-                <div class="user-avatar"><?= strtoupper(substr($_SESSION['nama'] ?? 'U', 0, 2)) ?></div>
-                <div>
-                    <div class="user-name"><?= htmlspecialchars($_SESSION['nama']) ?></div>
-                    <div class="user-email"><?= htmlspecialchars($_SESSION['email']) ?></div>
+                <div class="user-avatar">
+                    <?php if (!empty($user['foto_profil']) && file_exists('uploads/foto_profil/' . $user['foto_profil'])): ?>
+                        <img src="uploads/foto_profil/<?= htmlspecialchars($user['foto_profil']) ?>" alt="foto">
+                    <?php else: ?>
+                        <?= $initials ?>
+                    <?php endif; ?>
+                </div>
+
+                <div class="user-info">
+                    <div class="user-name">
+                        <?= htmlspecialchars($user['nama'] ?? '-') ?>
+                    </div>
+
+                    <div class="user-email">
+                        <?= htmlspecialchars($user['email'] ?? '') ?>
+                    </div>
                 </div>
             </div>
             <div class="career-score">
