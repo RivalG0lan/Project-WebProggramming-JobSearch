@@ -152,7 +152,13 @@ $kelengkapan = round(
             font-weight: 700;
             font-size: 14px;
             overflow: hidden;
-            flex-shrink: 0
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform .2s;
+        }
+
+        .sidebar-avatar:hover {
+            transform: scale(1.05);
         }
 
         .sidebar-avatar img {
@@ -160,6 +166,26 @@ $kelengkapan = round(
             height: 100%;
             object-fit: cover;
             border-radius: 50%
+        }
+
+        .avatar-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .8);
+
+            justify-content: center;
+            align-items: center;
+
+            z-index: 9999;
+        }
+
+        .avatar-modal img {
+            max-width: 90%;
+            max-height: 90%;
+
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, .5);
         }
 
         .user-info {
@@ -993,6 +1019,42 @@ $kelengkapan = round(
                 e.preventDefault();
             });
         });
+    </script>
+
+    <!-- lihat foto profil -->
+    <div id="avatarModal" class="avatar-modal">
+        <img id="avatarModalImg" src="" alt="Foto Profil">
+    </div>
+    <script>
+        const avatar = document.querySelector(".sidebar-avatar img");
+
+        const modal = document.getElementById("avatarModal");
+        const modalImg = document.getElementById("avatarModalImg");
+
+        if (avatar) {
+
+            avatar.addEventListener("click", () => {
+
+                modal.style.display = "flex";
+                modalImg.src = avatar.src;
+
+            });
+
+            modal.addEventListener("click", () => {
+
+                modal.style.display = "none";
+
+            });
+
+            document.addEventListener("keydown", (e) => {
+
+                if (e.key === "Escape") {
+                    modal.style.display = "none";
+                }
+
+            });
+
+        }
     </script>
 </body>
 

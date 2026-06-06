@@ -227,7 +227,13 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
       font-weight: 700;
       font-size: 14px;
       overflow: hidden;
-      flex-shrink: 0
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform .2s;
+    }
+
+    .sidebar-avatar:hover {
+      transform: scale(1.05);
     }
 
     .sidebar-avatar img {
@@ -235,6 +241,26 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
       height: 100%;
       object-fit: cover;
       border-radius: 50%
+    }
+
+    .avatar-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .8);
+
+      justify-content: center;
+      align-items: center;
+
+      z-index: 9999;
+    }
+
+    .avatar-modal img {
+      max-width: 90%;
+      max-height: 90%;
+
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, .5);
     }
 
     .user-info {
@@ -424,7 +450,13 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
       margin: 0 auto 16px;
       overflow: hidden;
       position: relative;
-      border: 4px solid #e0f2f1
+      border: 4px solid #e0f2f1;
+      cursor: pointer;
+      transition: transform .2s;
+    }
+
+    .big-avatar:hover {
+      transform: scale(1.05);
     }
 
     .big-avatar img {
@@ -1198,6 +1230,44 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
     }
     document.getElementById('skills_input').addEventListener('input', updateSkillTags);
     updateSkillTags(); // run on load
+  </script>
+
+  <!-- lihat foto profil -->
+  <div id="avatarModal" class="avatar-modal">
+    <img id="avatarModalImg" src="" alt="Foto Profil">
+  </div>
+  <script>
+    const avatars = document.querySelectorAll(
+      ".sidebar-avatar img, .big-avatar img"
+    );
+
+    const modal = document.getElementById("avatarModal");
+    const modalImg = document.getElementById("avatarModalImg");
+
+    avatars.forEach(avatar => {
+
+      avatar.addEventListener("click", () => {
+
+        modal.style.display = "flex";
+        modalImg.src = avatar.src;
+
+      });
+
+    });
+
+    modal.addEventListener("click", () => {
+
+      modal.style.display = "none";
+
+    });
+
+    document.addEventListener("keydown", (e) => {
+
+      if (e.key === "Escape") {
+        modal.style.display = "none";
+      }
+
+    });
   </script>
 </body>
 

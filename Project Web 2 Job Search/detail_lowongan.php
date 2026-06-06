@@ -186,6 +186,12 @@ $kelengkapan = round(
             flex-shrink: 0;
             font-weight: 700;
             font-size: 14px;
+            cursor: pointer;
+            transition: transform .2s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
         }
 
         .user-avatar img {
@@ -215,6 +221,26 @@ $kelengkapan = round(
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        .avatar-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .8);
+
+            justify-content: center;
+            align-items: center;
+
+            z-index: 9999;
+        }
+
+        .avatar-modal img {
+            max-width: 90%;
+            max-height: 90%;
+
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, .5);
         }
 
         .career-score {
@@ -1029,6 +1055,42 @@ $kelengkapan = round(
             </div>
         </main>
     </div>
+
+    <!-- lihat foto profil -->
+    <div id="avatarModal" class="avatar-modal">
+        <img id="avatarModalImg" src="" alt="Foto Profil">
+    </div>
+    <script>
+        const avatar = document.querySelector(".user-avatar img");
+
+        const modal = document.getElementById("avatarModal");
+        const modalImg = document.getElementById("avatarModalImg");
+
+        if (avatar) {
+
+            avatar.addEventListener("click", () => {
+
+                modal.style.display = "flex";
+                modalImg.src = avatar.src;
+
+            });
+
+            modal.addEventListener("click", () => {
+
+                modal.style.display = "none";
+
+            });
+
+            document.addEventListener("keydown", (e) => {
+
+                if (e.key === "Escape") {
+                    modal.style.display = "none";
+                }
+
+            });
+
+        }
+    </script>
 </body>
 
 </html>
