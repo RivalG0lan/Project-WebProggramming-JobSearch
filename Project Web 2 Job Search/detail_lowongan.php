@@ -70,6 +70,36 @@ $other = mysqli_query(
      LIMIT 3"
 );
 
+/* =========================
+   HITUNG KELENGKAPAN PROFIL
+   ========================= */
+
+$fields_cek = [
+    'nama',
+    'telepon',
+    'lokasi',
+    'bio',
+    'pendidikan',
+    'pengalaman',
+    'skills',
+    'foto_profil',
+    'cv_path'
+];
+
+$isi = 0;
+
+foreach ($fields_cek as $field) {
+    if (!empty($user[$field])) {
+        $isi++;
+    }
+}
+
+$kelengkapan = round(
+    ($isi / count($fields_cek)) * 100
+);
+
+//
+
 ?>
 
 <!DOCTYPE html>
@@ -682,8 +712,10 @@ $other = mysqli_query(
                 </div>
             </div>
             <div class="career-score">
-                <span class="career-score-label">Career Score</span>
-                <span class="career-score-value">30%</span>
+                <span class="career-score-label">Kelengkapan Profil</span>
+                <span class="career-score-value">
+                    <?= $kelengkapan ?>%
+                </span>
             </div>
             <nav>
                 <a href="dashboard_pelamar.php" class="nav-item">

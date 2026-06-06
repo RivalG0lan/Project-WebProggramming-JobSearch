@@ -65,6 +65,35 @@ $result = mysqli_query($conn, "
 $user = mysqli_fetch_assoc($result);
 
 $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
+/* =========================
+   HITUNG KELENGKAPAN PROFIL
+   ========================= */
+
+$fields_cek = [
+  'nama',
+  'telepon',
+  'lokasi',
+  'bio',
+  'pendidikan',
+  'pengalaman',
+  'skills',
+  'foto_profil',
+  'cv_path'
+];
+
+$isi = 0;
+
+foreach ($fields_cek as $field) {
+  if (!empty($user[$field])) {
+    $isi++;
+  }
+}
+
+$kelengkapan = round(
+  ($isi / count($fields_cek)) * 100
+);
+
+//
 ?>
 
 <!doctype html>
@@ -636,8 +665,10 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
       </div>
 
       <div class="career-score">
-        <span class="career-score-label">Career Score</span>
-        <span class="career-score-value">30%</span>
+        <span class="career-score-label">Kelengkapan Profil</span>
+        <span class="career-score-value">
+          <?= $kelengkapan ?>%
+        </span>
       </div>
 
       <nav>
