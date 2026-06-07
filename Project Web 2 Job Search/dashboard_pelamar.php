@@ -37,7 +37,7 @@ $fields_cek = [
     'pengalaman',
     'skills',
     'foto_profil',
-    'cv_path'
+    'cv_path',
 ];
 
 $isi = 0;
@@ -57,7 +57,7 @@ $total_lamaran = mysqli_num_rows(mysqli_query(
 
     "SELECT * FROM lamaran
 
-WHERE id_pelamar='$id_pelamar'"
+WHERE id_pelamar='$id_pelamar'",
 ));
 
 $total_review = mysqli_num_rows(mysqli_query(
@@ -67,7 +67,7 @@ $total_review = mysqli_num_rows(mysqli_query(
 
 WHERE id_pelamar='$id_pelamar'
 
-AND status='review'"
+AND status='review'",
 ));
 
 $total_interview = mysqli_num_rows(mysqli_query(
@@ -77,7 +77,7 @@ $total_interview = mysqli_num_rows(mysqli_query(
 
 WHERE id_pelamar='$id_pelamar'
 
-AND status='interview'"
+AND status='interview'",
 ));
 
 $total_lowongan = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM lowongan WHERE status='aktif'"));
@@ -134,13 +134,13 @@ $rekomendasi_query = mysqli_query($conn, "
 ");
 
 $skill_dictionary = [
-    'Frontend Developer'  => ['HTML', 'CSS', 'JavaScript', 'React', 'TypeScript', 'Tailwind', 'Git'],
-    'Backend Developer'   => ['PHP', 'MySQL', 'Node.js', 'Python', 'REST API', 'Git', 'Docker'],
+    'Frontend Developer' => ['HTML', 'CSS', 'JavaScript', 'React', 'TypeScript', 'Tailwind', 'Git'],
+    'Backend Developer' => ['PHP', 'MySQL', 'Node.js', 'Python', 'REST API', 'Git', 'Docker'],
     'Fullstack Developer' => ['HTML', 'CSS', 'JavaScript', 'PHP', 'MySQL', 'React', 'Node.js'],
-    'UI/UX Designer'      => ['Figma', 'Adobe XD', 'Wireframing', 'Prototyping', 'UI Design', 'UX Research', 'CSS'],
-    'Network Engineer'    => ['Cisco', 'Networking', 'Linux', 'TCP/IP', 'Firewall', 'Routing', 'Security'],
-    'Data Scientist'      => ['Python', 'SQL', 'Machine Learning', 'Data Analysis', 'R', 'Pandas', 'Statistics'],
-    'Mobile Developer'    => ['Flutter', 'React Native', 'Swift', 'Kotlin', 'Android', 'iOS', 'Java']
+    'UI/UX Designer' => ['Figma', 'Adobe XD', 'Wireframing', 'Prototyping', 'UI Design', 'UX Research', 'CSS'],
+    'Network Engineer' => ['Cisco', 'Networking', 'Linux', 'TCP/IP', 'Firewall', 'Routing', 'Security'],
+    'Data Scientist' => ['Python', 'SQL', 'Machine Learning', 'Data Analysis', 'R', 'Pandas', 'Statistics'],
+    'Mobile Developer' => ['Flutter', 'React Native', 'Swift', 'Kotlin', 'Android', 'iOS', 'Java'],
 ];
 
 $target_skills = $skill_dictionary[$bidang_keahlian] ?? ['Communication', 'Teamwork', 'Problem Solving'];
@@ -1016,20 +1016,32 @@ $top_missing_skills = array_slice($missing_skills, 0, 3);
             <div class="welcome-card">
                 <div class="welcome-card-content">
                     <h2>
-
                         Selamat Datang,
-                        <?= $_SESSION['nama']; ?> 👋
-
+                        <?= htmlspecialchars($_SESSION['nama']); ?> 👋
                     </h2>
-                    <p>Profil Anda 30% lengkap - Tingkatkan untuk peluang lebih besar!</p>
-                    <button class="btn-complete" onclick="window.location.href='profil_pelamar.php'">
-                        Lengkapi Profil
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M5 12h14"></path>
-                            <path d="m12 5 7 7-7 7"></path>
-                        </svg>
-                    </button>
+
+                    <?php if ($kelengkapan < 100): ?>
+
+                        <p>
+                            Profil Anda <?= $kelengkapan ?>% lengkap -
+                            Tingkatkan untuk peluang lebih besar!
+                        </p>
+
+                        <button class="btn-complete" onclick="window.location.href='profil_pelamar.php'">
+                            Lengkapi Profil<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </button>
+
+                    <?php else: ?>
+
+                        <p class="profil-lengkap">
+                            🎉 Profil Anda sudah 100% lengkap!
+                        </p>
+
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -1116,29 +1128,33 @@ $top_missing_skills = array_slice($missing_skills, 0, 3);
 
                 <div class="job-list">
                     <?php if (mysqli_num_rows($lamaran_terbaru_query) > 0): ?>
-                        <?php while ($lamaran = mysqli_fetch_assoc($lamaran_terbaru_query)): 
+                        <?php while ($lamaran = mysqli_fetch_assoc($lamaran_terbaru_query)):
                             $status_class = '';
-                            if ($lamaran['status'] == 'terkirim') $status_class = 'match'; // Hijau
-                            elseif ($lamaran['status'] == 'review' || $lamaran['status'] == 'interview') $status_class = 'sedang'; // Biru
-                            elseif ($lamaran['status'] == 'ditolak') $status_class = 'ditolak'; // Merah
-                        ?>
-                        <div class="job-card">
-                            <div class="job-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
+                            if ($lamaran['status'] == 'terkirim')
+                                $status_class = 'match'; // Hijau
+                            elseif ($lamaran['status'] == 'review' || $lamaran['status'] == 'interview')
+                                $status_class = 'sedang'; // Biru
+                            elseif ($lamaran['status'] == 'ditolak')
+                                $status_class = 'ditolak'; // Merah
+                            ?>
+                            <div class="job-card">
+                                <div class="job-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                    </svg>
+                                </div>
+                                <div class="job-info">
+                                    <div class="job-title"><?= htmlspecialchars($lamaran['judul']) ?></div>
+                                    <div class="job-company"><?= htmlspecialchars($lamaran['perusahaan']) ?></div>
+                                </div>
+                                <div class="job-meta">
+                                    <span
+                                        class="job-badge <?= $status_class ?>"><?= ucfirst(htmlspecialchars($lamaran['status'])) ?></span>
+                                    <span class="job-time"><?= date('d M Y', strtotime($lamaran['tanggal_lamaran'])) ?></span>
+                                </div>
                             </div>
-                            <div class="job-info">
-                                <div class="job-title"><?= htmlspecialchars($lamaran['judul']) ?></div>
-                                <div class="job-company"><?= htmlspecialchars($lamaran['perusahaan']) ?></div>
-                            </div>
-                            <div class="job-meta">
-                                <span class="job-badge <?= $status_class ?>"><?= ucfirst(htmlspecialchars($lamaran['status'])) ?></span>
-                                <span class="job-time"><?= date('d M Y', strtotime($lamaran['tanggal_lamaran'])) ?></span>
-                            </div>
-                        </div>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <div style="padding: 24px; text-align: center; color: #6b7280; font-size: 14px;">
@@ -1153,7 +1169,9 @@ $top_missing_skills = array_slice($missing_skills, 0, 3);
                 <!-- Rekomendasi untuk Anda -->
                 <div class="section">
                     <div class="section-header">
-                        <h2 class="section-title">Rekomendasi untuk Anda <?= !empty($bidang_keahlian) ? "(".htmlspecialchars($bidang_keahlian).")" : "" ?></h2>
+                        <h2 class="section-title">Rekomendasi untuk Anda
+                            <?= !empty($bidang_keahlian) ? "(" . htmlspecialchars($bidang_keahlian) . ")" : "" ?>
+                        </h2>
                         <a href="cari_lowongan.php?rekomendasi=1" class="btn-link">
                             Lihat Semua
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1166,29 +1184,32 @@ $top_missing_skills = array_slice($missing_skills, 0, 3);
                     <div class="recommendation-grid">
                         <?php if (mysqli_num_rows($rekomendasi_query) > 0): ?>
                             <?php while ($rek = mysqli_fetch_assoc($rekomendasi_query)): ?>
-                            <div class="recommendation-card" onclick="window.location.href='detail_lowongan.php?id=<?= $rek['id_lowongan'] ?>'">
-                                <span class="rec-badge">Sesuai Profil</span>
-                                <div class="rec-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2">
-                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                    </svg>
+                                <div class="recommendation-card"
+                                    onclick="window.location.href='detail_lowongan.php?id=<?= $rek['id_lowongan'] ?>'">
+                                    <span class="rec-badge">Sesuai Profil</span>
+                                    <div class="rec-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="rec-title"><?= htmlspecialchars($rek['judul']) ?></div>
+                                    <div class="rec-company"><?= htmlspecialchars($rek['perusahaan']) ?></div>
+                                    <div class="rec-location">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        <?= htmlspecialchars($rek['lokasi']) ?>
+                                    </div>
+                                    <div class="rec-salary">Rp <?= number_format($rek['gaji'], 0, ',', '.') ?></div>
                                 </div>
-                                <div class="rec-title"><?= htmlspecialchars($rek['judul']) ?></div>
-                                <div class="rec-company"><?= htmlspecialchars($rek['perusahaan']) ?></div>
-                                <div class="rec-location">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                        <circle cx="12" cy="10" r="3"></circle>
-                                    </svg>
-                                    <?= htmlspecialchars($rek['lokasi']) ?>
-                                </div>
-                                <div class="rec-salary">Rp <?= number_format($rek['gaji'], 0, ',', '.') ?></div>
-                            </div>
                             <?php endwhile; ?>
                         <?php else: ?>
-                            <div style="grid-column: span 3; text-align: center; color: #6b7280; font-size: 14px; padding: 24px;">
+                            <div
+                                style="grid-column: span 3; text-align: center; color: #6b7280; font-size: 14px; padding: 24px;">
                                 Belum ada rekomendasi yang sesuai dengan profil Anda saat ini.
                             </div>
                         <?php endif; ?>
@@ -1202,7 +1223,9 @@ $top_missing_skills = array_slice($missing_skills, 0, 3);
                         </svg>
                         <h3 class="skills-title">Skill yang Perlu Ditingkatkan</h3>
                     </div>
-                    <p class="skills-subtitle">Tingkatkan skill ini untuk profesi <?= htmlspecialchars($bidang_keahlian) ?></p>
+                    <p class="skills-subtitle">Tingkatkan skill ini untuk profesi
+                        <?= htmlspecialchars($bidang_keahlian) ?>
+                    </p>
 
                     <?php if (!empty($top_missing_skills)): ?>
                         <?php foreach ($top_missing_skills as $skill): ?>
@@ -1217,7 +1240,8 @@ $top_missing_skills = array_slice($missing_skills, 0, 3);
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <div style="padding: 16px; text-align: center; color: #059669; font-weight: 500; font-size: 14px; background: #dcfce7; border-radius: 8px;">
+                        <div
+                            style="padding: 16px; text-align: center; color: #059669; font-weight: 500; font-size: 14px; background: #dcfce7; border-radius: 8px;">
                             🎉 Luar Biasa! Anda sudah menguasai semua skill dasar untuk bidang ini.
                         </div>
                     <?php endif; ?>
