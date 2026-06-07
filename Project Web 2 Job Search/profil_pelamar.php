@@ -138,31 +138,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // ── Simpan data profil teks ────────────────────────────────────────────
   if (isset($_POST['simpan_profil'])) {
-    $nama = mysqli_real_escape_string($conn, trim($_POST['nama']));
-    $telepon = mysqli_real_escape_string($conn, trim($_POST['telepon']));
-    $lokasi = mysqli_real_escape_string($conn, trim($_POST['lokasi']));
-    $bio = mysqli_real_escape_string($conn, trim($_POST['bio']));
-    $pendidikan = mysqli_real_escape_string($conn, trim($_POST['pendidikan']));
-    $pengalaman = mysqli_real_escape_string($conn, trim($_POST['pengalaman']));
-    $skills = mysqli_real_escape_string($conn, trim($_POST['skills']));
-    $linkedin = mysqli_real_escape_string($conn, trim($_POST['linkedin']));
-    $portfolio = mysqli_real_escape_string($conn, trim($_POST['portfolio']));
-    $tgl_lahir = mysqli_real_escape_string($conn, trim($_POST['tanggal_lahir']));
+    $nama = trim($_POST['nama']);
+    $telepon = trim($_POST['telepon']);
+    $lokasi = trim($_POST['lokasi']);
+    $bio = trim($_POST['bio']);
+    $pendidikan = trim($_POST['pendidikan']);
+    $pengalaman = trim($_POST['pengalaman']);
+    $skills = trim($_POST['skills']);
+    $bidang_keahlian = trim($_POST['bidang_keahlian'] ?? '');
+    $linkedin = trim($_POST['linkedin']);
+    $portfolio = trim($_POST['portfolio']);
+    $tgl_lahir = trim($_POST['tanggal_lahir']);
 
-    $q = mysqli_query($conn, "
+    $stmt = $conn->prepare("
       UPDATE users SET
-        nama          = '$nama',
-        telepon       = '$telepon',
-        lokasi        = '$lokasi',
-        bio           = '$bio',
-        pendidikan    = '$pendidikan',
-        pengalaman    = '$pengalaman',
-        skills        = '$skills',
-        linkedin      = '$linkedin',
-        portfolio     = '$portfolio',
-        tanggal_lahir = " . ($tgl_lahir ? "'$tgl_lahir'" : "NULL") . "
-      WHERE id_user = '$id_user'
+        nama            = ?,
+        telepon         = ?,
+        lokasi          = ?,
+        bio             = ?,
+        pendidikan      = ?,
+        pengalaman      = ?,
+        skills          = ?,
+        bidang_keahlian = ?,
+        linkedin        = ?,
+        portfolio       = ?,
+        tanggal_lahir   = ?
+      WHERE id_user = ?
     ");
+    $tgl = $tgl_lahir ?: null;
+    $stmt->bind_param("sssssssssss" . "i", $nama, $telepon, $lokasi, $bio, $pendidikan, $pengalaman, $skills, $bidang_keahlian, $linkedin, $portfolio, $tgl, $id_user);
+    $q = $stmt->execute();
+    $stmt->close();
 
     if ($q) {
       $_SESSION['nama'] = $nama;
@@ -1254,15 +1260,29 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
                     <polygon
                       points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                   </svg>
-                  Skills
+                  Skills & Bidang Keahlian
                 </div>
-                <div class="form-group">
-                  <label>Skills (pisahkan dengan koma)</label>
-                  <input type="text" name="skills" id="skills_input"
-                    value="<?= htmlspecialchars($user['skills'] ?? '') ?>"
-                    placeholder="Contoh: PHP, MySQL, HTML, CSS, JavaScript">
-                  <span class="input-hint">Tulis skill Anda, pisahkan dengan tanda koma</span>
-                  <div class="skills-tags-preview" id="skills_preview"></div>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Bidang Keahlian / Posisi Diminati</label>
+                    <select name="bidang_keahlian" style="width:100%;padding:10px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;color:#111827;background:white;outline:none;cursor:pointer;">
+                      <option value="" <?= empty($user['bidang_keahlian']) ? 'selected' : '' ?>>-- Pilih Bidang --</option>
+                      <?php
+                      $bidang_list = ['Frontend Developer','Backend Developer','Fullstack Developer','UI/UX Designer','Network Engineer','Data Scientist','Mobile Developer'];
+                      foreach ($bidang_list as $b):
+                      ?>
+                        <option value="<?= $b ?>" <?= ($user['bidang_keahlian'] ?? '') === $b ? 'selected' : '' ?>><?= $b ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <div class="form-group full">
+                    <label>Skills (pisahkan dengan koma)</label>
+                    <input type="text" name="skills" id="skills_input"
+                      value="<?= htmlspecialchars($user['skills'] ?? '') ?>"
+                      placeholder="Contoh: PHP, MySQL, HTML, CSS, JavaScript">
+                    <span class="input-hint">Tulis skill Anda, pisahkan dengan tanda koma</span>
+                    <div class="skills-tags-preview" id="skills_preview"></div>
+                  </div>
                 </div>
               </div>
 

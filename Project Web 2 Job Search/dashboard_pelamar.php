@@ -17,7 +17,7 @@ if ($_SESSION['role'] != 'pelamar') {
 include 'config/koneksi.php';
 
 $id_pelamar = $_SESSION['id_user'];
-// Ambil data user
+
 $result = mysqli_query($conn, "
     SELECT *
     FROM users
@@ -26,12 +26,7 @@ $result = mysqli_query($conn, "
 
 $user = mysqli_fetch_assoc($result);
 
-// Inisial avatar
 $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
-
-/* =========================
-   HITUNG KELENGKAPAN PROFIL
-   ========================= */
 
 $fields_cek = [
     'nama',
@@ -56,8 +51,6 @@ foreach ($fields_cek as $field) {
 $kelengkapan = round(
     ($isi / count($fields_cek)) * 100
 );
-
-//
 
 $total_lamaran = mysqli_num_rows(mysqli_query(
     $conn,
@@ -87,13 +80,79 @@ WHERE id_pelamar='$id_pelamar'
 AND status='interview'"
 ));
 
-$total_lowongan = mysqli_num_rows(mysqli_query(
-    $conn,
+$total_lowongan = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM lowongan WHERE status='aktif'"));
 
-    "SELECT * FROM lowongan
+$lamaran_terbaru_query = mysqli_query($conn, "
+    SELECT l.*, low.judul, u.nama AS perusahaan, low.kategori
+    FROM lamaran l
+    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
+    JOIN users u ON low.id_perusahaan = u.id_user
+    WHERE l.id_pelamar = '$id_pelamar'
+    ORDER BY l.tanggal_lamaran DESC
+    LIMIT 3
+");
 
-WHERE status='aktif'"
-));
+$bidang_keahlian = $user['bidang_keahlian'] ?? '';
+$user_skills_raw = $user['skills'] ?? '';
+
+$where_rekomendasi = "WHERE low.status='aktif'";
+$conditions = [];
+
+// Match Bidang Keahlian
+if (!empty($bidang_keahlian)) {
+    $bidang_esc = mysqli_real_escape_string($conn, $bidang_keahlian);
+    $conditions[] = "(low.judul LIKE '%$bidang_esc%' OR low.kategori LIKE '%$bidang_esc%')";
+}
+
+// Match Skills
+if (!empty($user_skills_raw)) {
+    $skills_arr = array_filter(array_map('trim', explode(',', $user_skills_raw)));
+    $skill_conditions = [];
+    foreach ($skills_arr as $skill) {
+        if (!empty($skill)) {
+            $skill_esc = mysqli_real_escape_string($conn, $skill);
+            $skill_conditions[] = "low.skills_required LIKE '%$skill_esc%'";
+        }
+    }
+    if (count($skill_conditions) > 0) {
+        $conditions[] = "(" . implode(' OR ', $skill_conditions) . ")";
+    }
+}
+
+// Combine conditions with OR (so either role matches OR skills match)
+if (count($conditions) > 0) {
+    $where_rekomendasi .= " AND (" . implode(' OR ', $conditions) . ")";
+}
+
+$rekomendasi_query = mysqli_query($conn, "
+    SELECT low.*, u.nama AS perusahaan
+    FROM lowongan low
+    JOIN users u ON low.id_perusahaan = u.id_user
+    $where_rekomendasi
+    ORDER BY low.id_lowongan DESC
+    LIMIT 3
+");
+
+$skill_dictionary = [
+    'Frontend Developer'  => ['HTML', 'CSS', 'JavaScript', 'React', 'TypeScript', 'Tailwind', 'Git'],
+    'Backend Developer'   => ['PHP', 'MySQL', 'Node.js', 'Python', 'REST API', 'Git', 'Docker'],
+    'Fullstack Developer' => ['HTML', 'CSS', 'JavaScript', 'PHP', 'MySQL', 'React', 'Node.js'],
+    'UI/UX Designer'      => ['Figma', 'Adobe XD', 'Wireframing', 'Prototyping', 'UI Design', 'UX Research', 'CSS'],
+    'Network Engineer'    => ['Cisco', 'Networking', 'Linux', 'TCP/IP', 'Firewall', 'Routing', 'Security'],
+    'Data Scientist'      => ['Python', 'SQL', 'Machine Learning', 'Data Analysis', 'R', 'Pandas', 'Statistics'],
+    'Mobile Developer'    => ['Flutter', 'React Native', 'Swift', 'Kotlin', 'Android', 'iOS', 'Java']
+];
+
+$target_skills = $skill_dictionary[$bidang_keahlian] ?? ['Communication', 'Teamwork', 'Problem Solving'];
+$user_skills_arr = array_filter(array_map('trim', array_map('strtolower', explode(',', $user['skills'] ?? ''))));
+
+$missing_skills = [];
+foreach ($target_skills as $req) {
+    if (!in_array(strtolower($req), $user_skills_arr)) {
+        $missing_skills[] = $req;
+    }
+}
+$top_missing_skills = array_slice($missing_skills, 0, 3);
 
 ?>
 
@@ -688,9 +747,10 @@ WHERE status='aktif'"
 
         /* Skills Section */
         .skills-card {
-            background: #f9fafb;
+            background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
         }
 
         .skills-header {
@@ -1055,59 +1115,36 @@ WHERE status='aktif'"
                 </div>
 
                 <div class="job-list">
-                    <div class="job-card">
-                        <div class="job-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                            </svg>
+                    <?php if (mysqli_num_rows($lamaran_terbaru_query) > 0): ?>
+                        <?php while ($lamaran = mysqli_fetch_assoc($lamaran_terbaru_query)): 
+                            $status_class = '';
+                            if ($lamaran['status'] == 'terkirim') $status_class = 'match'; // Hijau
+                            elseif ($lamaran['status'] == 'review' || $lamaran['status'] == 'interview') $status_class = 'sedang'; // Biru
+                            elseif ($lamaran['status'] == 'ditolak') $status_class = 'ditolak'; // Merah
+                        ?>
+                        <div class="job-card">
+                            <div class="job-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                </svg>
+                            </div>
+                            <div class="job-info">
+                                <div class="job-title"><?= htmlspecialchars($lamaran['judul']) ?></div>
+                                <div class="job-company"><?= htmlspecialchars($lamaran['perusahaan']) ?></div>
+                            </div>
+                            <div class="job-meta">
+                                <span class="job-badge <?= $status_class ?>"><?= ucfirst(htmlspecialchars($lamaran['status'])) ?></span>
+                                <span class="job-time"><?= date('d M Y', strtotime($lamaran['tanggal_lamaran'])) ?></span>
+                            </div>
                         </div>
-                        <div class="job-info">
-                            <div class="job-title">Frontend Developer</div>
-                            <div class="job-company">Tokopedia</div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <div style="padding: 24px; text-align: center; color: #6b7280; font-size: 14px;">
+                            Belum ada lamaran pekerjaan.
                         </div>
-                        <div class="job-meta">
-                            <span class="job-badge match">Sedang Direview</span>
-                            <span class="job-time">2 hari lalu</span>
-                        </div>
-                    </div>
-
-                    <div class="job-card">
-                        <div class="job-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                            </svg>
-                        </div>
-                        <div class="job-info">
-                            <div class="job-title">UI/UX Designer</div>
-                            <div class="job-company">Gojek</div>
-                        </div>
-                        <div class="job-meta">
-                            <span class="job-badge sedang">Interview</span>
-                            <span class="job-time">5 hari lalu</span>
-                        </div>
-                    </div>
-
-                    <div class="job-card">
-                        <div class="job-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                            </svg>
-                        </div>
-                        <div class="job-info">
-                            <div class="job-title">Product Manager</div>
-                            <div class="job-company">Shopee</div>
-                        </div>
-                        <div class="job-meta">
-                            <span class="job-badge ditolak">Ditolak</span>
-                            <span class="job-time">1 minggu lalu</span>
-                        </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -1116,8 +1153,8 @@ WHERE status='aktif'"
                 <!-- Rekomendasi untuk Anda -->
                 <div class="section">
                     <div class="section-header">
-                        <h2 class="section-title">Rekomendasi untuk Anda</h2>
-                        <a href="cari_lowongan.php" class="btn-link">
+                        <h2 class="section-title">Rekomendasi untuk Anda <?= !empty($bidang_keahlian) ? "(".htmlspecialchars($bidang_keahlian).")" : "" ?></h2>
+                        <a href="cari_lowongan.php?rekomendasi=1" class="btn-link">
                             Lihat Semua
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
@@ -1127,113 +1164,63 @@ WHERE status='aktif'"
                     </div>
 
                     <div class="recommendation-grid">
-                        <div class="recommendation-card">
-                            <span class="rec-badge">95% Match</span>
-                            <div class="rec-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
+                        <?php if (mysqli_num_rows($rekomendasi_query) > 0): ?>
+                            <?php while ($rek = mysqli_fetch_assoc($rekomendasi_query)): ?>
+                            <div class="recommendation-card" onclick="window.location.href='detail_lowongan.php?id=<?= $rek['id_lowongan'] ?>'">
+                                <span class="rec-badge">Sesuai Profil</span>
+                                <div class="rec-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                    </svg>
+                                </div>
+                                <div class="rec-title"><?= htmlspecialchars($rek['judul']) ?></div>
+                                <div class="rec-company"><?= htmlspecialchars($rek['perusahaan']) ?></div>
+                                <div class="rec-location">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    <?= htmlspecialchars($rek['lokasi']) ?>
+                                </div>
+                                <div class="rec-salary">Rp <?= number_format($rek['gaji'], 0, ',', '.') ?></div>
                             </div>
-                            <div class="rec-title">Senior React Developer</div>
-                            <div class="rec-company">Bukalapak</div>
-                            <div class="rec-location">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                Jakarta
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <div style="grid-column: span 3; text-align: center; color: #6b7280; font-size: 14px; padding: 24px;">
+                                Belum ada rekomendasi yang sesuai dengan profil Anda saat ini.
                             </div>
-                            <div class="rec-salary">Rp 25-35 Juta</div>
-                        </div>
-
-                        <div class="recommendation-card">
-                            <span class="rec-badge">89% Match</span>
-                            <div class="rec-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
-                            </div>
-                            <div class="rec-title">Full Stack Engineer</div>
-                            <div class="rec-company">Traveloka</div>
-                            <div class="rec-location">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                Remote
-                            </div>
-                            <div class="rec-salary">Rp 30-40 Juta</div>
-                        </div>
-
-                        <div class="recommendation-card">
-                            <span class="rec-badge">82% Match</span>
-                            <div class="rec-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
-                            </div>
-                            <div class="rec-title">Frontend Lead</div>
-                            <div class="rec-company">Goto</div>
-                            <div class="rec-location">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                Jakarta
-                            </div>
-                            <div class="rec-salary">Rp 35-50 Juta</div>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
-
                 <!-- Skill yang Dibutuhkan -->
                 <div class="skills-card">
                     <div class="skills-header">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2">
                             <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                         </svg>
-                        <h3 class="skills-title">Skill yang Dibutuhkan</h3>
+                        <h3 class="skills-title">Skill yang Perlu Ditingkatkan</h3>
                     </div>
-                    <p class="skills-subtitle">Pelajari ini untuk meningkatkan peluang Anda</p>
+                    <p class="skills-subtitle">Tingkatkan skill ini untuk profesi <?= htmlspecialchars($bidang_keahlian) ?></p>
 
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <span class="skill-name">TypeScript</span>
-                            <span class="skill-percentage">92%</span>
+                    <?php if (!empty($top_missing_skills)): ?>
+                        <?php foreach ($top_missing_skills as $skill): ?>
+                            <div class="skill-item">
+                                <div class="skill-header">
+                                    <span class="skill-name"><?= htmlspecialchars($skill) ?></span>
+                                    <span class="skill-percentage">0% (Belum Dimiliki)</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div style="padding: 16px; text-align: center; color: #059669; font-weight: 500; font-size: 14px; background: #dcfce7; border-radius: 8px;">
+                            🎉 Luar Biasa! Anda sudah menguasai semua skill dasar untuk bidang ini.
                         </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" style="width: 92%"></div>
-                        </div>
-                    </div>
-
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <span class="skill-name">Next.js</span>
-                            <span class="skill-percentage">85%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" style="width: 85%"></div>
-                        </div>
-                    </div>
-
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <span class="skill-name">GraphQL</span>
-                            <span class="skill-percentage">78%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" style="width: 78%"></div>
-                        </div>
-                    </div>
+                    <?php endif; ?>
 
                     <button class="btn-analyze" onclick="window.location.href='skill_gap_analyzer.php'">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1244,7 +1231,7 @@ WHERE status='aktif'"
                             <path d="M1 12h6m6 0h6"></path>
                             <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path>
                         </svg>
-                        Analisa Skill Gap
+                        Analisa Skill Gap Anda
                     </button>
                 </div>
             </div>

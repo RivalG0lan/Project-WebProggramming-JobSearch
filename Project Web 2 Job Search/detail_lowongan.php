@@ -938,14 +938,19 @@ $kelengkapan = round(
                         <div class="section-label">Deskripsi Pekerjaan</div>
                         <div class="desc-text"><?= htmlspecialchars($data['deskripsi']) ?></div>
 
-                        <!-- Tags dummy (bisa dikembangkan) -->
+                        <!-- Tags Skills (Dari Database) -->
                         <div class="section-label">Skills yang Dibutuhkan</div>
                         <div class="tag-row">
-                            <span class="tag teal">PHP</span>
-                            <span class="tag teal">MySQL</span>
-                            <span class="tag">Komunikasi</span>
-                            <span class="tag">Team Work</span>
-                            <span class="tag">Problem Solving</span>
+                            <?php 
+                            if (!empty($data['skills_required'])) {
+                                $skills_req_arr = array_filter(array_map('trim', explode(',', $data['skills_required'])));
+                                foreach ($skills_req_arr as $skill_req) {
+                                    echo '<span class="tag teal">' . htmlspecialchars($skill_req) . '</span>';
+                                }
+                            } else {
+                                echo '<span class="tag" style="background:transparent; color:#9ca3af; padding-left:0;">Belum ada spesifikasi skill</span>';
+                            }
+                            ?>
                         </div>
                     </div>
 

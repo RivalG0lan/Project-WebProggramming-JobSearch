@@ -2,39 +2,42 @@
 
 include 'config/koneksi.php';
 
-if (isset($_POST['register'])) {
+    $pesan_error = '';
+    $pesan_sukses = '';
 
-    $nama = $_POST['nama'];
+    if (isset($_POST['register'])) {
 
-    $email = $_POST['email'];
+        $nama = trim($_POST['nama']);
+        $email = trim($_POST['email']);
+        $password_input = $_POST['password'];
+        $konfirmasi = $_POST['confirm_password'];
 
-    $password =
-        md5($_POST['password']);
+        if ($password_input !== $konfirmasi) {
+            $pesan_error = "Password dan Konfirmasi Password tidak sama!";
+        } else {
+            // Cek email apakah sudah terdaftar
+            $cek = $conn->prepare("SELECT id_user FROM users WHERE email = ?");
+            $cek->bind_param("s", $email);
+            $cek->execute();
+            $cek->store_result();
 
-    $query = mysqli_query(
-        $conn,
+            if ($cek->num_rows > 0) {
+                $pesan_error = "Email sudah terdaftar! Gunakan email lain.";
+            } else {
+                $password = password_hash($password_input, PASSWORD_DEFAULT);
 
-        "INSERT INTO users
-    (nama,email,password,role)
-
-    VALUES
-
-    ('$nama',
-    '$email',
-    '$password',
-    'perusahaan')
-    "
-    );
-
-    if ($query) {
-
-        echo "Register berhasil";
-
-    } else {
-
-        echo "Register gagal";
+                $stmt = $conn->prepare("INSERT INTO users (nama, email, password, role) VALUES (?, ?, ?, 'perusahaan')");
+                $stmt->bind_param("sss", $nama, $email, $password);
+                
+                if ($stmt->execute()) {
+                    $pesan_sukses = "Registrasi berhasil! Silakan login.";
+                } else {
+                    $pesan_error = "Registrasi gagal. Coba lagi.";
+                }
+            }
+            $cek->close();
+        }
     }
-}
 ?>
 
 
@@ -352,6 +355,18 @@ if (isset($_POST['register'])) {
                 <h1>Buat Akun Baru</h1>
                 <p class="subtitle">Bergabunglah dengan Lokerin dan temukan peluang karir terbaik</p>
 
+                <?php if (!empty($pesan_sukses)): ?>
+                    <div style="padding:12px 16px;background:#dcfce7;color:#166534;border-radius:8px;margin-bottom:16px;font-size:14px;font-weight:500;border:1px solid #bbf7d0">
+                        ✅ <?= htmlspecialchars($pesan_sukses) ?>
+                        <br><a href="login_perusahaan.php" style="color:#0d9488;font-weight:600;text-decoration:underline">Klik di sini untuk login</a>
+                    </div>
+                <?php endif; ?>
+                <?php if (!empty($pesan_error)): ?>
+                    <div style="padding:12px 16px;background:#fef2f2;color:#991b1b;border-radius:8px;margin-bottom:16px;font-size:14px;font-weight:500;border:1px solid #fecaca">
+                        ⚠️ <?= htmlspecialchars($pesan_error) ?>
+                    </div>
+                <?php endif; ?>
+
                 <!-- Tabs -->
                 <div class="tabs">
                     <button class="tab active">
@@ -374,7 +389,7 @@ if (isset($_POST['register'])) {
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
-                            <input type="text" name="nama" placeholder="PT Contoh Indonesia" required>
+                            <input type="text" name="nama" placeholder="PT Contoh Indonesia" value="<?= htmlspecialchars($_POST['nama'] ?? '') ?>" required>
                         </div>
                     </div>
 
@@ -386,7 +401,7 @@ if (isset($_POST['register'])) {
                                 <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                             </svg>
-                            <input type="email" name="email" placeholder="email@example.com" required>
+                            <input type="email" name="email" placeholder="email@example.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
                         </div>
                     </div>
 

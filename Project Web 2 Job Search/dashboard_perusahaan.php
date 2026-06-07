@@ -5,14 +5,80 @@ session_start();
 if (!isset($_SESSION['id_user'])) {
 
     header("Location: login_perusahaan.php");
-
+    exit;
 }
 
 if ($_SESSION['role'] != 'perusahaan') {
 
     header("Location: login_perusahaan.php");
-
+    exit;
 }
+
+include 'config/koneksi.php';
+
+$id_perusahaan = (int) $_SESSION['id_user'];
+
+// === STAT CARDS ===
+// Total lowongan milik perusahaan ini
+$q_total_lowongan = mysqli_query($conn, "SELECT COUNT(*) AS total FROM lowongan WHERE id_perusahaan = '$id_perusahaan'");
+$total_lowongan = mysqli_fetch_assoc($q_total_lowongan)['total'];
+
+// Total pelamar ke lowongan milik perusahaan ini
+$q_total_pelamar = mysqli_query($conn, "
+    SELECT COUNT(*) AS total FROM lamaran l
+    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
+    WHERE low.id_perusahaan = '$id_perusahaan'
+");
+$total_pelamar = mysqli_fetch_assoc($q_total_pelamar)['total'];
+
+// Lamaran menunggu review (status = dikirim)
+$q_menunggu = mysqli_query($conn, "
+    SELECT COUNT(*) AS total FROM lamaran l
+    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
+    WHERE low.id_perusahaan = '$id_perusahaan' AND l.status = 'dikirim'
+");
+$total_menunggu = mysqli_fetch_assoc($q_menunggu)['total'];
+
+// Interview terjadwal
+$q_interview = mysqli_query($conn, "
+    SELECT COUNT(*) AS total FROM lamaran l
+    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
+    WHERE low.id_perusahaan = '$id_perusahaan' AND l.status = 'interview'
+");
+$total_interview = mysqli_fetch_assoc($q_interview)['total'];
+
+// === LOWONGAN AKTIF (max 3) ===
+$q_lowongan_aktif = mysqli_query($conn, "
+    SELECT low.*, 
+           (SELECT COUNT(*) FROM lamaran WHERE id_lowongan = low.id_lowongan) AS jumlah_pelamar
+    FROM lowongan low
+    WHERE low.id_perusahaan = '$id_perusahaan' AND low.status = 'aktif'
+    ORDER BY low.tanggal_post DESC
+    LIMIT 3
+");
+
+// === KANDIDAT TERBAIK (pelamar yang sudah melamar) ===
+$q_kandidat = mysqli_query($conn, "
+    SELECT u.id_user, u.nama, u.bidang_keahlian, u.skills, u.foto_profil,
+           l.status AS status_lamaran, low.judul AS lowongan_judul
+    FROM lamaran l
+    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
+    JOIN users u ON l.id_pelamar = u.id_user
+    WHERE low.id_perusahaan = '$id_perusahaan'
+    ORDER BY l.tanggal_lamaran DESC
+    LIMIT 3
+");
+
+// Employer Score (berdasarkan kelengkapan profil perusahaan)
+$q_user = mysqli_query($conn, "SELECT * FROM users WHERE id_user = '$id_perusahaan'");
+$user_perusahaan = mysqli_fetch_assoc($q_user);
+$fields_cek_perusahaan = ['nama', 'email', 'telepon', 'lokasi', 'bio', 'foto_profil'];
+$isi_perusahaan = 0;
+foreach ($fields_cek_perusahaan as $f) {
+    if (!empty($user_perusahaan[$f])) $isi_perusahaan++;
+}
+$employer_score = round(($isi_perusahaan / count($fields_cek_perusahaan)) * 100);
+
 ?>
 
 <!DOCTYPE html>
@@ -790,10 +856,10 @@ if ($_SESSION['role'] != 'perusahaan') {
             </div>
 
             <div class="company-profile">
-                <div class="company-avatar">P</div>
+                <div class="company-avatar"><?= strtoupper(substr($_SESSION['nama'] ?? 'P', 0, 1)) ?></div>
                 <div class="company-info">
-                    <div class="company-name"><?= $_SESSION['nama']; ?></div>
-                    <div class="company-industry"><?= $_SESSION['email']; ?></div>
+                    <div class="company-name"><?= htmlspecialchars($_SESSION['nama']); ?></div>
+                    <div class="company-industry"><?= htmlspecialchars($_SESSION['email']); ?></div>
                 </div>
             </div>
 
@@ -802,10 +868,10 @@ if ($_SESSION['role'] != 'perusahaan') {
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span class="employer-score-label">Employer Score</span>
-                        <span class="employer-score-value">50%</span>
+                        <span class="employer-score-value"><?= $employer_score ?>%</span>
                     </div>
                     <div class="employer-score-bar">
-                        <div class="employer-score-fill"></div>
+                        <div class="employer-score-fill" style="width: <?= $employer_score ?>%"></div>
                     </div>
                 </div>
             </div>
@@ -936,9 +1002,9 @@ if ($_SESSION['role'] != 'perusahaan') {
                     Selamat Datang, <?= $_SESSION['nama']; ?>!
                 </div>
                 <div class="welcome-subtitle">
-                    Employer Score Anda 50%. Tingkatkan untuk menarik lebih banyak kandidat berkualitas!
+                    Employer Score Anda <?= $employer_score ?>%. <?= $employer_score < 80 ? 'Tingkatkan untuk menarik lebih banyak kandidat berkualitas!' : 'Profil Anda sudah sangat lengkap!' ?>
                 </div>
-                <button class="btn-improve">
+                <button class="btn-improve" onclick="window.location.href='profil_perusahaan.php'">
                     Tingkatkan Profil
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -957,7 +1023,7 @@ if ($_SESSION['role'] != 'perusahaan') {
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
                     </div>
-                    <div class="stat-number">12</div>
+                    <div class="stat-number"><?= $total_lowongan ?></div>
                     <div class="stat-label">Total Lowongan</div>
                 </div>
 
@@ -971,7 +1037,7 @@ if ($_SESSION['role'] != 'perusahaan') {
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                     </div>
-                    <div class="stat-number">156</div>
+                    <div class="stat-number"><?= $total_pelamar ?></div>
                     <div class="stat-label">Total Pelamar</div>
                 </div>
 
@@ -979,12 +1045,12 @@ if ($_SESSION['role'] != 'perusahaan') {
                     <div class="stat-icon blue">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                         </svg>
                     </div>
-                    <div class="stat-number">1.2K</div>
-                    <div class="stat-label">Dilihat Kandidat</div>
+                    <div class="stat-number"><?= $total_menunggu ?></div>
+                    <div class="stat-label">Menunggu Review</div>
                 </div>
 
                 <div class="stat-card">
@@ -997,7 +1063,7 @@ if ($_SESSION['role'] != 'perusahaan') {
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
                     </div>
-                    <div class="stat-number">8</div>
+                    <div class="stat-number"><?= $total_interview ?></div>
                     <div class="stat-label">Interview Terjadwal</div>
                 </div>
             </div>
@@ -1019,101 +1085,48 @@ if ($_SESSION['role'] != 'perusahaan') {
                             </a>
                         </div>
 
-                        <div class="job-item">
-                            <div class="job-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
-                            </div>
-                            <div class="job-info">
-                                <div class="job-title">Senior Frontend Developer</div>
-                                <div class="job-time">3 hari lalu</div>
-                            </div>
-                            <div class="job-stats">
-                                <div class="job-stat-row">
-                                    <div class="job-stat">
-                                        <div class="job-stat-number">45</div>
-                                        <div class="job-stat-label">Pelamar</div>
+                        <?php
+                        if (mysqli_num_rows($q_lowongan_aktif) > 0):
+                            while ($low = mysqli_fetch_assoc($q_lowongan_aktif)):
+                                // Format waktu relatif (sederhana)
+                                $waktu = date('d M Y', strtotime($low['tanggal_post']));
+                        ?>
+                                <div class="job-item">
+                                    <div class="job-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                        </svg>
                                     </div>
-                                    <div class="job-stat">
-                                        <div class="job-stat-number">234</div>
-                                        <div class="job-stat-label">Views</div>
+                                    <div class="job-info">
+                                        <div class="job-title"><?= htmlspecialchars($low['judul']) ?></div>
+                                        <div class="job-time"><?= $waktu ?></div>
                                     </div>
+                                    <div class="job-stats">
+                                        <div class="job-stat-row">
+                                            <div class="job-stat">
+                                                <div class="job-stat-number"><?= $low['jumlah_pelamar'] ?></div>
+                                                <div class="job-stat-label">Pelamar</div>
+                                            </div>
+                                            <!-- Views removed, as it's not in DB -->
+                                        </div>
+                                    </div>
+                                    <button class="btn-arrow" onclick="window.location.href='detail_lowongan.php?id=<?= $low['id_lowongan'] ?>'">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </button>
                                 </div>
+                        <?php
+                            endwhile;
+                        else:
+                        ?>
+                            <div style="text-align: center; padding: 32px; color: #6b7280;">
+                                <p>Belum ada lowongan aktif.</p>
                             </div>
-                            <button class="btn-arrow">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div class="job-item">
-                            <div class="job-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
-                            </div>
-                            <div class="job-info">
-                                <div class="job-title">Product Manager</div>
-                                <div class="job-time">1 minggu lalu</div>
-                            </div>
-                            <div class="job-stats">
-                                <div class="job-stat-row">
-                                    <div class="job-stat">
-                                        <div class="job-stat-number">32</div>
-                                        <div class="job-stat-label">Pelamar</div>
-                                    </div>
-                                    <div class="job-stat">
-                                        <div class="job-stat-number">189</div>
-                                        <div class="job-stat-label">Views</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="btn-arrow">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div class="job-item">
-                            <div class="job-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
-                            </div>
-                            <div class="job-info">
-                                <div class="job-title">UI/UX Designer</div>
-                                <div class="job-time">2 minggu lalu</div>
-                            </div>
-                            <div class="job-stats">
-                                <div class="job-stat-row">
-                                    <div class="job-stat">
-                                        <div class="job-stat-number">28</div>
-                                        <div class="job-stat-label">Pelamar</div>
-                                    </div>
-                                    <div class="job-stat">
-                                        <div class="job-stat-number">156</div>
-                                        <div class="job-stat-label">Views</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="btn-arrow">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </button>
-                        </div>
+                        <?php endif; ?>
 
                         <a href="posting_lowongan.php" style="text-decoration: none;"></a>
                         <button class="btn-post-full">
@@ -1162,7 +1175,7 @@ if ($_SESSION['role'] != 'perusahaan') {
                                 </div>
                                 <div class="action-info">
                                     <div class="action-title">Review Kandidat</div>
-                                    <div class="action-subtitle">8 kandidat menunggu</div>
+                                    <div class="action-subtitle"><?= $total_menunggu ?> kandidat menunggu</div>
                                 </div>
                             </div>
 
@@ -1207,68 +1220,54 @@ if ($_SESSION['role'] != 'perusahaan') {
                     </div>
 
                     <div class="candidates-grid">
-                        <div class="candidate-card">
-                            <span class="match-badge high">95% Match</span>
-                            <div class="candidate-avatar">AR</div>
-                            <div class="candidate-name">Ahmad Rizki</div>
-                            <div class="candidate-role">Senior Frontend Developer</div>
-                            <div class="candidate-skills">
-                                <span class="skill-tag">React</span>
-                                <span class="skill-tag">TypeScript</span>
-                            </div>
-                            <div class="candidate-actions">
-                                <button class="btn-shortlist">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Shortlist
-                                </button>
-                                <button class="btn-profile">Profil</button>
-                            </div>
-                        </div>
+                        <?php
+                        if (mysqli_num_rows($q_kandidat) > 0):
+                            while ($kan = mysqli_fetch_assoc($q_kandidat)):
+                                $inisial = strtoupper(substr($kan['nama'], 0, 2));
+                                
+                                // Parse skills
+                                $skills_arr = [];
+                                if (!empty($kan['skills'])) {
+                                    $skills_arr = explode(',', $kan['skills']);
+                                    $skills_arr = array_slice(array_map('trim', $skills_arr), 0, 3); // Ambil max 3
+                                }
 
-                        <div class="candidate-card">
-                            <span class="match-badge medium">92% Match</span>
-                            <div class="candidate-avatar" style="background: #8b5cf6;">SD</div>
-                            <div class="candidate-name">Sarah Dewi</div>
-                            <div class="candidate-role">Product Manager</div>
-                            <div class="candidate-skills">
-                                <span class="skill-tag">Agile</span>
-                                <span class="skill-tag">Analytics</span>
+                                // Dummy match badge since real AI matching is complex
+                                $match_score = rand(70, 95);
+                                $badge_class = $match_score >= 90 ? 'high' : ($match_score >= 80 ? 'medium' : 'good');
+                        ?>
+                                <div class="candidate-card">
+                                    <span class="match-badge <?= $badge_class ?>"><?= $match_score ?>% Match</span>
+                                    <div class="candidate-avatar"><?= $inisial ?></div>
+                                    <div class="candidate-name"><?= htmlspecialchars($kan['nama']) ?></div>
+                                    <div class="candidate-role"><?= htmlspecialchars($kan['bidang_keahlian'] ?? 'Belum ada bidang') ?></div>
+                                    <div class="candidate-skills">
+                                        <?php foreach ($skills_arr as $skill): ?>
+                                            <span class="skill-tag"><?= htmlspecialchars($skill) ?></span>
+                                        <?php endforeach; ?>
+                                        <?php if (empty($skills_arr)): ?>
+                                            <span class="skill-tag" style="background:transparent; color:#9ca3af;">Belum ada skill</span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="candidate-actions">
+                                        <button class="btn-shortlist" onclick="window.location.href='pesan_perusahaan.php?id=<?= $kan['id_user'] ?>'">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            Pesan
+                                        </button>
+                                        <button class="btn-profile" onclick="window.location.href='kandidat.php'">Profil</button>
+                                    </div>
+                                </div>
+                        <?php
+                            endwhile;
+                        else:
+                        ?>
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 32px; color: #6b7280; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
+                                <p>Belum ada kandidat yang melamar.</p>
                             </div>
-                            <div class="candidate-actions">
-                                <button class="btn-shortlist">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Shortlist
-                                </button>
-                                <button class="btn-profile">Profil</button>
-                            </div>
-                        </div>
-
-                        <div class="candidate-card">
-                            <span class="match-badge good">88% Match</span>
-                            <div class="candidate-avatar" style="background: #3b82f6;">BS</div>
-                            <div class="candidate-name">Budi Santoso</div>
-                            <div class="candidate-role">UI/UX Designer</div>
-                            <div class="candidate-skills">
-                                <span class="skill-tag">Figma</span>
-                                <span class="skill-tag">Research</span>
-                            </div>
-                            <div class="candidate-actions">
-                                <button class="btn-shortlist">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Shortlist
-                                </button>
-                                <button class="btn-profile">Profil</button>
-                            </div>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

@@ -7,47 +7,39 @@ include 'config/koneksi.php';
 if (isset($_POST['login'])) {
 
     $email = $_POST['email'];
+    $password_input = $_POST['password'];
 
-    $password =
-        md5($_POST['password']);
-
-    $query = mysqli_query(
-        $conn,
-
-        "SELECT * FROM users
-
-    WHERE
-    email='$email'
-
-    AND
-    password='$password'
-
-    AND
-    role='pelamar'
-    "
-    );
-
-    $data =
-        mysqli_fetch_assoc($query);
+    // Gunakan prepared statement untuk keamanan dari SQL injection
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email=? AND role='pelamar'");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
 
     if ($data) {
+        $password_db = $data['password'];
+        $is_valid = false;
 
-        $_SESSION['id_user']
-            = $data['id_user'];
+        // Cek dengan password_verify (untuk akun baru) atau md5 (untuk akun lama)
+        if (password_verify($password_input, $password_db)) {
+            $is_valid = true;
+        } elseif (md5($password_input) === $password_db) {
+            $is_valid = true;
+            // Opsional: rehash password ke format baru bisa dilakukan di sini
+        }
 
-        $_SESSION['nama']
-            = $data['nama'];
+        if ($is_valid) {
+            $_SESSION['id_user'] = $data['id_user'];
+            $_SESSION['nama'] = $data['nama'];
+            $_SESSION['role'] = $data['role'];
+            $_SESSION['email'] = $data['email'];
 
-        $_SESSION['role']
-            = $data['role'];
-
-        $_SESSION['email']
-            = $data['email'];
-
-        header("Location: dashboard_pelamar.php");
-
+            header("Location: dashboard_pelamar.php");
+            exit;
+        } else {
+            echo "Email atau password salah";
+        }
     } else {
-
         echo "Email atau password salah";
     }
 }

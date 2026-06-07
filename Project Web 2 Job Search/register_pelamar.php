@@ -300,40 +300,50 @@
 
     include 'config/koneksi.php';
 
+    $pesan_error = '';
+    $pesan_sukses = '';
+
     if (isset($_POST['register'])) {
 
-        $nama = $_POST['nama'];
+        $nama = trim($_POST['nama']);
+        $email = trim($_POST['email']);
+        $password = $_POST['password'];
+        $konfirmasi = $_POST['konfirmasi_password'];
+        $bidang = trim($_POST['bidang_keahlian'] ?? '');
 
-        $email = $_POST['email'];
-
-        $password =
-            md5($_POST['password']);
-
-        $query = mysqli_query(
-            $conn,
-
-            "INSERT INTO users
-        (nama,email,password,role)
-
-        VALUES
-
-        ('$nama',
-        '$email',
-        '$password',
-        'pelamar')
-        "
-        );
-
-        if ($query) {
-
-            echo "Register berhasil";
-
+        // Validasi konfirmasi password
+        if ($password !== $konfirmasi) {
+            $pesan_error = "Password dan Konfirmasi Password tidak sama!";
         } else {
+            // Cek email sudah terdaftar
+            $cek = $conn->prepare("SELECT id_user FROM users WHERE email = ?");
+            $cek->bind_param("s", $email);
+            $cek->execute();
+            $cek->store_result();
 
-            echo "Register gagal";
+            if ($cek->num_rows > 0) {
+                $pesan_error = "Email sudah terdaftar! Gunakan email lain.";
+            } else {
+                $hashed = password_hash($password, PASSWORD_DEFAULT);
+
+                $stmt = $conn->prepare(
+                    "INSERT INTO users (nama, email, password, role, bidang_keahlian)
+                     VALUES (?, ?, ?, 'pelamar', ?)"
+                );
+                $stmt->bind_param("ssss", $nama, $email, $hashed, $bidang);
+
+                if ($stmt->execute()) {
+                    $pesan_sukses = "Registrasi berhasil! Silakan login.";
+                } else {
+                    $pesan_error = "Registrasi gagal. Coba lagi.";
+                }
+                $stmt->close();
+            }
+            $cek->close();
         }
     }
     ?>
+
 
     <div class="container">
         <!-- Left Side - Form -->
@@ -351,6 +361,18 @@
 
                 <h1>Buat Akun Baru</h1>
                 <p class="subtitle">Bergabunglah dengan LokerIn dan temukan peluang karir terbaik</p>
+
+                <?php if (!empty($pesan_sukses)): ?>
+                    <div style="padding:12px 16px;background:#dcfce7;color:#166534;border-radius:8px;margin-bottom:16px;font-size:14px;font-weight:500;border:1px solid #bbf7d0">
+                        ✅ <?= htmlspecialchars($pesan_sukses) ?>
+                        <br><a href="login_pelamar.php" style="color:#0d9488;font-weight:600;text-decoration:underline">Klik di sini untuk login</a>
+                    </div>
+                <?php endif; ?>
+                <?php if (!empty($pesan_error)): ?>
+                    <div style="padding:12px 16px;background:#fef2f2;color:#991b1b;border-radius:8px;margin-bottom:16px;font-size:14px;font-weight:500;border:1px solid #fecaca">
+                        ⚠️ <?= htmlspecialchars($pesan_error) ?>
+                    </div>
+                <?php endif; ?>
 
                 <!-- Tabs -->
                 <div class="tabs">
@@ -373,7 +395,7 @@
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
-                            <input type="text" name="nama" placeholder="John Doe" required>
+                            <input type="text" name="nama" placeholder="John Doe" value="<?= htmlspecialchars($_POST['nama'] ?? '') ?>" required>
                         </div>
                     </div>
 
@@ -385,7 +407,28 @@
                                 <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                             </svg>
-                            <input type="email" name="email" placeholder="email@example.com" required>
+                            <input type="email" name="email" placeholder="email@example.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bidang Keahlian / Posisi Diminati</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                            <select name="bidang_keahlian" style="width:100%;padding:12px 14px 12px 42px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;color:#111827;background:white;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;transition:all 0.2s;" required>
+                                <option value="" disabled <?= empty($_POST['bidang_keahlian'] ?? '') ? 'selected' : '' ?>>-- Pilih Bidang --</option>
+                                <option value="Frontend Developer" <?= ($_POST['bidang_keahlian'] ?? '') === 'Frontend Developer' ? 'selected' : '' ?>>Frontend Developer</option>
+                                <option value="Backend Developer" <?= ($_POST['bidang_keahlian'] ?? '') === 'Backend Developer' ? 'selected' : '' ?>>Backend Developer</option>
+                                <option value="Fullstack Developer" <?= ($_POST['bidang_keahlian'] ?? '') === 'Fullstack Developer' ? 'selected' : '' ?>>Fullstack Developer</option>
+                                <option value="UI/UX Designer" <?= ($_POST['bidang_keahlian'] ?? '') === 'UI/UX Designer' ? 'selected' : '' ?>>UI/UX Designer</option>
+                                <option value="Network Engineer" <?= ($_POST['bidang_keahlian'] ?? '') === 'Network Engineer' ? 'selected' : '' ?>>Network Engineer</option>
+                                <option value="Data Scientist" <?= ($_POST['bidang_keahlian'] ?? '') === 'Data Scientist' ? 'selected' : '' ?>>Data Scientist</option>
+                                <option value="Mobile Developer" <?= ($_POST['bidang_keahlian'] ?? '') === 'Mobile Developer' ? 'selected' : '' ?>>Mobile Developer</option>
+                            </select>
                         </div>
                     </div>
 
@@ -409,7 +452,7 @@
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
-                            <input type="password" placeholder="••••••••" required>
+                            <input type="password" name="konfirmasi_password" placeholder="••••••••" required>
                         </div>
                     </div>
 

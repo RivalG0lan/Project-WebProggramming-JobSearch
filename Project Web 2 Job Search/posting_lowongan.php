@@ -37,6 +37,9 @@ if (isset($_POST['post_lowongan'])) {
     $deskripsi =
         $_POST['deskripsi'];
 
+    $skills_required =
+        mysqli_real_escape_string($conn, $_POST['skills_required'] ?? '');
+
     $query = mysqli_query(
         $conn,
 
@@ -48,6 +51,7 @@ if (isset($_POST['post_lowongan'])) {
     lokasi,
     gaji,
     deskripsi,
+    skills_required,
     status
     )
 
@@ -59,6 +63,7 @@ if (isset($_POST['post_lowongan'])) {
     '$lokasi',
     '$gaji',
     '$deskripsi',
+    '$skills_required',
     'aktif'
     )"
     );
@@ -990,6 +995,7 @@ if (isset($_POST['post_lowongan'])) {
                 <div class="form-section">
 
                     <form method="POST">
+                        <input type="hidden" name="skills_required" id="skills_required_input" value="">
                         <!-- Step 1: Info Dasar -->
                         <div id="form-step1">
                             <h2 class="section-title">Informasi Dasar</h2>
@@ -1325,7 +1331,13 @@ if (isset($_POST['post_lowongan'])) {
                 updateList('skills-list', skills, 'skill');
                 input.value = '';
                 updateScore();
+                syncSkillsHidden();
             }
+        }
+
+        // Sync skills array to hidden input
+        function syncSkillsHidden() {
+            document.getElementById('skills_required_input').value = skills.join(', ');
         }
 
         // Add Benefit
@@ -1366,6 +1378,7 @@ if (isset($_POST['post_lowongan'])) {
                 skills.splice(index, 1);
                 updateList('skills-list', skills, 'skill');
                 updateScore();
+                syncSkillsHidden();
             } else if (type === 'benefit') {
                 benefits.splice(index, 1);
                 updateList('benefits-list', benefits, 'benefit');

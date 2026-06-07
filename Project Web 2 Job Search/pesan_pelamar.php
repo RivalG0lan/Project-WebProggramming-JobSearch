@@ -1,99 +1,42 @@
 <?php
-
 session_start();
 
 if (!isset($_SESSION['id_user'])) {
-
   header("Location: login_pelamar.php");
-
+  exit;
 }
 
 if ($_SESSION['role'] != 'pelamar') {
-
   header("Location: login_pelamar.php");
-
+  exit;
 }
 
 include 'config/koneksi.php';
 
-$id_pelamar = $_SESSION['id_user'];
-
-$total_lamaran = mysqli_num_rows(mysqli_query(
-  $conn,
-
-  "SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'"
-));
-
-$total_review = mysqli_num_rows(mysqli_query(
-  $conn,
-
-  "SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'
-
-AND status='review'"
-));
-
-$total_interview = mysqli_num_rows(mysqli_query(
-  $conn,
-
-  "SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'
-
-AND status='interview'"
-));
-
-$total_lowongan = mysqli_num_rows(mysqli_query(
-  $conn,
-
-  "SELECT * FROM lowongan
-
-WHERE status='aktif'"
-));
-
 $id_pelamar = (int) $_SESSION['id_user'];
 
-$result = mysqli_query($conn, "
-    SELECT *
-    FROM users
-    WHERE id_user=$id_pelamar
-");
-
+$result = mysqli_query($conn, "SELECT * FROM users WHERE id_user=$id_pelamar");
 $user = mysqli_fetch_assoc($result);
-
 $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
-/* =========================
-   HITUNG KELENGKAPAN PROFIL
-   ========================= */
 
-$fields_cek = [
-  'nama',
-  'telepon',
-  'lokasi',
-  'bio',
-  'pendidikan',
-  'pengalaman',
-  'skills',
-  'foto_profil',
-  'cv_path'
-];
-
+// Hitung kelengkapan profil
+$fields_cek = ['nama', 'telepon', 'lokasi', 'bio', 'pendidikan', 'pengalaman', 'skills', 'foto_profil', 'cv_path'];
 $isi = 0;
-
 foreach ($fields_cek as $field) {
-  if (!empty($user[$field])) {
-    $isi++;
-  }
+  if (!empty($user[$field])) $isi++;
 }
+$kelengkapan = round(($isi / count($fields_cek)) * 100);
 
-$kelengkapan = round(
-  ($isi / count($fields_cek)) * 100
-);
-
-//
+// Ambil id_lawan dari parameter (jika ada)
+$id_lawan = (int)($_GET['id_lawan'] ?? 0);
+$lawan = null;
+if ($id_lawan > 0) {
+  $r = $conn->prepare("SELECT id_user, nama, foto_profil, role, bidang_keahlian FROM users WHERE id_user = ?");
+  $r->bind_param("i", $id_lawan);
+  $r->execute();
+  $lawan = $r->get_result()->fetch_assoc();
+  $r->close();
+}
 ?>
 
 <!doctype html>
@@ -105,565 +48,167 @@ $kelengkapan = round(
   <title>Pesan - Lokerin</title>
   <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: #f9fafb;
       color: #111827;
       line-height: 1.6;
     }
 
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
+    .layout { display: flex; min-height: 100vh; }
 
-    /* Sidebar - sama seperti sebelumnya */
+    /* Sidebar */
     .sidebar {
-      width: 260px;
-      background: white;
-      border-right: 1px solid #e5e7eb;
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
+      width: 260px; background: white; border-right: 1px solid #e5e7eb;
+      padding: 24px 16px; display: flex; flex-direction: column;
+      position: fixed; height: 100vh; overflow-y: auto;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 24px;
-      padding: 0 8px;
-    }
-
-    .logo-img {
-      width: 27px;
-      height: 27px;
-      object-fit: contain;
-    }
-
-    .logo-text {
-      font-size: 18px;
-      font-weight: 700;
-      color: #111827;
-    }
+    .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; padding: 0 8px; }
+    .logo-img { width: 27px; height: 27px; object-fit: contain; }
+    .logo-text { font-size: 18px; font-weight: 700; color: #111827; }
 
     .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: #f9fafb;
-      border-radius: 12px;
-      margin-bottom: 24px
+      display: flex; align-items: center; gap: 12px; padding: 12px;
+      background: #f9fafb; border-radius: 12px; margin-bottom: 24px;
     }
 
     .sidebar-avatar {
-      width: 40px;
-      height: 40px;
-      background: #0d9488;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 700;
-      font-size: 14px;
-      overflow: hidden;
-      flex-shrink: 0;
-      cursor: pointer;
-      transition: transform .2s;
+      width: 40px; height: 40px; background: #0d9488; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 14px; overflow: hidden; flex-shrink: 0;
     }
+    .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-    .sidebar-avatar:hover {
-      transform: scale(1.05);
-    }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 14px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-email { font-size: 12px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .sidebar-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%
-    }
+    .career-score { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 24px; }
+    .career-score-label { font-size: 12px; color: #6b7280; }
+    .career-score-value { font-size: 14px; font-weight: 600; color: #0d9488; }
 
-    .avatar-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .8);
-
-      justify-content: center;
-      align-items: center;
-
-      z-index: 9999;
-    }
-
-    .avatar-modal img {
-      max-width: 90%;
-      max-height: 90%;
-
-      border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, .5);
-    }
-
-    .user-info {
-      flex: 1;
-      min-width: 0
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: #111827;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis
-    }
-
-    .user-email {
-      font-size: 12px;
-      color: #6b7280;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis
-    }
-
-    .career-score {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      margin-bottom: 24px;
-    }
-
-    .career-score-label {
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .career-score-value {
-      font-size: 14px;
-      font-weight: 600;
-      color: #0d9488;
-    }
-
-    nav {
-      flex: 1;
-    }
-
+    nav { flex: 1; }
     .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      color: #6b7280;
-      text-decoration: none;
-      border-radius: 8px;
-      margin-bottom: 4px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+      color: #6b7280; text-decoration: none; border-radius: 8px; margin-bottom: 4px;
+      font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;
     }
-
-    .nav-item:hover {
-      background: #f9fafb;
-      color: #111827;
-    }
-
-    .nav-item.active {
-      background: #e0f2f1;
-      color: #0d9488;
-    }
-
-    .nav-divider {
-      height: 1px;
-      background: #e5e7eb;
-      margin: 16px 0;
-    }
-
-    .nav-section-title {
-      font-size: 12px;
-      color: #9ca3af;
-      padding: 8px 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-item-logout {
-      color: #ef4444;
-    }
-
-    .nav-item-logout:hover {
-      background: #fef2f2;
-    }
+    .nav-item:hover { background: #f9fafb; color: #111827; }
+    .nav-item.active { background: #e0f2f1; color: #0d9488; }
+    .nav-divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
+    .nav-item-logout { color: #ef4444; }
+    .nav-item-logout:hover { background: #fef2f2; }
 
     /* Main Content */
-    .main-content {
-      flex: 1;
-      margin-left: 260px;
-      display: flex;
-      height: 100vh;
-    }
+    .main-content { flex: 1; margin-left: 260px; display: flex; height: 100vh; }
 
     /* Message List */
     .message-list-container {
-      width: 360px;
-      background: white;
-      border-right: 1px solid #e5e7eb;
-      display: flex;
-      flex-direction: column;
+      width: 360px; background: white; border-right: 1px solid #e5e7eb;
+      display: flex; flex-direction: column;
     }
-
-    .message-list-header {
-      padding: 24px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .message-list-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 16px;
-    }
-
-    .message-search {
-      position: relative;
-    }
-
+    .message-list-header { padding: 24px; border-bottom: 1px solid #e5e7eb; }
+    .message-list-title { font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 16px; }
+    .message-search { position: relative; }
     .message-search input {
-      width: 100%;
-      padding: 10px 16px 10px 40px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: all 0.2s;
+      width: 100%; padding: 10px 16px 10px 40px; border: 1px solid #e5e7eb;
+      border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s;
     }
+    .message-search input:focus { border-color: #0d9488; }
+    .message-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
 
-    .message-search input:focus {
-      border-color: #0d9488;
-    }
-
-    .message-search-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #9ca3af;
-    }
-
-    .message-filter {
-      display: flex;
-      gap: 8px;
-      padding: 16px 24px;
-      border-bottom: 1px solid #e5e7eb;
-      overflow-x: auto;
-    }
-
-    .filter-btn {
-      padding: 6px 16px;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
-      background: white;
-      color: #6b7280;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .filter-btn:hover {
-      background: #f9fafb;
-    }
-
-    .filter-btn.active {
-      background: #0d9488;
-      color: white;
-      border-color: #0d9488;
-    }
-
-    .message-list {
-      flex: 1;
-      overflow-y: auto;
-    }
+    .message-list { flex: 1; overflow-y: auto; }
 
     .message-item {
-      padding: 16px 24px;
-      border-bottom: 1px solid #f3f4f6;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      gap: 12px;
+      padding: 16px 24px; border-bottom: 1px solid #f3f4f6; cursor: pointer;
+      transition: all 0.2s; display: flex; gap: 12px;
     }
+    .message-item:hover { background: #f9fafb; }
+    .message-item.active { background: #e0f2f1; }
+    .message-item.unread { background: #f0fdfa; }
 
-    .message-item:hover {
-      background: #f9fafb;
+    .msg-avatar {
+      width: 48px; height: 48px; border-radius: 50%; background: #3b82f6;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 600; flex-shrink: 0; font-size: 16px; overflow: hidden;
     }
+    .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-    .message-item.active {
-      background: #e0f2f1;
-    }
+    .message-content { flex: 1; min-width: 0; }
+    .message-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px; }
+    .message-sender { font-size: 15px; font-weight: 600; color: #111827; }
+    .message-time { font-size: 12px; color: #9ca3af; white-space: nowrap; }
+    .message-preview { font-size: 14px; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .message-item.unread .message-preview { color: #111827; font-weight: 500; }
+    .unread-badge { width: 8px; height: 8px; background: #0d9488; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
 
-    .message-item.unread {
-      background: #f0fdfa;
-    }
-
-    .message-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: #3b82f6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .message-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .message-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 4px;
-    }
-
-    .message-sender {
-      font-size: 15px;
-      font-weight: 600;
-      color: #111827;
-    }
-
-    .message-time {
-      font-size: 12px;
-      color: #9ca3af;
-      white-space: nowrap;
-    }
-
-    .message-preview {
-      font-size: 14px;
-      color: #6b7280;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .message-item.unread .message-preview {
-      color: #111827;
-      font-weight: 500;
-    }
-
-    .unread-badge {
-      width: 8px;
-      height: 8px;
-      background: #0d9488;
-      border-radius: 50%;
-      margin-top: 4px;
-    }
+    .no-contacts { padding: 40px 24px; text-align: center; color: #9ca3af; font-size: 14px; }
 
     /* Chat Container */
-    .chat-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #f9fafb;
-    }
+    .chat-container { flex: 1; display: flex; flex-direction: column; background: #f9fafb; }
 
     .chat-header {
-      padding: 20px 32px;
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 20px 32px; background: white; border-bottom: 1px solid #e5e7eb;
+      display: flex; justify-content: space-between; align-items: center;
     }
-
-    .chat-header-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+    .chat-header-info { display: flex; align-items: center; gap: 16px; }
 
     .chat-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: #3b82f6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
+      width: 48px; height: 48px; border-radius: 50%; background: #3b82f6;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 600; font-size: 18px; overflow: hidden;
     }
+    .chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .chat-user-info h3 { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 2px; }
+    .chat-user-info p { font-size: 14px; color: #6b7280; }
 
-    .chat-user-info h3 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 2px;
-    }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 24px 32px; }
 
-    .chat-user-info p {
-      font-size: 14px;
-      color: #6b7280;
-    }
+    .chat-date-divider { text-align: center; margin: 24px 0; font-size: 13px; color: #9ca3af; }
 
-    .chat-actions {
-      display: flex;
-      gap: 12px;
-    }
-
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background: white;
-      border: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .icon-btn:hover {
-      background: #f9fafb;
-    }
-
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px 32px;
-    }
-
-    .chat-date-divider {
-      text-align: center;
-      margin: 24px 0;
-      font-size: 13px;
-      color: #9ca3af;
-    }
-
-    .message-group {
-      margin-bottom: 24px;
-    }
-
-    .message-bubble {
-      max-width: 60%;
-      margin-bottom: 8px;
-    }
-
-    .message-bubble.received {
-      display: flex;
-      gap: 12px;
-    }
-
-    .message-bubble.sent {
-      margin-left: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
+    .message-bubble { max-width: 60%; margin-bottom: 8px; }
+    .message-bubble.received { display: flex; gap: 12px; }
+    .message-bubble.sent { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; }
 
     .bubble-content {
-      background: white;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      color: #111827;
-      line-height: 1.5;
+      background: white; padding: 12px 16px; border-radius: 12px;
+      font-size: 14px; color: #111827; line-height: 1.5;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
+    .message-bubble.sent .bubble-content { background: #0d9488; color: white; }
+    .bubble-time { font-size: 12px; color: #9ca3af; margin-top: 4px; padding: 0 4px; }
 
-    .message-bubble.sent .bubble-content {
-      background: #0d9488;
-      color: white;
-    }
-
-    .bubble-time {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-top: 4px;
-      padding: 0 4px;
-    }
-
-    .chat-input-container {
-      padding: 20px 32px;
-      background: white;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .chat-input-wrapper {
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-    }
-
-    .chat-input {
-      flex: 1;
-    }
-
+    .chat-input-container { padding: 20px 32px; background: white; border-top: 1px solid #e5e7eb; }
+    .chat-input-wrapper { display: flex; gap: 12px; align-items: flex-end; }
+    .chat-input { flex: 1; }
     .chat-input textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-      resize: none;
-      outline: none;
-      min-height: 44px;
-      max-height: 120px;
+      width: 100%; padding: 12px 16px; border: 1px solid #e5e7eb; border-radius: 8px;
+      font-size: 14px; font-family: inherit; resize: none; outline: none;
+      min-height: 44px; max-height: 120px;
     }
-
-    .chat-input textarea:focus {
-      border-color: #0d9488;
-    }
+    .chat-input textarea:focus { border-color: #0d9488; }
 
     .send-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      background: #0d9488;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: white;
+      width: 44px; height: 44px; border-radius: 8px; background: #0d9488;
+      border: none; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: white; transition: background 0.2s;
     }
+    .send-btn:hover { background: #0f766e; }
+    .send-btn:disabled { background: #9ca3af; cursor: not-allowed; }
 
-    .send-btn:hover {
-      background: #0f766e;
+    .chat-empty {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; color: #9ca3af; gap: 16px;
     }
+    .chat-empty svg { opacity: 0.4; }
+    .chat-empty p { font-size: 16px; }
 
     @media (max-width: 768px) {
-      .sidebar {
-        display: none;
-      }
-
-      .main-content {
-        margin-left: 0;
-      }
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
     }
   </style>
 </head>
@@ -692,299 +237,282 @@ $kelengkapan = round(
 
       <div class="career-score">
         <span class="career-score-label">Kelengkapan Profil</span>
-        <span class="career-score-value">
-          <?= $kelengkapan ?>%
-        </span>
+        <span class="career-score-value"><?= $kelengkapan ?>%</span>
       </div>
 
       <nav>
         <a href="dashboard_pelamar.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
           Dashboard
         </a>
-
         <a href="cari_lowongan.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
           Cari Lowongan
         </a>
-
         <a href="lamaran_saya.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
           Lamaran Saya
         </a>
-
         <a href="profil_pelamar.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           Profil
         </a>
-
         <a href="career_roadmap.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 3v18h18"></path>
-            <path d="m19 9-5 5-4-4-3 3"></path>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
           Career Roadmap
         </a>
-
         <a href="skill_gap_analyzer.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path></svg>
           Skill Gap Analyzer
         </a>
-
         <a href="pesan_pelamar.php" class="nav-item active">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
           Pesan
         </a>
-
         <div class="nav-divider"></div>
-
         <a href="pengaturan_pelamar.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M12 1v6m0 6v6"></path>
-            <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
-            <path d="M1 12h6m6 0h6"></path>
-            <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6"></path><path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path><path d="M1 12h6m6 0h6"></path><path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path></svg>
           Pengaturan
         </a>
-
         <a href="logout.php" class="nav-item nav-item-logout">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
           Keluar
         </a>
       </nav>
     </aside>
 
     <main class="main-content">
+      <!-- Daftar Kontak Chat -->
       <div class="message-list-container">
         <div class="message-list-header">
           <h1 class="message-list-title">Pesan</h1>
           <div class="message-search">
-            <svg class="message-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
+            <svg class="message-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
             </svg>
-            <input type="text" placeholder="Cari pesan..." />
+            <input type="text" id="searchContact" placeholder="Cari pesan..." oninput="filterContacts()" />
           </div>
         </div>
-
-        <div class="message-filter">
-          <button class="filter-btn active">Semua</button>
-          <button class="filter-btn">Belum Dibaca</button>
-          <button class="filter-btn">Perusahaan</button>
-        </div>
-
-        <div class="message-list">
-          <div class="message-item unread active">
-            <div class="message-avatar">TC</div>
-            <div class="message-content">
-              <div class="message-header">
-                <span class="message-sender">Tech Corp Indonesia</span>
-                <span class="message-time">10:30</span>
-              </div>
-              <p class="message-preview">
-                Selamat! Anda terpilih untuk interview tahap 2...
-              </p>
-            </div>
-            <div class="unread-badge"></div>
-          </div>
-
-          <div class="message-item unread">
-            <div class="message-avatar">GI</div>
-            <div class="message-content">
-              <div class="message-header">
-                <span class="message-sender">Gojek Indonesia</span>
-                <span class="message-time">Kemarin</span>
-              </div>
-              <p class="message-preview">
-                Terima kasih telah melamar di posisi Senior...
-              </p>
-            </div>
-            <div class="unread-badge"></div>
-          </div>
-
-          <div class="message-item">
-            <div class="message-avatar">TK</div>
-            <div class="message-content">
-              <div class="message-header">
-                <span class="message-sender">Tokopedia</span>
-                <span class="message-time">2 hari lalu</span>
-              </div>
-              <p class="message-preview">
-                Hai John, kami ingin mengundang Anda untuk...
-              </p>
-            </div>
-          </div>
-
-          <div class="message-item">
-            <div class="message-avatar">BL</div>
-            <div class="message-content">
-              <div class="message-header">
-                <span class="message-sender">Blibli.com</span>
-                <span class="message-time">3 hari lalu</span>
-              </div>
-              <p class="message-preview">
-                Lamaran Anda sedang dalam proses review...
-              </p>
-            </div>
-          </div>
+        <div class="message-list" id="contactList">
+          <div class="no-contacts">Memuat kontak...</div>
         </div>
       </div>
 
-      <div class="chat-container">
-        <div class="chat-header">
-          <div class="chat-header-info">
-            <div class="chat-avatar">TC</div>
-            <div class="chat-user-info">
-              <h3>Tech Corp Indonesia</h3>
-              <p>HR Recruiter</p>
-            </div>
-          </div>
-          <div class="chat-actions">
-            <button class="icon-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="chat-messages">
-          <div class="chat-date-divider">Hari ini</div>
-
-          <div class="message-group">
-            <div class="message-bubble received">
-              <div class="message-avatar">TC</div>
-              <div>
-                <div class="bubble-content">
-                  Halo John, terima kasih sudah melamar di posisi Senior
-                  Frontend Developer.
-                </div>
-                <div class="bubble-time">09:15</div>
+      <!-- Area Chat -->
+      <div class="chat-container" id="chatArea">
+        <?php if ($lawan): ?>
+          <!-- Chat header & messages akan diisi oleh JavaScript -->
+          <div class="chat-header" id="chatHeader">
+            <div class="chat-header-info">
+              <div class="chat-avatar" id="chatAvatar">
+                <?php if (!empty($lawan['foto_profil']) && file_exists('uploads/foto_profil/' . $lawan['foto_profil'])): ?>
+                  <img src="uploads/foto_profil/<?= htmlspecialchars($lawan['foto_profil']) ?>" alt="">
+                <?php else: ?>
+                  <?= strtoupper(substr($lawan['nama'], 0, 2)) ?>
+                <?php endif; ?>
               </div>
-            </div>
-
-            <div class="message-bubble received">
-              <div class="message-avatar" style="visibility: hidden"></div>
-              <div>
-                <div class="bubble-content">
-                  Kami ingin mengundang Anda untuk interview tahap 2.
-                </div>
-                <div class="bubble-time">09:16</div>
+              <div class="chat-user-info">
+                <h3 id="chatName"><?= htmlspecialchars($lawan['nama']) ?></h3>
+                <p id="chatRole"><?= htmlspecialchars($lawan['role'] === 'perusahaan' ? 'Perusahaan' : ($lawan['bidang_keahlian'] ?? 'Pelamar')) ?></p>
               </div>
             </div>
           </div>
-
-          <div class="message-group">
-            <div class="message-bubble sent">
-              <div class="bubble-content">
-                Terima kasih! Saya sangat tertarik dengan posisi ini.
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-date-divider">Memuat pesan...</div>
+          </div>
+          <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+              <div class="chat-input">
+                <textarea id="messageInput" placeholder="Ketik pesan..." rows="1" onkeydown="handleEnter(event)"></textarea>
               </div>
-              <div class="bubble-time">09:20</div>
-            </div>
-
-            <div class="message-bubble sent">
-              <div class="bubble-content">
-                Kapan waktu yang tersedia untuk interview?
-              </div>
-              <div class="bubble-time">09:21</div>
+              <button class="send-btn" id="sendBtn" onclick="kirimPesan()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
             </div>
           </div>
-
-          <div class="message-group">
-            <div class="message-bubble received">
-              <div class="message-avatar">TC</div>
-              <div>
-                <div class="bubble-content">
-                  Kami menawarkan 3 pilihan waktu:<br />
-                  1. Senin, 16 Des - 10:00 WIB<br />
-                  2. Selasa, 17 Des - 14:00 WIB<br />
-                  3. Rabu, 18 Des - 09:00 WIB
-                </div>
-                <div class="bubble-time">10:30</div>
-              </div>
-            </div>
+        <?php else: ?>
+          <div class="chat-empty">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <p>Pilih percakapan untuk mulai chatting</p>
           </div>
-        </div>
-
-        <div class="chat-input-container">
-          <div class="chat-input-wrapper">
-            <div class="chat-input">
-              <textarea placeholder="Ketik pesan..." rows="1"></textarea>
-            </div>
-            <button class="send-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            </button>
-          </div>
-        </div>
+        <?php endif; ?>
       </div>
     </main>
   </div>
 
-  <!-- lihat foto profil -->
-  <div id="avatarModal" class="avatar-modal">
-    <img id="avatarModalImg" src="" alt="Foto Profil">
-  </div>
   <script>
-    const avatar = document.querySelector(".sidebar-avatar img");
+    const MY_ID = <?= $id_pelamar ?>;
+    const LAWAN_ID = <?= $id_lawan ?>;
+    let lastMsgId = 0;
+    let pollingInterval = null;
+    let allContacts = [];
 
-    const modal = document.getElementById("avatarModal");
-    const modalImg = document.getElementById("avatarModalImg");
+    // === KONTAK ===
+    function loadContacts() {
+      fetch('daftar_kontak.php')
+        .then(r => r.json())
+        .then(data => {
+          if (!data.success) return;
+          allContacts = data.contacts;
+          renderContacts(allContacts);
+        })
+        .catch(() => {
+          document.getElementById('contactList').innerHTML = '<div class="no-contacts">Belum ada pesan</div>';
+        });
+    }
 
-    if (avatar) {
+    function renderContacts(contacts) {
+      const list = document.getElementById('contactList');
+      if (contacts.length === 0) {
+        list.innerHTML = '<div class="no-contacts">Belum ada percakapan</div>';
+        return;
+      }
 
-      avatar.addEventListener("click", () => {
+      list.innerHTML = contacts.map(c => {
+        const isActive = c.id_user === LAWAN_ID;
+        const unreadClass = c.unread > 0 ? 'unread' : '';
+        const activeClass = isActive ? 'active' : '';
+        const avatarHTML = c.foto_profil
+          ? `<img src="uploads/foto_profil/${c.foto_profil}" alt="">`
+          : c.initials;
 
-        modal.style.display = "flex";
-        modalImg.src = avatar.src;
+        return `
+          <div class="message-item ${unreadClass} ${activeClass}" onclick="openChat(${c.id_user})">
+            <div class="msg-avatar">${avatarHTML}</div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-sender">${c.nama}</span>
+                <span class="message-time">${c.waktu_relatif}</span>
+              </div>
+              <p class="message-preview">${c.pengirim_terakhir === MY_ID ? 'Anda: ' : ''}${c.pesan_terakhir}</p>
+            </div>
+            ${c.unread > 0 ? '<div class="unread-badge"></div>' : ''}
+          </div>
+        `;
+      }).join('');
+    }
 
-      });
+    function filterContacts() {
+      const q = document.getElementById('searchContact').value.toLowerCase();
+      const filtered = allContacts.filter(c => c.nama.toLowerCase().includes(q) || c.pesan_terakhir.toLowerCase().includes(q));
+      renderContacts(filtered);
+    }
 
-      modal.addEventListener("click", () => {
+    function openChat(id) {
+      window.location.href = `pesan_pelamar.php?id_lawan=${id}`;
+    }
 
-        modal.style.display = "none";
+    // === CHAT ===
+    function loadMessages() {
+      if (LAWAN_ID <= 0) return;
 
-      });
+      const url = `ambil_pesan.php?id_lawan=${LAWAN_ID}` + (lastMsgId > 0 ? `&after=${lastMsgId}` : '');
 
-      document.addEventListener("keydown", (e) => {
+      fetch(url)
+        .then(r => r.json())
+        .then(data => {
+          if (!data.success) return;
 
-        if (e.key === "Escape") {
-          modal.style.display = "none";
-        }
+          const container = document.getElementById('chatMessages');
 
-      });
+          if (lastMsgId === 0 && data.messages.length === 0) {
+            container.innerHTML = '<div class="chat-date-divider">Belum ada pesan. Mulai percakapan!</div>';
+            return;
+          }
 
+          if (lastMsgId === 0) {
+            container.innerHTML = '<div class="chat-date-divider">Hari ini</div>';
+          }
+
+          data.messages.forEach(msg => {
+            const bubble = document.createElement('div');
+            bubble.className = `message-bubble ${msg.is_mine ? 'sent' : 'received'}`;
+
+            const time = new Date(msg.tanggal_kirim).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+            if (msg.is_mine) {
+              bubble.innerHTML = `
+                <div class="bubble-content">${msg.isi_pesan}</div>
+                <div class="bubble-time">${time}</div>
+              `;
+            } else {
+              bubble.innerHTML = `
+                <div class="bubble-content">${msg.isi_pesan}</div>
+                <div class="bubble-time">${time}</div>
+              `;
+            }
+
+            container.appendChild(bubble);
+
+            if (msg.id_pesan > lastMsgId) lastMsgId = msg.id_pesan;
+          });
+
+          container.scrollTop = container.scrollHeight;
+        });
+    }
+
+    function kirimPesan() {
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (!text || LAWAN_ID <= 0) return;
+
+      const btn = document.getElementById('sendBtn');
+      btn.disabled = true;
+
+      const formData = new FormData();
+      formData.append('id_penerima', LAWAN_ID);
+      formData.append('isi_pesan', text);
+
+      fetch('kirim_pesan.php', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+          btn.disabled = false;
+          if (data.success) {
+            input.value = '';
+            input.style.height = '44px';
+            loadMessages(); // Refresh langsung
+            loadContacts(); // Update preview
+          } else {
+            alert('Gagal kirim: ' + data.message);
+          }
+        })
+        .catch(() => { btn.disabled = false; });
+    }
+
+    function handleEnter(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        kirimPesan();
+      }
+    }
+
+    // Auto-resize textarea
+    document.addEventListener('DOMContentLoaded', () => {
+      const ta = document.getElementById('messageInput');
+      if (ta) {
+        ta.addEventListener('input', () => {
+          ta.style.height = '44px';
+          ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+        });
+      }
+    });
+
+    // === INIT ===
+    loadContacts();
+    if (LAWAN_ID > 0) {
+      loadMessages();
+      // Polling setiap 2 detik untuk pesan baru
+      pollingInterval = setInterval(() => {
+        loadMessages();
+      }, 2000);
+
+      // Refresh contact list setiap 5 detik
+      setInterval(loadContacts, 5000);
     }
   </script>
 </body>

@@ -42,9 +42,36 @@ if (isset($_GET['hapus'])) {
     header("Location: kelola_lowongan.php");
 
 }
+$id_perusahaan = (int) $_SESSION['id_user'];
+
+// === STAT CARDS ===
+$q_total_lowongan = mysqli_query($conn, "SELECT COUNT(*) AS total FROM lowongan WHERE id_perusahaan = '$id_perusahaan'");
+$total_lowongan = mysqli_fetch_assoc($q_total_lowongan)['total'];
+
+$q_lowongan_aktif = mysqli_query($conn, "SELECT COUNT(*) AS total FROM lowongan WHERE id_perusahaan = '$id_perusahaan' AND status = 'aktif'");
+$total_aktif = mysqli_fetch_assoc($q_lowongan_aktif)['total'];
+
+$q_lowongan_ditutup = mysqli_query($conn, "SELECT COUNT(*) AS total FROM lowongan WHERE id_perusahaan = '$id_perusahaan' AND status = 'ditutup'");
+$total_ditutup = mysqli_fetch_assoc($q_lowongan_ditutup)['total'];
+
+$q_total_pelamar = mysqli_query($conn, "
+    SELECT COUNT(*) AS total FROM lamaran l
+    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
+    WHERE low.id_perusahaan = '$id_perusahaan'
+");
+$total_pelamar = mysqli_fetch_assoc($q_total_pelamar)['total'];
+
+// Employer Score
+$q_user = mysqli_query($conn, "SELECT * FROM users WHERE id_user = '$id_perusahaan'");
+$user_perusahaan = mysqli_fetch_assoc($q_user);
+$fields_cek_perusahaan = ['nama', 'email', 'telepon', 'lokasi', 'bio', 'foto_profil'];
+$isi_perusahaan = 0;
+foreach ($fields_cek_perusahaan as $f) {
+    if (!empty($user_perusahaan[$f])) $isi_perusahaan++;
+}
+$employer_score = round(($isi_perusahaan / count($fields_cek_perusahaan)) * 100);
 
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 
@@ -662,10 +689,10 @@ if (isset($_GET['hapus'])) {
             <div class="employer-score">
                 <div class="employer-score-header">
                     <span class="employer-score-label">Employer Score</span>
-                    <span class="employer-score-value">50%</span>
+                    <span class="employer-score-value"><?= $employer_score ?>%</span>
                 </div>
                 <div class="employer-score-bar">
-                    <div class="employer-score-fill"></div>
+                    <div class="employer-score-fill" style="width: <?= $employer_score ?>%;"></div>
                 </div>
             </div>
 
@@ -805,7 +832,7 @@ if (isset($_GET['hapus'])) {
                         </div>
                     </div>
                     <div class="stat-label">Total Lowongan</div>
-                    <div class="stat-value">12</div>
+                    <div class="stat-value"><?= $total_lowongan ?></div>
                 </div>
 
                 <div class="stat-card">
@@ -818,7 +845,7 @@ if (isset($_GET['hapus'])) {
                         </div>
                     </div>
                     <div class="stat-label">Lowongan Aktif</div>
-                    <div class="stat-value">8</div>
+                    <div class="stat-value"><?= $total_aktif ?></div>
                 </div>
 
                 <div class="stat-card">
@@ -834,7 +861,7 @@ if (isset($_GET['hapus'])) {
                         </div>
                     </div>
                     <div class="stat-label">Total Pelamar</div>
-                    <div class="stat-value">347</div>
+                    <div class="stat-value"><?= $total_pelamar ?></div>
                 </div>
 
                 <div class="stat-card">
@@ -849,7 +876,7 @@ if (isset($_GET['hapus'])) {
                         </div>
                     </div>
                     <div class="stat-label">Lowongan Ditutup</div>
-                    <div class="stat-value">4</div>
+                    <div class="stat-value"><?= $total_ditutup ?></div>
                 </div>
             </div>
 

@@ -1,67 +1,15 @@
 <?php
-
 session_start();
 
-if (!isset($_SESSION['id_user'])) {
-
-  header("Location: login_pelamar.php");
-
-}
-
-if ($_SESSION['role'] != 'pelamar') {
-
-  header("Location: login_pelamar.php");
-
+if (!isset($_SESSION['id_user']) || $_SESSION['role'] != 'pelamar') {
+    header("Location: login_pelamar.php");
+    exit;
 }
 
 include 'config/koneksi.php';
 
-$id_pelamar = $_SESSION['id_user'];
-
-$total_lamaran = mysqli_num_rows(mysqli_query(
-  $conn,
-
-  "SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'"
-));
-
-$total_review = mysqli_num_rows(mysqli_query(
-  $conn,
-
-  "SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'
-
-AND status='review'"
-));
-
-$total_interview = mysqli_num_rows(mysqli_query(
-  $conn,
-
-  "SELECT * FROM lamaran
-
-WHERE id_pelamar='$id_pelamar'
-
-AND status='interview'"
-));
-
-$total_lowongan = mysqli_num_rows(mysqli_query(
-  $conn,
-
-  "SELECT * FROM lowongan
-
-WHERE status='aktif'"
-));
-
 $id_pelamar = (int) $_SESSION['id_user'];
-
-$result = mysqli_query($conn, "
-    SELECT *
-    FROM users
-    WHERE id_user=$id_pelamar
-");
-
+$result = mysqli_query($conn, "SELECT * FROM users WHERE id_user=$id_pelamar");
 $user = mysqli_fetch_assoc($result);
 
 $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
@@ -69,1240 +17,331 @@ $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
 /* =========================
    HITUNG KELENGKAPAN PROFIL
    ========================= */
+$fields_cek = ['nama', 'telepon', 'lokasi', 'bio', 'pendidikan', 'pengalaman', 'skills', 'foto_profil', 'cv_path'];
+$isi = 0;
+foreach ($fields_cek as $field) {
+    if (!empty($user[$field])) $isi++;
+}
+$kelengkapan = round(($isi / count($fields_cek)) * 100);
 
-$fields_cek = [
-  'nama',
-  'telepon',
-  'lokasi',
-  'bio',
-  'pendidikan',
-  'pengalaman',
-  'skills',
-  'foto_profil',
-  'cv_path'
+/* =========================
+   CAREER ROADMAP LOGIC
+   ========================= */
+$bidang_keahlian = $user['bidang_keahlian'] ?? '';
+$user_skills_raw = strtolower($user['skills'] ?? '');
+
+$roadmaps = [
+    'Frontend Developer' => [
+        'desc' => 'Fokus pada antarmuka pengguna, performa web, dan pengalaman interaktif.',
+        'steps' => [
+            ['title' => 'Internet & Dasar Web', 'desc' => 'Memahami cara kerja HTTP, DNS, Hosting, HTML, dan CSS dasar.', 'skills' => ['html', 'css']],
+            ['title' => 'JavaScript Lanjut', 'desc' => 'Memahami ES6+, DOM Manipulation, Fetch API, dan Async/Await.', 'skills' => ['javascript', 'js']],
+            ['title' => 'Framework Modern', 'desc' => 'Menguasai React, Vue, atau Angular beserta ekosistemnya.', 'skills' => ['react', 'vue', 'angular']],
+            ['title' => 'Advanced Topics', 'desc' => 'Mempelajari TypeScript, Next.js, SEO, dan Web Vitals.', 'skills' => ['typescript', 'next.js', 'ssr']]
+        ]
+    ],
+    'Backend Developer' => [
+        'desc' => 'Membangun logika bisnis, manajemen database, dan arsitektur server yang skalabel.',
+        'steps' => [
+            ['title' => 'Bahasa Pemrograman', 'desc' => 'Menguasai PHP, Python, Java, atau Node.js.', 'skills' => ['php', 'python', 'java', 'node.js', 'golang']],
+            ['title' => 'Database Management', 'desc' => 'Memahami Relational (MySQL/PostgreSQL) dan NoSQL.', 'skills' => ['mysql', 'postgresql', 'sql', 'mongodb']],
+            ['title' => 'API & Arsitektur', 'desc' => 'Merancang RESTful API atau GraphQL dengan best practices keamanan.', 'skills' => ['api', 'rest api', 'graphql']],
+            ['title' => 'DevOps & Deployment', 'desc' => 'Mempelajari Docker, CI/CD, AWS/GCP, dan Server Linux.', 'skills' => ['docker', 'ci/cd', 'aws', 'linux']]
+        ]
+    ],
+    'Fullstack Developer' => [
+        'desc' => 'Menguasai baik sisi Frontend maupun Backend secara menyeluruh.',
+        'steps' => [
+            ['title' => 'Frontend Dasar', 'desc' => 'Menguasai HTML, CSS, JavaScript, dan UI framework.', 'skills' => ['html', 'css', 'javascript']],
+            ['title' => 'Backend & Database', 'desc' => 'Membuat server dengan Node.js/PHP dan menghubungkan database.', 'skills' => ['php', 'node.js', 'mysql', 'sql']],
+            ['title' => 'Version Control', 'desc' => 'Menguasai Git dan alur kerja kolaborasi.', 'skills' => ['git', 'github']],
+            ['title' => 'Deployment', 'desc' => 'Mendeploy aplikasi fullstack ke server atau cloud (VPS/Vercel).', 'skills' => ['docker', 'aws', 'vercel', 'deployment']]
+        ]
+    ],
+    'UI/UX Designer' => [
+        'desc' => 'Mendesain pengalaman dan antarmuka pengguna yang estetis dan fungsional.',
+        'steps' => [
+            ['title' => 'Prinsip Desain', 'desc' => 'Memahami teori warna, tipografi, dan layouting.', 'skills' => ['ui design', 'typography']],
+            ['title' => 'UX Research', 'desc' => 'Melakukan riset pengguna, wireframing, dan user flow.', 'skills' => ['ux research', 'wireframing']],
+            ['title' => 'Design Tools', 'desc' => 'Menguasai Figma, Adobe XD, atau Sketch.', 'skills' => ['figma', 'adobe xd', 'sketch']],
+            ['title' => 'Prototyping & Testing', 'desc' => 'Membuat prototipe interaktif dan melakukan usability testing.', 'skills' => ['prototyping', 'usability testing']]
+        ]
+    ],
+    'Network Engineer' => [
+        'desc' => 'Merancang, mengimplementasikan, dan mengelola jaringan komputer.',
+        'steps' => [
+            ['title' => 'Dasar Jaringan', 'desc' => 'Memahami topologi, model OSI, dan TCP/IP.', 'skills' => ['networking', 'tcp/ip']],
+            ['title' => 'Routing & Switching', 'desc' => 'Mengonfigurasi router dan switch (misal: Cisco, MikroTik).', 'skills' => ['cisco', 'mikrotik', 'routing', 'switching']],
+            ['title' => 'Keamanan Jaringan', 'desc' => 'Mengatur Firewall, VPN, dan sistem deteksi intrusi.', 'skills' => ['firewall', 'security', 'vpn']],
+            ['title' => 'Manajemen Server', 'desc' => 'Mengelola server Linux/Windows untuk infrastruktur jaringan.', 'skills' => ['linux', 'windows server']]
+        ]
+    ],
+    'Data Scientist' => [
+        'desc' => 'Mengolah data mentah menjadi insight berharga menggunakan statistik dan Machine Learning.',
+        'steps' => [
+            ['title' => 'Statistik & Math', 'desc' => 'Memahami probabilitas, aljabar linier, dan statistika.', 'skills' => ['statistics', 'math']],
+            ['title' => 'Bahasa Pemrograman', 'desc' => 'Menguasai Python atau R beserta library manipulasi data.', 'skills' => ['python', 'r', 'pandas', 'numpy']],
+            ['title' => 'Data Visualization', 'desc' => 'Membuat visualisasi data menggunakan Tableau, PowerBI, atau Matplotlib.', 'skills' => ['data visualization', 'tableau', 'powerbi']],
+            ['title' => 'Machine Learning', 'desc' => 'Menerapkan algoritma ML, klasifikasi, dan regresi.', 'skills' => ['machine learning', 'ml', 'scikit-learn']]
+        ]
+    ],
+    'Mobile Developer' => [
+        'desc' => 'Membangun aplikasi untuk platform mobile (Android/iOS).',
+        'steps' => [
+            ['title' => 'Fundamental Pemrograman', 'desc' => 'Menguasai OOP dan konsep dasar pemrograman.', 'skills' => ['oop', 'java', 'dart', 'kotlin']],
+            ['title' => 'Pemilihan Platform', 'desc' => 'Memilih antara Native (Kotlin/Swift) atau Cross-Platform (Flutter/React Native).', 'skills' => ['flutter', 'react native', 'android', 'ios']],
+            ['title' => 'UI & API Integration', 'desc' => 'Membangun UI yang responsif dan mengkonsumsi REST API.', 'skills' => ['api', 'ui design', 'rest api']],
+            ['title' => 'App Store Deployment', 'desc' => 'Proses rilis ke Google Play Store atau Apple App Store.', 'skills' => ['deployment', 'play store', 'app store']]
+        ]
+    ]
 ];
 
-$isi = 0;
+$selected_roadmap = $roadmaps[$bidang_keahlian] ?? null;
 
-foreach ($fields_cek as $field) {
-  if (!empty($user[$field])) {
-    $isi++;
-  }
+// Tentukan status tiap langkah roadmap berdasarkan skill user
+if ($selected_roadmap) {
+    $has_current = false;
+    foreach ($selected_roadmap['steps'] as &$step) {
+        $step_completed = false;
+        // Cek apakah minimal 1 skill dari step ini dimiliki user
+        foreach ($step['skills'] as $req_skill) {
+            if (strpos($user_skills_raw, $req_skill) !== false) {
+                $step_completed = true;
+                break;
+            }
+        }
+
+        if ($step_completed) {
+            $step['status'] = 'completed';
+        } else {
+            if (!$has_current) {
+                $step['status'] = 'current';
+                $has_current = true;
+            } else {
+                $step['status'] = 'locked';
+            }
+        }
+    }
+    unset($step);
 }
-
-$kelengkapan = round(
-  ($isi / count($fields_cek)) * 100
-);
-
-//
-
 ?>
 
 <!doctype html>
 <html lang="id">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Career Roadmap - Lokerin</title>
-  <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        "Helvetica Neue", Arial, sans-serif;
-      background-color: #f9fafb;
-      color: #111827;
-      line-height: 1.6;
-    }
-
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background: white;
-      border-right: 1px solid #e5e7eb;
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 24px;
-      padding: 0 8px;
-    }
-
-    .logo-img {
-      width: 27px;
-      height: 27px;
-      object-fit: contain;
-    }
-
-    .logo-text {
-      font-size: 18px;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: #f9fafb;
-      border-radius: 12px;
-      margin-bottom: 24px
-    }
-
-    .sidebar-avatar {
-      width: 40px;
-      height: 40px;
-      background: #0d9488;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 700;
-      font-size: 14px;
-      overflow: hidden;
-      flex-shrink: 0;
-      cursor: pointer;
-      transition: transform .2s;
-    }
-
-    .sidebar-avatar:hover {
-      transform: scale(1.05);
-    }
-
-    .sidebar-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%
-    }
-
-    .avatar-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .8);
-
-      justify-content: center;
-      align-items: center;
-
-      z-index: 9999;
-    }
-
-    .avatar-modal img {
-      max-width: 90%;
-      max-height: 90%;
-
-      border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, .5);
-    }
-
-    .user-info {
-      flex: 1;
-      min-width: 0
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: #111827;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis
-    }
-
-    .user-email {
-      font-size: 12px;
-      color: #6b7280;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis
-    }
-
-    .career-score {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      margin-bottom: 24px;
-    }
-
-    .career-score-label {
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .career-score-value {
-      font-size: 14px;
-      font-weight: 600;
-      color: #0d9488;
-    }
-
-    nav {
-      flex: 1;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      color: #6b7280;
-      text-decoration: none;
-      border-radius: 8px;
-      margin-bottom: 4px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .nav-item:hover {
-      background: #f9fafb;
-      color: #111827;
-    }
-
-    .nav-item.active {
-      background: #e0f2f1;
-      color: #0d9488;
-    }
-
-    .nav-divider {
-      height: 1px;
-      background: #e5e7eb;
-      margin: 16px 0;
-    }
-
-    .nav-section-title {
-      font-size: 12px;
-      color: #9ca3af;
-      padding: 8px 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-item-logout {
-      color: #ef4444;
-    }
-
-    .nav-item-logout:hover {
-      background: #fef2f2;
-    }
-
-    /* Main Content */
-    .main-content {
-      flex: 1;
-      margin-left: 260px;
-      padding: 24px 32px;
-    }
-
-    /* Header */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 32px;
-    }
-
-    .location {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background: white;
-      border: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.2s;
-    }
-
-    .icon-btn:hover {
-      background: #f9fafb;
-    }
-
-    .notification-badge {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      width: 18px;
-      height: 18px;
-      background: #ef4444;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: white;
-      font-weight: 600;
-    }
-
-    /* Page Title */
-    .page-title {
-      font-size: 32px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .page-subtitle {
-      font-size: 16px;
-      color: #6b7280;
-      margin-bottom: 32px;
-    }
-
-    /* Position Cards */
-    .position-cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      margin-bottom: 48px;
-    }
-
-    .position-card {
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      border: 2px solid #e5e7eb;
-      transition: all 0.3s;
-    }
-
-    .position-card.current {
-      border-color: #0d9488;
-    }
-
-    .position-card.target {
-      border-color: #f59e0b;
-    }
-
-    .position-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .position-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .position-card.current .position-icon {
-      background: #e0f2f1;
-      color: #0d9488;
-    }
-
-    .position-card.target .position-icon {
-      background: #fef3c7;
-      color: #f59e0b;
-    }
-
-    .position-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .position-card.current .position-label {
-      color: #0d9488;
-    }
-
-    .position-card.target .position-label {
-      color: #f59e0b;
-    }
-
-    .position-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .position-meta {
-      font-size: 15px;
-      color: #6b7280;
-    }
-
-    /* Roadmap Section */
-    .roadmap-section {
-      margin-bottom: 48px;
-    }
-
-    .roadmap-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
-    .roadmap-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    /* Timeline */
-    .timeline {
-      position: relative;
-      padding-left: 100px;
-    }
-
-    .timeline::before {
-      content: "";
-      position: absolute;
-      left: 32px;
-      top: 32px;
-      bottom: 32px;
-      width: 2px;
-      background: #e5e7eb;
-    }
-
-    .timeline-item {
-      position: relative;
-      margin-bottom: 40px;
-    }
-
-    .timeline-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .timeline-icon-wrapper {
-      position: absolute;
-      left: -100px;
-      top: 24px;
-      width: 64px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .timeline-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: white;
-      border: 3px solid #e5e7eb;
-      font-size: 24px;
-      position: relative;
-      left: 0;
-    }
-
-    .timeline-item.current .timeline-icon {
-      border-color: #0d9488;
-      background: #e0f2f1;
-      color: #0d9488;
-    }
-
-    .timeline-item.next .timeline-icon {
-      border-color: #f59e0b;
-      background: #fef3c7;
-      color: #f59e0b;
-    }
-
-    .timeline-item.future .timeline-icon {
-      border-color: #d1d5db;
-      background: #f9fafb;
-      color: #9ca3af;
-    }
-
-    .timeline-content {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      border: 2px solid #e5e7eb;
-      transition: all 0.3s;
-    }
-
-    .timeline-item.current .timeline-content {
-      border-color: #0d9488;
-      background: #f0fdfa;
-    }
-
-    .timeline-item.next .timeline-content {
-      border-color: #f59e0b;
-      background: #fffbeb;
-    }
-
-    .timeline-content-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 16px;
-    }
-
-    .timeline-position {
-      flex: 1;
-    }
-
-    .timeline-position-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .position-badge {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .position-badge.current {
-      background: #0d9488;
-      color: white;
-    }
-
-    .position-badge.next {
-      background: #f59e0b;
-      color: white;
-    }
-
-    .timeline-level {
-      font-size: 14px;
-      color: #6b7280;
-      margin-bottom: 16px;
-    }
-
-    .timeline-salary {
-      text-align: right;
-    }
-
-    .timeline-salary-amount {
-      font-size: 18px;
-      font-weight: 700;
-      color: #0d9488;
-    }
-
-    .timeline-salary-duration {
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .timeline-skills-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #111827;
-      margin-bottom: 12px;
-    }
-
-    .timeline-skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .skill-badge {
-      background: #e0f2f1;
-      color: #0d9488;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .timeline-tips {
-      background: #fffbeb;
-      border-left: 3px solid #f59e0b;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .tips-icon {
-      color: #f59e0b;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .tips-text {
-      font-size: 14px;
-      color: #92400e;
-    }
-
-    .timeline-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #0d9488;
-      font-size: 14px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .timeline-link:hover {
-      gap: 12px;
-    }
-
-    /* Action Cards */
-    .action-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .action-card {
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      border: 1px solid #e5e7eb;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-
-    .action-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    .action-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .action-card:nth-child(1) .action-icon {
-      background: #dbeafe;
-      color: #2563eb;
-    }
-
-    .action-card:nth-child(2) .action-icon {
-      background: #fef3c7;
-      color: #f59e0b;
-    }
-
-    .action-card:nth-child(3) .action-icon {
-      background: #e0f2f1;
-      color: #0d9488;
-    }
-
-    .action-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .action-description {
-      font-size: 14px;
-      color: #6b7280;
-      line-height: 1.6;
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .position-cards {
-        grid-template-columns: 1fr;
-      }
-
-      .action-cards {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        display: none;
-      }
-
-      .main-content {
-        margin-left: 0;
-        padding: 16px;
-      }
-
-      .timeline {
-        padding-left: 60px;
-      }
-
-      .timeline::before {
-        left: 28px;
-      }
-
-      .timeline-icon-wrapper {
-        left: -32px;
-        width: 60px;
-        height: 60px;
-      }
-
-      .timeline-icon {
-        width: 48px;
-        height: 48px;
-        font-size: 20px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career Roadmap - Lokerin</title>
+    <link rel="icon" type="image/png" href="assets/icon_head_lokerin.png" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #f9fafb; color: #111827; line-height: 1.6; }
+        .layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar { width: 260px; background: white; border-right: 1px solid #e5e7eb; padding: 24px 16px; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
+        .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; padding: 0 8px; }
+        .logo-img { width: 27px; height: 27px; object-fit: contain; }
+        .logo-text { font-size: 18px; font-weight: 700; color: #111827; }
+
+        .user-profile { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 12px; margin-bottom: 24px; }
+        .sidebar-avatar { width: 40px; height: 40px; background: #0d9488; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; overflow: hidden; flex-shrink: 0; }
+        .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-info { flex: 1; min-width: 0; }
+        .user-name { font-size: 14px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-email { font-size: 12px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .career-score { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 24px; }
+        .career-score-label { font-size: 12px; color: #6b7280; }
+        .career-score-value { font-size: 14px; font-weight: 600; color: #0d9488; }
+
+        nav { flex: 1; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #6b7280; text-decoration: none; border-radius: 8px; margin-bottom: 4px; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+        .nav-item:hover { background: #f9fafb; color: #111827; }
+        .nav-item.active { background: #e0f2f1; color: #0d9488; }
+        .nav-divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
+        .nav-item-logout { color: #ef4444; }
+        .nav-item-logout:hover { background: #fef2f2; }
+
+        /* Main Content */
+        .main-content { flex: 1; margin-left: 260px; padding: 32px 48px; max-width: 1200px; }
+
+        .page-header { margin-bottom: 40px; }
+        .page-title { font-size: 32px; font-weight: 800; color: #111827; margin-bottom: 12px; letter-spacing: -0.02em; }
+        .page-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; line-height: 1.6; }
+
+        /* Roadmap container */
+        .roadmap-container { position: relative; margin-top: 40px; padding-left: 24px; }
+        .roadmap-line { position: absolute; top: 0; bottom: 0; left: 35px; width: 3px; background: #e5e7eb; border-radius: 3px; }
+
+        .roadmap-step { position: relative; padding-left: 60px; margin-bottom: 40px; }
+        .roadmap-step:last-child { margin-bottom: 0; }
+
+        .step-indicator {
+            position: absolute; left: -1px; top: 0; width: 26px; height: 26px; border-radius: 50%;
+            background: white; border: 3px solid #e5e7eb; display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; z-index: 2;
+        }
+
+        .step-content {
+            background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: all 0.3s; position: relative;
+        }
+        .step-content::before {
+            content: ''; position: absolute; top: 12px; left: -8px; width: 16px; height: 16px;
+            background: white; border-left: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;
+            transform: rotate(45deg);
+        }
+
+        .step-title { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+        .step-desc { font-size: 15px; color: #6b7280; margin-bottom: 16px; line-height: 1.5; }
+        .step-skills { display: flex; gap: 8px; flex-wrap: wrap; }
+        .skill-tag { background: #f3f4f6; color: #4b5563; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* States */
+        .roadmap-step.completed .step-indicator { background: #0d9488; border-color: #0d9488; color: white; }
+        .roadmap-step.completed .step-content { border-color: #0d9488; background: #f0fdfa; }
+        .roadmap-step.completed .step-content::before { background: #f0fdfa; border-color: #0d9488; }
+        .roadmap-step.completed .skill-tag { background: #ccfbf1; color: #0f766e; }
+
+        .roadmap-step.current .step-indicator { border-color: #0d9488; border-width: 4px; box-shadow: 0 0 0 4px #ccfbf1; }
+        .roadmap-step.current .step-content { border-color: #0d9488; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1); }
+        .roadmap-step.current .step-content::before { border-color: #0d9488; }
+
+        .roadmap-step.locked .step-indicator { background: #f3f4f6; }
+        .roadmap-step.locked .step-content { opacity: 0.6; }
+
+        /* Empty State */
+        .empty-state { background: white; border: 2px dashed #e5e7eb; border-radius: 16px; padding: 60px 24px; text-align: center; }
+        .empty-state h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .empty-state p { color: #6b7280; margin-bottom: 24px; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: #0d9488; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        .btn-primary:hover { background: #0f766e; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 24px; }
+        }
+    </style>
 </head>
 
 <body>
-  <div class="layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="logo">
-        <img class="logo-img" src="assets/logo_lokerin.png" alt="L" />
-        <span class="logo-text">LokerIn</span>
-      </div>
-
-      <div class="user-profile">
-        <div class="sidebar-avatar">
-          <?php if (!empty($user['foto_profil']) && file_exists('uploads/foto_profil/' . $user['foto_profil'])): ?>
-            <img src="uploads/foto_profil/<?= htmlspecialchars($user['foto_profil']) ?>" alt="foto">
-          <?php else: ?>
-            <?= $initials ?>
-          <?php endif; ?>
-        </div>
-        <div class="user-info">
-          <div class="user-name"><?= htmlspecialchars($user['nama'] ?? '-') ?></div>
-          <div class="user-email"><?= htmlspecialchars($user['email'] ?? '') ?></div>
-        </div>
-      </div>
-
-      <div class="career-score">
-        <span class="career-score-label">Kelengkapan Profil</span>
-        <span class="career-score-value">
-          <?= $kelengkapan ?>%
-        </span>
-      </div>
-
-      <nav>
-        <a href="dashboard_pelamar.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-          Dashboard
-        </a>
-
-        <a href="cari_lowongan.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          Cari Lowongan
-        </a>
-
-        <a href="lamaran_saya.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-          Lamaran Saya
-        </a>
-
-        <a href="profil_pelamar.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          Profil
-        </a>
-
-        <a href="career_roadmap.php" class="nav-item active">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 3v18h18"></path>
-            <path d="m19 9-5 5-4-4-3 3"></path>
-          </svg>
-          Career Roadmap
-        </a>
-
-        <a href="skill_gap_analyzer.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
-          </svg>
-          Skill Gap Analyzer
-        </a>
-
-        <a href="pesan_pelamar.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          Pesan
-        </a>
-
-        <div class="nav-divider"></div>
-
-        <a href="pengaturan_pelamar.php" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M12 1v6m0 6v6"></path>
-            <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
-            <path d="M1 12h6m6 0h6"></path>
-            <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path>
-          </svg>
-          Pengaturan
-        </a>
-
-        <a href="logout.php" class="nav-item nav-item-logout">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-          Keluar
-        </a>
-      </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Header -->
-      <header class="header">
-        <div class="location">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          Jakarta, Indonesia
-        </div>
-
-        <div class="header-actions">
-          <button class="icon-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            <span class="notification-badge">3</span>
-          </button>
-
-          <button class="icon-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-            </svg>
-          </button>
-        </div>
-      </header>
-
-      <!-- Page Title -->
-      <h1 class="page-title">Career Roadmap</h1>
-      <p class="page-subtitle">
-        Visualisasi perjalanan karir Anda dari posisi saat ini ke target
-      </p>
-
-      <!-- Position Cards -->
-      <div class="position-cards">
-        <!-- Current Position -->
-        <div class="position-card current">
-          <div class="position-header">
-            <div class="position-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-              </svg>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img class="logo-img" src="assets/logo_lokerin.png" alt="L" />
+                <span class="logo-text">LokerIn</span>
             </div>
-            <div>
-              <div class="position-label">Posisi Saat Ini</div>
-            </div>
-          </div>
-          <h2 class="position-title">Frontend Developer</h2>
-          <p class="position-meta">Level: Mid • 3 tahun pengalaman</p>
-        </div>
 
-        <!-- Target Position -->
-        <div class="position-card target">
-          <div class="position-header">
-            <div class="position-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <circle cx="12" cy="12" r="6"></circle>
-                <circle cx="12" cy="12" r="2"></circle>
-              </svg>
-            </div>
-            <div>
-              <div class="position-label">Target Posisi</div>
-            </div>
-          </div>
-          <h2 class="position-title">Engineering Manager</h2>
-          <p class="position-meta">Estimasi: 5 tahun dari sekarang</p>
-        </div>
-      </div>
-
-      <!-- Roadmap Section -->
-      <div class="roadmap-section">
-        <div class="roadmap-header">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 3v18h18"></path>
-            <path d="m19 9-5 5-4-4-3 3"></path>
-          </svg>
-          <h2 class="roadmap-title">Roadmap Perjalanan Karir</h2>
-        </div>
-
-        <!-- Timeline -->
-        <div class="timeline">
-          <!-- Current Position -->
-          <div class="timeline-item current">
-            <div class="timeline-icon-wrapper">
-              <div class="timeline-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-            </div>
-            <div class="timeline-content">
-              <div class="timeline-content-header">
-                <div class="timeline-position">
-                  <h3 class="timeline-position-title">
-                    Frontend Developer
-                    <span class="position-badge current">Anda di sini</span>
-                  </h3>
-                  <p class="timeline-level">Level: Mid</p>
+            <div class="user-profile">
+                <div class="sidebar-avatar">
+                    <?php if (!empty($user['foto_profil']) && file_exists('uploads/foto_profil/' . $user['foto_profil'])): ?>
+                        <img src="uploads/foto_profil/<?= htmlspecialchars($user['foto_profil']) ?>" alt="foto">
+                    <?php else: ?>
+                        <?= $initials ?>
+                    <?php endif; ?>
                 </div>
-                <div class="timeline-salary">
-                  <div class="timeline-salary-amount">Rp 15-25 Juta</div>
-                  <div class="timeline-salary-duration">2-3 tahun</div>
+                <div class="user-info">
+                    <div class="user-name"><?= htmlspecialchars($user['nama'] ?? '-') ?></div>
+                    <div class="user-email"><?= htmlspecialchars($user['email'] ?? '') ?></div>
                 </div>
-              </div>
-
-              <div class="timeline-skills-label">Skills yang dibutuhkan:</div>
-              <div class="timeline-skills">
-                <span class="skill-badge">React</span>
-                <span class="skill-badge">TypeScript</span>
-                <span class="skill-badge">CSS</span>
-              </div>
-
-              <div class="timeline-tips">
-                <svg class="tips-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <polygon
-                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                  </polygon>
-                </svg>
-                <span class="tips-text">Tips: Fokus pada penguasaan teknologi dan best
-                  practices</span>
-              </div>
-
-              <a href="" class="timeline-link">
-                Lihat detail transisi
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
             </div>
-          </div>
 
-          <!-- Next Position - Senior Frontend Developer -->
-          <div class="timeline-item next">
-            <div class="timeline-icon-wrapper">
-              <div class="timeline-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <circle cx="12" cy="12" r="6"></circle>
-                  <circle cx="12" cy="12" r="2"></circle>
-                </svg>
-              </div>
+            <div class="career-score">
+                <span class="career-score-label">Kelengkapan Profil</span>
+                <span class="career-score-value"><?= $kelengkapan ?>%</span>
             </div>
-            <div class="timeline-content">
-              <div class="timeline-content-header">
-                <div class="timeline-position">
-                  <h3 class="timeline-position-title">
-                    Senior Frontend Developer
-                    <span class="position-badge next">Target Berikutnya</span>
-                  </h3>
-                  <p class="timeline-level">Level: Senior</p>
+
+            <nav>
+                <a href="dashboard_pelamar.php" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <a href="cari_lowongan.php" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                    Cari Lowongan
+                </a>
+                <a href="lamaran_saya.php" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Lamaran Saya
+                </a>
+                <a href="profil_pelamar.php" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Profil
+                </a>
+                <a href="career_roadmap.php" class="nav-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+                    Career Roadmap
+                </a>
+                <a href="skill_gap_analyzer.php" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path></svg>
+                    Skill Gap Analyzer
+                </a>
+                <a href="pesan_pelamar.php" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Pesan
+                </a>
+                <div class="nav-divider"></div>
+                <a href="pengaturan_pelamar.php" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6"></path><path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path><path d="M1 12h6m6 0h6"></path><path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path></svg>
+                    Pengaturan
+                </a>
+                <a href="logout.php" class="nav-item nav-item-logout">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Keluar
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <?php if (empty($bidang_keahlian) || !$selected_roadmap): ?>
+                <div class="page-header">
+                    <h1 class="page-title">Career Roadmap</h1>
+                    <p class="page-subtitle">Petunjuk langkah demi langkah menuju karir impian Anda.</p>
                 </div>
-                <div class="timeline-salary">
-                  <div class="timeline-salary-amount">Rp 25-40 Juta</div>
-                  <div class="timeline-salary-duration">2-4 tahun</div>
+                <div class="empty-state">
+                    <h3>Pilih Bidang Keahlian Anda</h3>
+                    <p>Lengkapi profil Anda dengan memilih Bidang Keahlian / Posisi Diminati untuk melihat roadmap karir yang sesuai.</p>
+                    <a href="profil_pelamar.php" class="btn-primary">Update Profil Sekarang</a>
                 </div>
-              </div>
-
-              <div class="timeline-skills-label">Skills yang dibutuhkan:</div>
-              <div class="timeline-skills">
-                <span class="skill-badge">Architecture</span>
-                <span class="skill-badge">Performance</span>
-                <span class="skill-badge">Mentoring</span>
-              </div>
-
-              <div class="timeline-tips">
-                <svg class="tips-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <polygon
-                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                  </polygon>
-                </svg>
-                <span class="tips-text">Tips: Mulai memimpin proyek dan mentoring junior</span>
-              </div>
-
-              <a href="" class="timeline-link">
-                Lihat detail transisi
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          <!-- Future Position 1 - Tech Lead -->
-          <div class="timeline-item future">
-            <div class="timeline-icon-wrapper">
-              <div class="timeline-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                </svg>
-              </div>
-            </div>
-            <div class="timeline-content">
-              <div class="timeline-content-header">
-                <div class="timeline-position">
-                  <h3 class="timeline-position-title">
-                    Tech Lead / Staff Engineer
-                  </h3>
-                  <p class="timeline-level">Level: Lead</p>
+            <?php else: ?>
+                <div class="page-header">
+                    <h1 class="page-title">Roadmap: <?= htmlspecialchars($bidang_keahlian) ?></h1>
+                    <p class="page-subtitle"><?= htmlspecialchars($selected_roadmap['desc']) ?></p>
                 </div>
-                <div class="timeline-salary">
-                  <div class="timeline-salary-amount">Rp 40-60 Juta</div>
-                  <div class="timeline-salary-duration">2-3 tahun</div>
+
+                <div class="roadmap-container">
+                    <div class="roadmap-line"></div>
+                    
+                    <?php foreach ($selected_roadmap['steps'] as $index => $step): ?>
+                        <div class="roadmap-step <?= $step['status'] ?>">
+                            <div class="step-indicator">
+                                <?php if ($step['status'] == 'completed'): ?>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <?php elseif ($step['status'] == 'current'): ?>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <?php else: ?>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <?php endif; ?>
+                            </div>
+                            <div class="step-content">
+                                <h3 class="step-title">Langkah <?= $index + 1 ?>: <?= htmlspecialchars($step['title']) ?></h3>
+                                <p class="step-desc"><?= htmlspecialchars($step['desc']) ?></p>
+                                <div class="step-skills">
+                                    <?php foreach ($step['skills'] as $skill): ?>
+                                        <span class="skill-tag"><?= htmlspecialchars($skill) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-              </div>
+            <?php endif; ?>
 
-              <div class="timeline-skills-label">Skills yang dibutuhkan:</div>
-              <div class="timeline-skills">
-                <span class="skill-badge">System Design</span>
-                <span class="skill-badge">Leadership</span>
-                <span class="skill-badge">Cross-team collaboration</span>
-              </div>
-
-              <div class="timeline-tips">
-                <svg class="tips-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <polygon
-                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                  </polygon>
-                </svg>
-                <span class="tips-text">Tips: Pimpin tim teknis dan buat keputusan arsitektur</span>
-              </div>
-
-              <a href="" class="timeline-link">
-                Lihat detail transisi
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          <!-- Target Position - Engineering Manager -->
-          <div class="timeline-item future">
-            <div class="timeline-icon-wrapper">
-              <div class="timeline-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                </svg>
-              </div>
-            </div>
-            <div class="timeline-content">
-              <div class="timeline-content-header">
-                <div class="timeline-position">
-                  <h3 class="timeline-position-title">Engineering Manager</h3>
-                  <p class="timeline-level">Level: Manager</p>
-                </div>
-                <div class="timeline-salary">
-                  <div class="timeline-salary-amount">Rp 60-100 Juta</div>
-                  <div class="timeline-salary-duration">Target</div>
-                </div>
-              </div>
-
-              <div class="timeline-skills-label">Skills yang dibutuhkan:</div>
-              <div class="timeline-skills">
-                <span class="skill-badge">People Management</span>
-                <span class="skill-badge">Strategy</span>
-                <span class="skill-badge">Hiring</span>
-              </div>
-
-              <div class="timeline-tips">
-                <svg class="tips-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <polygon
-                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                  </polygon>
-                </svg>
-                <span class="tips-text">Tips: Kelola tim engineer dan align dengan bisnis</span>
-              </div>
-
-              <a href="" class="timeline-link">
-                Lihat detail transisi
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Cards -->
-      <div class="action-cards">
-        <a href="" class="action-card">
-          <div class="action-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-            </svg>
-          </div>
-          <h3 class="action-title">Pelajari Skills Baru</h3>
-          <p class="action-description">
-            Dapatkan rekomendasi kursus dan sertifikasi
-          </p>
-        </a>
-
-        <a href="" class="action-card">
-          <div class="action-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="8" r="7"></circle>
-              <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-            </svg>
-          </div>
-          <h3 class="action-title">Ambil Sertifikasi</h3>
-          <p class="action-description">
-            Tingkatkan kredibilitas dengan sertifikasi profesional
-          </p>
-        </a>
-
-        <a href="" class="action-card">
-          <div class="action-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-            </svg>
-          </div>
-          <h3 class="action-title">Cari Lowongan Cocok</h3>
-          <p class="action-description">
-            Temukan lowongan yang sesuai dengan roadmap Anda
-          </p>
-        </a>
-      </div>
-    </main>
-  </div>
-
-  <script>
-    // Handle icon buttons
-    document.querySelectorAll(".icon-btn").forEach((btn) => {
-      btn.addEventListener("click", function (e) {
-        e.preventDefault();
-      });
-    });
-
-    // Handle timeline links
-    document.querySelectorAll(".timeline-link").forEach((link) => {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-      });
-    });
-
-    // Handle action cards
-    document.querySelectorAll(".action-card").forEach((card) => {
-      card.addEventListener("click", function (e) {
-        e.preventDefault();
-      });
-    });
-  </script>
-
-  <!-- lihat foto profil -->
-  <div id="avatarModal" class="avatar-modal">
-    <img id="avatarModalImg" src="" alt="Foto Profil">
-  </div>
-  <script>
-    const avatar = document.querySelector(".sidebar-avatar img");
-
-    const modal = document.getElementById("avatarModal");
-    const modalImg = document.getElementById("avatarModalImg");
-
-    if (avatar) {
-
-      avatar.addEventListener("click", () => {
-
-        modal.style.display = "flex";
-        modalImg.src = avatar.src;
-
-      });
-
-      modal.addEventListener("click", () => {
-
-        modal.style.display = "none";
-
-      });
-
-      document.addEventListener("keydown", (e) => {
-
-        if (e.key === "Escape") {
-          modal.style.display = "none";
-        }
-
-      });
-
-    }
-  </script>
+        </main>
+    </div>
 </body>
-
 </html>

@@ -16,56 +16,45 @@ if ($_SESSION['role'] != 'pelamar') {
 
 include 'config/koneksi.php';
 
-$query = mysqli_query(
-    $conn,
-
-    "SELECT * FROM lowongan
-
-WHERE status='aktif'
-
-ORDER BY id_lowongan DESC"
-);
-
-$total_lowongan = mysqli_num_rows($query);
-
 $id_pelamar = (int) $_SESSION['id_user'];
-
-$result = mysqli_query($conn, "
-    SELECT *
-    FROM users
-    WHERE id_user=$id_pelamar
-");
-
+$result = mysqli_query($conn, "SELECT * FROM users WHERE id_user=$id_pelamar");
 $user = mysqli_fetch_assoc($result);
 
 $initials = strtoupper(substr($user['nama'] ?? 'U', 0, 2));
+
 /* =========================
    HITUNG KELENGKAPAN PROFIL
    ========================= */
-
-$fields_cek = [
-    'nama',
-    'telepon',
-    'lokasi',
-    'bio',
-    'pendidikan',
-    'pengalaman',
-    'skills',
-    'foto_profil',
-    'cv_path'
-];
-
+$fields_cek = ['nama','telepon','lokasi','bio','pendidikan','pengalaman','skills','foto_profil','cv_path'];
 $isi = 0;
-
 foreach ($fields_cek as $field) {
     if (!empty($user[$field])) {
         $isi++;
     }
 }
+$kelengkapan = round(($isi / count($fields_cek)) * 100);
 
-$kelengkapan = round(
-    ($isi / count($fields_cek)) * 100
-);
+/* =========================
+   PENCARIAN & FILTER LOGIC
+   ========================= */
+$keyword = isset($_GET['q']) ? mysqli_real_escape_string($conn, $_GET['q']) : '';
+$is_rekomendasi = isset($_GET['rekomendasi']) && $_GET['rekomendasi'] == '1';
+$bidang_keahlian = $user['bidang_keahlian'] ?? '';
+
+$where_clause = "WHERE status='aktif'";
+
+if ($keyword) {
+    $where_clause .= " AND (judul LIKE '%$keyword%' OR deskripsi LIKE '%$keyword%' OR lokasi LIKE '%$keyword%')";
+}
+
+if ($is_rekomendasi && $bidang_keahlian) {
+    // Cari lowongan yang judulnya mirip dengan bidang keahlian
+    $bidang_esc = mysqli_real_escape_string($conn, $bidang_keahlian);
+    $where_clause .= " AND judul LIKE '%$bidang_esc%'";
+}
+
+$query = mysqli_query($conn, "SELECT * FROM lowongan $where_clause ORDER BY id_lowongan DESC");
+$total_lowongan = mysqli_num_rows($query);
 
 //
 ?>
@@ -443,6 +432,36 @@ $kelengkapan = round(
 
         .btn-filter:hover {
             background: #f0fdfa;
+        }
+
+        /* Tabs Filter */
+        .tabs-filter {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 12px;
+        }
+
+        .tab-filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            background: #f3f4f6;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .tab-filter-btn:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .tab-filter-btn.active {
+            background: #0d9488;
+            color: white;
         }
 
         /* Results Header */
@@ -838,6 +857,16 @@ $kelengkapan = round(
                 <h1 class="page-title">Cari Lowongan Pekerjaan</h1>
             </div>
 
+            <!-- Tabs Filter -->
+            <div class="tabs-filter">
+                <a href="?rekomendasi=0" class="tab-filter-btn <?= !$is_rekomendasi ? 'active' : '' ?>">Semua Lowongan</a>
+                <?php if ($bidang_keahlian): ?>
+                    <a href="?rekomendasi=1" class="tab-filter-btn <?= $is_rekomendasi ? 'active' : '' ?>">
+                        ✨ Rekomendasi Sesuai Profil (<?= htmlspecialchars($bidang_keahlian) ?>)
+                    </a>
+                <?php endif; ?>
+            </div>
+
             <!-- Search Section -->
             <div class="search-section">
                 <form method="GET">
@@ -849,8 +878,12 @@ $kelengkapan = round(
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <path d="m21 21-4.35-4.35"></path>
                             </svg>
-                            <input type="text" name="keyword" class="search-input"
+                            <input type="text" name="q" class="search-input"
+                                value="<?= htmlspecialchars($keyword) ?>"
                                 placeholder="Posisi, skill, atau perusahaan...">
+                            <?php if ($is_rekomendasi): ?>
+                                <input type="hidden" name="rekomendasi" value="1">
+                            <?php endif; ?>
                         </div>
 
                         <div class="search-input-wrapper">
