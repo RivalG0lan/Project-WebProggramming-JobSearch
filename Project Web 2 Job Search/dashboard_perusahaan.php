@@ -1112,7 +1112,7 @@ $employer_score = round(($isi_perusahaan / count($fields_cek_perusahaan)) * 100)
                                             <!-- Views removed, as it's not in DB -->
                                         </div>
                                     </div>
-                                    <button class="btn-arrow" onclick="window.location.href='detail_lowongan.php?id=<?= $low['id_lowongan'] ?>'">
+                                    <button class="btn-arrow" onclick="window.location.href='kelola_lowongan.php?id=<?= $low['id_lowongan'] ?>'">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                             stroke-width="2">
                                             <polyline points="9 18 15 12 9 6"></polyline>

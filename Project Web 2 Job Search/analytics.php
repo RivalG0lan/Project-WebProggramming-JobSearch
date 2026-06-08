@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+include 'config/koneksi.php';
+include 'employer_score.php';
+
 if (!isset($_SESSION['id_user'])) {
     header("Location: login_perusahaan.php");
     exit;
@@ -731,11 +734,18 @@ if (!isset($_SESSION['id_user'])) {
 
             <div class="employer-score">
                 <div class="employer-score-header">
-                    <span class="employer-score-label">Employer Score</span>
-                    <span class="employer-score-value">50%</span>
+                    <span class="employer-score-label">
+                        Employer Score
+                    </span>
+
+                    <span class="employer-score-value">
+                        <?= $employer_score ?>%
+                    </span>
                 </div>
+
                 <div class="employer-score-bar">
-                    <div class="employer-score-fill"></div>
+                    <div class="employer-score-fill" style="width: <?= $employer_score ?>%;">
+                    </div>
                 </div>
             </div>
 

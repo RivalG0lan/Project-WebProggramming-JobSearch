@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+include 'config/koneksi.php';
+include 'employer_score.php';
+
 if (!isset($_SESSION['id_user'])) {
   header("Location: login_perusahaan.php");
   exit;
@@ -612,14 +615,18 @@ if (!isset($_SESSION['id_user'])) {
     }
 
     .employer-score {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       padding: 8px 12px;
       background: white;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
       margin-bottom: 24px;
+    }
+
+    .employer-score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
     }
 
     .employer-score-label {
@@ -637,7 +644,6 @@ if (!isset($_SESSION['id_user'])) {
       height: 4px;
       background: #e5e7eb;
       border-radius: 2px;
-      margin-top: 8px;
       overflow: hidden;
     }
 
@@ -1302,18 +1308,18 @@ if (!isset($_SESSION['id_user'])) {
       </div>
 
       <div class="employer-score">
-        <div style="flex: 1">
-          <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 8px;
-              ">
-            <span class="employer-score-label">Employer Score</span>
-            <span class="employer-score-value">50%</span>
-          </div>
-          <div class="employer-score-bar">
-            <div class="employer-score-fill"></div>
+        <div class="employer-score-header">
+          <span class="employer-score-label">
+            Employer Score
+          </span>
+
+          <span class="employer-score-value">
+            <?= $employer_score ?>%
+          </span>
+        </div>
+
+        <div class="employer-score-bar">
+          <div class="employer-score-fill" style="width: <?= $employer_score ?>%;">
           </div>
         </div>
       </div>
@@ -1452,7 +1458,8 @@ if (!isset($_SESSION['id_user'])) {
 
         <div class="form-group">
           <label class="form-label">Nama Lengkap</label>
-          <input type="text" class="form-input" value="<?= strtoupper(substr($_SESSION['nama'], 0, 1)) . substr($_SESSION['nama'], 1) ?>" />
+          <input type="text" class="form-input"
+            value="<?= strtoupper(substr($_SESSION['nama'], 0, 1)) . substr($_SESSION['nama'], 1) ?>" />
         </div>
 
         <div class="form-group">

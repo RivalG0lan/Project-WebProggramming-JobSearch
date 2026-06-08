@@ -3,6 +3,7 @@
 session_start();
 
 include 'config/koneksi.php';
+include 'employer_score.php';
 
 if (!isset($_SESSION['id_user'])) {
 
@@ -828,11 +829,18 @@ if (isset($_POST['post_lowongan'])) {
 
             <div class="employer-score">
                 <div class="employer-score-header">
-                    <span class="employer-score-label">Employer Score</span>
-                    <span class="employer-score-value">50%</span>
+                    <span class="employer-score-label">
+                        Employer Score
+                    </span>
+
+                    <span class="employer-score-value">
+                        <?= $employer_score ?>%
+                    </span>
                 </div>
+
                 <div class="employer-score-bar">
-                    <div class="employer-score-fill"></div>
+                    <div class="employer-score-fill" style="width: <?= $employer_score ?>%;">
+                    </div>
                 </div>
             </div>
 
@@ -864,7 +872,7 @@ if (isset($_POST['post_lowongan'])) {
                     Kelola Lowongan
                 </a>
 
-                <a href="kandidat.html" class="nav-item">
+                <a href="kandidat.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
@@ -882,7 +890,7 @@ if (isset($_POST['post_lowongan'])) {
                     Profil Perusahaan
                 </a>
 
-                <a href="analytics.html" class="nav-item">
+                <a href="analytics.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="20" x2="18" y2="10"></line>
                         <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -891,7 +899,7 @@ if (isset($_POST['post_lowongan'])) {
                     Analytics
                 </a>
 
-                <a href="pesan_perusahaan.html" class="nav-item">
+                <a href="pesan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
@@ -900,7 +908,7 @@ if (isset($_POST['post_lowongan'])) {
 
                 <div class="nav-divider"></div>
 
-                <a href="pengaturan_perusahaan.html" class="nav-item">
+                <a href="pengaturan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6"></path>

@@ -13,6 +13,8 @@ if ($_SESSION['role'] != 'perusahaan') {
     exit;
 }
 
+include 'employer_score.php';
+
 $id_perusahaan = $_SESSION['id_user'];
 
 // Ambil semua lowongan milik perusahaan ini untuk filter dropdown
@@ -765,11 +767,18 @@ foreach (['dikirim', 'review', 'interview', 'accepted', 'rejected'] as $s) {
             </div>
             <div class="employer-score">
                 <div class="employer-score-header">
-                    <span class="employer-score-label">Employer Score</span>
-                    <span class="employer-score-value">50%</span>
+                    <span class="employer-score-label">
+                        Employer Score
+                    </span>
+
+                    <span class="employer-score-value">
+                        <?= $employer_score ?>%
+                    </span>
                 </div>
+
                 <div class="employer-score-bar">
-                    <div class="employer-score-fill"></div>
+                    <div class="employer-score-fill" style="width: <?= $employer_score ?>%;">
+                    </div>
                 </div>
             </div>
             <nav>
@@ -998,8 +1007,10 @@ foreach (['dikirim', 'review', 'interview', 'accepted', 'rejected'] as $s) {
                                     <option value="rejected" <?= $st == 'rejected' ? 'selected' : '' ?>>❌ Ditolak</option>
                                 </select>
                                 <button type="submit" class="btn-update">Simpan</button>
-                                <a href="pesan_perusahaan.php?id_lawan=<?= $row['id_pelamar'] ?>" class="btn-action btn-outline-teal" style="margin-left: auto;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <a href="pesan_perusahaan.php?id_lawan=<?= $row['id_pelamar'] ?>"
+                                    class="btn-action btn-outline-teal" style="margin-left: auto;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                                     </svg> Chat Pelamar
                                 </a>
