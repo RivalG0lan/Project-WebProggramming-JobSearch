@@ -136,7 +136,7 @@ foreach (['dikirim', 'review', 'interview', 'accepted', 'rejected'] as $s) {
         .logo-text {
             font-size: 18px;
             font-weight: 700;
-            color: #111827;
+            color: #0D9488;
         }
 
         .company-profile {

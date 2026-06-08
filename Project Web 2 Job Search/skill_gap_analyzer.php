@@ -82,7 +82,7 @@ $match_rate = $total_req > 0 ? round((count($matched_skills) / $total_req) * 100
         }
         .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; padding: 0 8px; }
         .logo-img { width: 27px; height: 27px; object-fit: contain; }
-        .logo-text { font-size: 18px; font-weight: 700; color: #111827; }
+        .logo-text { font-size: 18px; font-weight: 700; color: #0D9488; }
 
         .user-profile {
             display: flex; align-items: center; gap: 12px; padding: 12px;

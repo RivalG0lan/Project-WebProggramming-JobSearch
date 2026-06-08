@@ -216,7 +216,7 @@ $top_missing_skills = array_slice($missing_skills, 0, 3);
         .logo-text {
             font-size: 18px;
             font-weight: 700;
-            color: #111827;
+            color: #0D9488;
         }
 
         .user-profile {

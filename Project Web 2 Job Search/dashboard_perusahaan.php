@@ -138,7 +138,7 @@ $employer_score = round(($isi_perusahaan / count($fields_cek_perusahaan)) * 100)
         .logo-text {
             font-size: 18px;
             font-weight: 700;
-            color: #111827;
+            color: #0D9488;
         }
 
         .company-profile {

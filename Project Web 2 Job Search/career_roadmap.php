@@ -143,7 +143,7 @@ if ($selected_roadmap) {
         .sidebar { width: 260px; background: white; border-right: 1px solid #e5e7eb; padding: 24px 16px; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
         .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; padding: 0 8px; }
         .logo-img { width: 27px; height: 27px; object-fit: contain; }
-        .logo-text { font-size: 18px; font-weight: 700; color: #111827; }
+        .logo-text { font-size: 18px; font-weight: 700; color: #0D9488; }
 
         .user-profile { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 12px; margin-bottom: 24px; }
         .sidebar-avatar { width: 40px; height: 40px; background: #0d9488; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; overflow: hidden; flex-shrink: 0; }

@@ -116,7 +116,7 @@ $total_lowongan = mysqli_num_rows($query);
         .logo-text {
             font-size: 18px;
             font-weight: 700;
-            color: #111827;
+            color: #0D9488;
         }
 
         .user-profile {

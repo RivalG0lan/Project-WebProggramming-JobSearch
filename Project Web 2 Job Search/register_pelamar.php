@@ -59,7 +59,7 @@
         .logo-text {
             font-size: 20px;
             font-weight: 700;
-            color: #111827;
+            color: #0D9488;
         }
 
         h1 {
