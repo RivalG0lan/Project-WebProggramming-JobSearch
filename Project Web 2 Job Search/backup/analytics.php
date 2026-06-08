@@ -8,141 +8,6 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login_perusahaan.php");
     exit;
 }
-
-if ($_SESSION['role'] != 'perusahaan') {
-    header("Location: login_perusahaan.php");
-    exit;
-}
-
-$id_perusahaan = (int) $_SESSION['id_user'];
-
-// ============================================================
-// QUERY DATA ANALYTICS DARI DATABASE
-// ============================================================
-
-// --- STAT CARDS ---
-
-// Total lamaran ke semua lowongan perusahaan ini
-$q_total_aplikasi = mysqli_query($conn, "
-    SELECT COUNT(*) AS total
-    FROM lamaran l
-    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
-    WHERE low.id_perusahaan = '$id_perusahaan'
-");
-$total_aplikasi = mysqli_fetch_assoc($q_total_aplikasi)['total'] ?? 0;
-
-// Total lowongan milik perusahaan
-$q_total_lowongan = mysqli_query($conn, "
-    SELECT COUNT(*) AS total
-    FROM lowongan
-    WHERE id_perusahaan = '$id_perusahaan'
-");
-$total_lowongan = mysqli_fetch_assoc($q_total_lowongan)['total'] ?? 0;
-
-// Conversion rate: lamaran diterima (accepted) / total lamaran * 100
-$q_accepted = mysqli_query($conn, "
-    SELECT COUNT(*) AS total
-    FROM lamaran l
-    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
-    WHERE low.id_perusahaan = '$id_perusahaan' AND l.status = 'accepted'
-");
-$total_accepted = mysqli_fetch_assoc($q_accepted)['total'] ?? 0;
-$conversion_rate = $total_aplikasi > 0 ? round(($total_accepted / $total_aplikasi) * 100, 1) : 0;
-
-// Rata-rata hari dari tanggal_post lowongan ke tanggal lamaran masuk (sebagai proxy time-to-hire)
-$q_avg_days = mysqli_query($conn, "
-    SELECT AVG(DATEDIFF(l.tanggal_lamaran, low.tanggal_post)) AS avg_days
-    FROM lamaran l
-    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
-    WHERE low.id_perusahaan = '$id_perusahaan'
-");
-$avg_days_row = mysqli_fetch_assoc($q_avg_days);
-$avg_time_to_hire = $avg_days_row['avg_days'] ? round($avg_days_row['avg_days']) : 0;
-
-// --- DISTRIBUSI STATUS LAMARAN (untuk progress bars) ---
-$q_status = mysqli_query($conn, "
-    SELECT l.status, COUNT(*) AS jumlah
-    FROM lamaran l
-    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
-    WHERE low.id_perusahaan = '$id_perusahaan'
-    GROUP BY l.status
-");
-$status_counts = [];
-while ($row = mysqli_fetch_assoc($q_status)) {
-    $status_counts[$row['status']] = $row['jumlah'];
-}
-$s_dikirim = $status_counts['dikirim'] ?? 0;
-$s_review = $status_counts['review'] ?? 0;
-$s_interview = $status_counts['interview'] ?? 0;
-$s_accepted = $status_counts['accepted'] ?? 0;
-$s_rejected = $status_counts['rejected'] ?? 0;
-
-// --- PERFORMA PER LOWONGAN (tabel) ---
-$q_lowongan_performa = mysqli_query($conn, "
-    SELECT
-        low.id_lowongan,
-        low.judul,
-        low.kategori,
-        low.status AS status_lowongan,
-        low.tanggal_post,
-        COUNT(l.id_lamaran) AS total_pelamar,
-        SUM(CASE WHEN l.status = 'interview' THEN 1 ELSE 0 END) AS interview,
-        SUM(CASE WHEN l.status = 'accepted' THEN 1 ELSE 0 END) AS accepted
-    FROM lowongan low
-    LEFT JOIN lamaran l ON l.id_lowongan = low.id_lowongan
-    WHERE low.id_perusahaan = '$id_perusahaan'
-    GROUP BY low.id_lowongan
-    ORDER BY total_pelamar DESC
-    LIMIT 10
-");
-
-// --- LAMARAN PER BULAN (6 bulan terakhir, untuk bar chart) ---
-$q_monthly = mysqli_query($conn, "
-    SELECT
-        DATE_FORMAT(l.tanggal_lamaran, '%b') AS bulan,
-        DATE_FORMAT(l.tanggal_lamaran, '%Y-%m') AS bulan_sort,
-        COUNT(*) AS jumlah
-    FROM lamaran l
-    JOIN lowongan low ON l.id_lowongan = low.id_lowongan
-    WHERE low.id_perusahaan = '$id_perusahaan'
-      AND l.tanggal_lamaran >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-    GROUP BY bulan_sort, bulan
-    ORDER BY bulan_sort ASC
-");
-$monthly_data = [];
-while ($row = mysqli_fetch_assoc($q_monthly)) {
-    $monthly_data[] = $row;
-}
-
-// Nilai maksimum untuk skala bar chart
-$max_monthly = 1;
-foreach ($monthly_data as $m) {
-    if ($m['jumlah'] > $max_monthly)
-        $max_monthly = $m['jumlah'];
-}
-
-// --- DISTRIBUSI KATEGORI LOWONGAN ---
-$q_kategori = mysqli_query($conn, "
-    SELECT
-        low.kategori,
-        COUNT(l.id_lamaran) AS jumlah
-    FROM lowongan low
-    LEFT JOIN lamaran l ON l.id_lowongan = low.id_lowongan
-    WHERE low.id_perusahaan = '$id_perusahaan' AND low.kategori IS NOT NULL AND low.kategori != ''
-    GROUP BY low.kategori
-    ORDER BY jumlah DESC
-    LIMIT 5
-");
-$kategori_data = [];
-$max_kategori = 1;
-while ($row = mysqli_fetch_assoc($q_kategori)) {
-    $kategori_data[] = $row;
-    if ($row['jumlah'] > $max_kategori)
-        $max_kategori = $row['jumlah'];
-}
-
-// Warna untuk progress bars kategori
-$progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
 ?>
 
 <!DOCTYPE html>
@@ -278,6 +143,7 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
         .employer-score-fill {
             height: 100%;
             background: #f59e0b;
+            width: 50%;
             border-radius: 2px;
         }
 
@@ -355,7 +221,39 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
             gap: 12px;
         }
 
-        /* STAT CARDS */
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .btn-export {
+            background: #0d9488;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover {
+            background: #0f766e;
+        }
+
         .stats-overview {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -406,6 +304,26 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
             color: #f59e0b;
         }
 
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .stat-trend.up {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .stat-trend.down {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
         .stat-label {
             font-size: 13px;
             color: #6b7280;
@@ -424,7 +342,6 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
             color: #9ca3af;
         }
 
-        /* CHARTS GRID */
         .charts-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -452,62 +369,91 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
             color: #111827;
         }
 
-        /* BAR CHART (dari data DB) */
+        .card-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: #f9fafb;
+        }
+
+        .tab-btn.active {
+            background: #0d9488;
+            color: white;
+            border-color: #0d9488;
+        }
+
         .chart-container {
-            height: 280px;
+            height: 300px;
             background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
             border-radius: 8px;
             display: flex;
             align-items: flex-end;
             justify-content: space-around;
-            padding: 20px 12px 0;
+            padding: 20px;
             gap: 8px;
         }
 
-        .chart-bar-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-end;
-        }
-
-        .chart-bar-value {
-            font-size: 11px;
-            color: #6b7280;
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-
         .chart-bar {
-            width: 100%;
+            flex: 1;
             background: #0d9488;
             border-radius: 4px 4px 0 0;
+            position: relative;
             transition: all 0.3s;
-            min-height: 4px;
         }
 
         .chart-bar:hover {
             opacity: 0.8;
         }
 
-        .chart-bar-label {
-            font-size: 11px;
-            color: #6b7280;
-            margin-top: 8px;
-            text-align: center;
+        .chart-bar:nth-child(1) {
+            height: 45%;
+            background: #14b8a6;
         }
 
-        .chart-empty {
-            width: 100%;
-            text-align: center;
-            color: #9ca3af;
-            font-size: 14px;
-            padding: 60px 0;
+        .chart-bar:nth-child(2) {
+            height: 60%;
+            background: #0d9488;
         }
 
-        /* PROGRESS BARS */
+        .chart-bar:nth-child(3) {
+            height: 75%;
+            background: #14b8a6;
+        }
+
+        .chart-bar:nth-child(4) {
+            height: 55%;
+            background: #0d9488;
+        }
+
+        .chart-bar:nth-child(5) {
+            height: 85%;
+            background: #14b8a6;
+        }
+
+        .chart-bar:nth-child(6) {
+            height: 70%;
+            background: #0d9488;
+        }
+
+        .chart-bar:nth-child(7) {
+            height: 90%;
+            background: #14b8a6;
+        }
+
         .progress-list {
             display: flex;
             flex-direction: column;
@@ -571,7 +517,6 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
             background: #ef4444;
         }
 
-        /* TABLE */
         .table-container {
             overflow-x: auto;
         }
@@ -634,7 +579,6 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
             color: #2563eb;
         }
 
-        /* METRICS GRID */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -719,14 +663,6 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
             color: #374151;
         }
 
-        /* EMPTY STATE */
-        .empty-notice {
-            text-align: center;
-            padding: 40px;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-
         @media (max-width: 1400px) {
             .charts-grid {
                 grid-template-columns: 1fr;
@@ -766,6 +702,10 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
             .header-actions {
                 width: 100%;
             }
+
+            .date-filter {
+                flex: 1;
+            }
         }
     </style>
 </head>
@@ -783,18 +723,29 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                     <?= strtoupper(substr($_SESSION['nama'], 0, 1)) ?>
                 </div>
                 <div class="company-info">
-                    <div class="company-name"><?= htmlspecialchars($_SESSION['nama']) ?></div>
-                    <div class="company-industry"><?= htmlspecialchars($_SESSION['email']) ?></div>
+                    <div class="company-name">
+                        <?= htmlspecialchars($_SESSION['nama']) ?>
+                    </div>
+                    <div class="company-industry">
+                        <?= htmlspecialchars($_SESSION['email']) ?>
+                    </div>
                 </div>
             </div>
 
             <div class="employer-score">
                 <div class="employer-score-header">
-                    <span class="employer-score-label">Employer Score</span>
-                    <span class="employer-score-value"><?= $employer_score ?>%</span>
+                    <span class="employer-score-label">
+                        Employer Score
+                    </span>
+
+                    <span class="employer-score-value">
+                        <?= $employer_score ?>%
+                    </span>
                 </div>
+
                 <div class="employer-score-bar">
-                    <div class="employer-score-fill" style="width: <?= $employer_score ?>%;"></div>
+                    <div class="employer-score-fill" style="width: <?= $employer_score ?>%;">
+                    </div>
                 </div>
             </div>
 
@@ -808,14 +759,16 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                     </svg>
                     Dashboard
                 </a>
+
                 <a href="posting_lowongan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="1"></circle>
                         <circle cx="12" cy="12" r="8"></circle>
-                        <line x1="12" y1="8" x2="12" y2="16"></line>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
                     </svg>
                     Posting Lowongan
                 </a>
+
                 <a href="kelola_lowongan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -823,6 +776,7 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                     </svg>
                     Kelola Lowongan
                 </a>
+
                 <a href="kandidat.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -832,6 +786,7 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                     </svg>
                     Kandidat
                 </a>
+
                 <a href="profil_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -839,6 +794,7 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                     </svg>
                     Profil Perusahaan
                 </a>
+
                 <a href="analytics.php" class="nav-item active">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -847,13 +803,16 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                     </svg>
                     Analytics
                 </a>
+
                 <a href="pesan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
                     Pesan
                 </a>
+
                 <div class="nav-divider"></div>
+
                 <a href="pengaturan_perusahaan.php" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
@@ -864,6 +823,7 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                     </svg>
                     Pengaturan
                 </a>
+
                 <a href="logout.php" class="nav-item nav-item-logout">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -881,38 +841,55 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                     <h1>Analytics</h1>
                     <p>Pantau performa rekrutmen perusahaan Anda</p>
                 </div>
+
                 <div class="header-actions">
-                    <a href="kandidat.php"
-                        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#0d9488;color:white;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;">
+                    <div class="date-filter">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        Lihat Kandidat
-                    </a>
+                        30 Hari Terakhir
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <button class="btn-export">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export Report
+                    </button>
                 </div>
             </header>
 
-            <!-- STAT CARDS -->
             <div class="stats-overview">
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon blue">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
                             </svg>
                         </div>
+                        <div class="stat-trend up">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
+                                <polyline points="18 15 12 9 6 15"></polyline>
+                            </svg>
+                            12.5%
+                        </div>
                     </div>
-                    <div class="stat-label">Total Aplikasi Masuk</div>
-                    <div class="stat-value"><?= number_format($total_aplikasi) ?></div>
-                    <div class="stat-subtext">Dari <?= $total_lowongan ?> lowongan yang diposting</div>
+                    <div class="stat-label">Total Views</div>
+                    <div class="stat-value">45,231</div>
+                    <div class="stat-subtext">+5,432 dari bulan lalu</div>
                 </div>
 
                 <div class="stat-card">
@@ -920,14 +897,23 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                         <div class="stat-icon green">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
-                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <line x1="20" y1="8" x2="20" y2="14"></line>
+                                <line x1="23" y1="11" x2="17" y2="11"></line>
                             </svg>
                         </div>
+                        <div class="stat-trend up">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
+                                <polyline points="18 15 12 9 6 15"></polyline>
+                            </svg>
+                            8.2%
+                        </div>
                     </div>
-                    <div class="stat-label">Total Lowongan</div>
-                    <div class="stat-value"><?= number_format($total_lowongan) ?></div>
-                    <div class="stat-subtext">Lowongan yang telah diposting</div>
+                    <div class="stat-label">Total Aplikasi</div>
+                    <div class="stat-value">347</div>
+                    <div class="stat-subtext">+28 dari bulan lalu</div>
                 </div>
 
                 <div class="stat-card">
@@ -939,10 +925,17 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
                             </svg>
                         </div>
+                        <div class="stat-trend down">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                            2.1%
+                        </div>
                     </div>
                     <div class="stat-label">Conversion Rate</div>
-                    <div class="stat-value"><?= $conversion_rate ?>%</div>
-                    <div class="stat-subtext"><?= $total_accepted ?> lamaran diterima (accepted)</div>
+                    <div class="stat-value">7.6%</div>
+                    <div class="stat-subtext">-0.8% dari bulan lalu</div>
                 </div>
 
                 <div class="stat-card">
@@ -954,209 +947,14 @@ $progress_colors = ['blue', 'green', 'purple', 'orange', 'red'];
                                 <polyline points="12 6 12 12 16 14"></polyline>
                             </svg>
                         </div>
-                    </div>
-                    <div class="stat-label">Avg. Time to Receive</div>
-                    <div class="stat-value"><?= $avg_time_to_hire ?> hari</div>
-                    <div class="stat-subtext">Rata-rata dari posting ke lamaran masuk</div>
-                </div>
-            </div>
-
-            <!-- CHARTS GRID -->
-            <div class="charts-grid">
-                <!-- Bar Chart: Lamaran per Bulan -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Tren Lamaran (6 Bulan Terakhir)</h2>
-                    </div>
-                    <?php if (empty($monthly_data)): ?>
-                        <div class="chart-empty">Belum ada data lamaran dalam 6 bulan terakhir.</div>
-                    <?php else: ?>
-                        <div class="chart-container">
-                            <?php foreach ($monthly_data as $m):
-                                $pct = $max_monthly > 0 ? ($m['jumlah'] / $max_monthly) * 220 : 4;
-                                ?>
-                                <div class="chart-bar-wrapper">
-                                    <div class="chart-bar-value"><?= $m['jumlah'] ?></div>
-                                    <div class="chart-bar" style="height: <?= max(4, $pct) ?>px;"></div>
-                                    <div class="chart-bar-label"><?= htmlspecialchars($m['bulan']) ?></div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Progress: Distribusi Kategori Lowongan -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Lamaran per Kategori</h2>
-                    </div>
-                    <?php if (empty($kategori_data)): ?>
-                        <div class="empty-notice">Belum ada data kategori.</div>
-                    <?php else: ?>
-                        <div class="progress-list">
-                            <?php foreach ($kategori_data as $i => $kat):
-                                $pct_k = $max_kategori > 0 ? round(($kat['jumlah'] / $max_kategori) * 100) : 0;
-                                $color = $progress_colors[$i % count($progress_colors)];
-                                ?>
-                                <div class="progress-item">
-                                    <div class="progress-header">
-                                        <span class="progress-label"><?= htmlspecialchars($kat['kategori']) ?></span>
-                                        <span class="progress-value"><?= $kat['jumlah'] ?></span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill <?= $color ?>" style="width: <?= $pct_k ?>%"></div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <!-- METRICS: Distribusi Status Lamaran -->
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-header">
-                        <div class="metric-icon-circle teal">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        <div class="stat-trend up">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
+                                <polyline points="18 15 12 9 6 15"></polyline>
                             </svg>
-                        </div>
-                        <div class="metric-info">
-                            <div class="metric-label">Diterima (Accepted)</div>
-                            <div class="metric-value-large"><?= $s_accepted ?></div>
+                            15.3%
                         </div>
                     </div>
-                    <div class="metric-details">
-                        <div class="metric-detail">
-                            <div class="metric-detail-label">Interview</div>
-                            <div class="metric-detail-value"><?= $s_interview ?></div>
-                        </div>
-                        <div class="metric-detail">
-                            <div class="metric-detail-label">Ditolak</div>
-                            <div class="metric-detail-value"><?= $s_rejected ?></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-header">
-                        <div class="metric-icon-circle blue">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </div>
-                        <div class="metric-info">
-                            <div class="metric-label">Dalam Review</div>
-                            <div class="metric-value-large"><?= $s_review ?></div>
-                        </div>
-                    </div>
-                    <div class="metric-details">
-                        <div class="metric-detail">
-                            <div class="metric-detail-label">Baru Dikirim</div>
-                            <div class="metric-detail-value"><?= $s_dikirim ?></div>
-                        </div>
-                        <div class="metric-detail">
-                            <div class="metric-detail-label">Total Proses</div>
-                            <div class="metric-detail-value"><?= $s_dikirim + $s_review + $s_interview ?></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-header">
-                        <div class="metric-icon-circle indigo">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <line x1="18" y1="20" x2="18" y2="10"></line>
-                                <line x1="12" y1="20" x2="12" y2="4"></line>
-                                <line x1="6" y1="20" x2="6" y2="14"></line>
-                            </svg>
-                        </div>
-                        <div class="metric-info">
-                            <div class="metric-label">Employer Score</div>
-                            <div class="metric-value-large"><?= $employer_score ?>%</div>
-                        </div>
-                    </div>
-                    <div class="metric-details">
-                        <div class="metric-detail">
-                            <div class="metric-detail-label">Lowongan Aktif</div>
-                            <div class="metric-detail-value">
-                                <?php
-                                $q_aktif = mysqli_query($conn, "SELECT COUNT(*) AS c FROM lowongan WHERE id_perusahaan='$id_perusahaan' AND status='aktif'");
-                                echo mysqli_fetch_assoc($q_aktif)['c'] ?? 0;
-                                ?>
-                            </div>
-                        </div>
-                        <div class="metric-detail">
-                            <div class="metric-detail-label">Avg Pelamar/Lowongan</div>
-                            <div class="metric-detail-value">
-                                <?= $total_lowongan > 0 ? round($total_aplikasi / $total_lowongan, 1) : 0 ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TABEL PERFORMA LOWONGAN -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Performa Per Lowongan</h2>
-                    <a href="kelola_lowongan.php"
-                        style="font-size:14px;color:#0d9488;font-weight:600;text-decoration:none;">Kelola Lowongan →</a>
-                </div>
-                <?php if (mysqli_num_rows($q_lowongan_performa) === 0): ?>
-                    <div class="empty-notice">Belum ada lowongan yang diposting.</div>
-                <?php else: ?>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Judul Lowongan</th>
-                                    <th>Kategori</th>
-                                    <th>Pelamar</th>
-                                    <th>Interview</th>
-                                    <th>Diterima</th>
-                                    <th>Tanggal Post</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php while ($low = mysqli_fetch_assoc($q_lowongan_performa)): ?>
-                                    <tr>
-                                        <td class="job-title-cell">
-                                            <a href="edit_lowongan.php?id=<?= $low['id_lowongan'] ?>"
-                                                style="color:#111827;text-decoration:none;">
-                                                <?= htmlspecialchars($low['judul']) ?>
-                                            </a>
-                                        </td>
-                                        <td><?= htmlspecialchars($low['kategori'] ?? '-') ?></td>
-                                        <td style="font-weight:600;"><?= $low['total_pelamar'] ?></td>
-                                        <td><?= $low['interview'] ?></td>
-                                        <td><?= $low['accepted'] ?></td>
-                                        <td><?= date('d M Y', strtotime($low['tanggal_post'])) ?></td>
-                                        <td>
-                                            <?php if ($low['status_lowongan'] === 'aktif'): ?>
-                                                <span class="badge success">Aktif</span>
-                                            <?php else: ?>
-                                                <span
-                                                    class="badge warning"><?= ucfirst(htmlspecialchars($low['status_lowongan'])) ?></span>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endwhile; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-        </main>
-    </div>
-</body>
-
-</html>
+                    <div class="stat-label">Avg. Time to Hire</div>
+                    <div class="stat-value">18 hari</div>
+                    <div class="stat-subtext">3 hari lebih
