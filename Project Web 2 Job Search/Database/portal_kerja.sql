@@ -78,6 +78,17 @@ CREATE TABLE `users` (
   `telepon` varchar(20) DEFAULT NULL,
   `lokasi` varchar(100) DEFAULT NULL,
   `bio` text DEFAULT NULL,
+
+  -- PROFIL PERUSAHAAN
+  `deskripsi` text DEFAULT NULL,
+  `website` varchar(255) DEFAULT NULL,
+  `alamat` varchar(255) DEFAULT NULL,
+  `industri` varchar(100) DEFAULT NULL,
+  `ukuran_perusahaan` varchar(50) DEFAULT NULL,
+  `tahun_berdiri` year DEFAULT NULL,
+  `foto_perusahaan` varchar(255) DEFAULT NULL,
+
+  -- DATA PELAMAR
   `pendidikan` varchar(255) DEFAULT NULL,
   `pengalaman` text DEFAULT NULL,
   `skills` text DEFAULT NULL,
